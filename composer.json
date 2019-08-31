@@ -1,0 +1,37 @@
+{
+    "name": "majazeh/maravel",
+    "description": "Majazeh Dasboard v2",
+    "type": "Laravel package",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "baravak",
+            "email": "itb.baravak@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "Maravel\\": "src/"
+        },
+        "files": [
+
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Maravel\\Providers\\AppServiceProvider",
+                "Maravel\\Providers\\RouteServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "laravel/socialite": "^4.1.4",
+        "doctrine/dbal": "^2.9.2",
+        "laravel/passport": "^7.4",
+        "davejamesmiller/laravel-breadcrumbs": "^5.2.1"
+    }
+}
