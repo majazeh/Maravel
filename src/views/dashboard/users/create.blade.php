@@ -1,4 +1,4 @@
-@extends('dashboard.layouts.create')
+@extends('layouts.create')
 
 @section('form-name')
 @include('dashboard.users.forms.name')

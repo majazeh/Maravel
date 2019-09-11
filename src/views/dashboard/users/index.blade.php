@@ -33,7 +33,7 @@
         <th>
             <select name="type" data-lijax="change" data-state='true'>
                 <option {{!request()->type ? 'selected="selected"' : ''}} value="">{{_t('account.type')}}</option>
-                @foreach (config('guardio.status', ['admin', 'user']) as $key => $type)
+                @foreach (config('guardio.type', ['admin', 'user']) as $key => $type)
                     <option {{request()->type == $key ? 'selected="selected"' : ''}} value="{{$key}}">{{$type}}</option>
                 @endforeach
             </select>
@@ -53,7 +53,9 @@
 <tbody class="f1">
     @foreach ($users as $user)
     <tr>
-        <td class="text-center">{{ $user->serial }}</td>
+        <td class="text-center">
+            <a href="{{route($module->resource .'.show', $user->serial)}}">{{$user->serial }}</a>
+        </td>
         <td>
             <a class="text-dark" href="{{ route($module->resource . '.edit', $user->id) }}">{{ $user->name }}</a>
         </td>
@@ -69,6 +71,7 @@
         </td>
         <td class="text-center">
             @include('layouts.compomnents.edit-link', ['link' => route($module->resource . '.edit', $user->serial ?: $user->id)])
+            @include('layouts.compomnents.delete-link', ['link' => route($module->resource . '.destroy', $user->serial ?: $user->id)])
         </td>
     </tr>
     @endforeach

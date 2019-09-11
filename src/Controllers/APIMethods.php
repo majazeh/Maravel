@@ -4,11 +4,11 @@ namespace Maravel\Controllers;
 
 use Illuminate\Http\Request;
 
-trait Methods
+trait APIMethods
 {
     use Methods\Index;
     use Methods\Show;
-    use Methods\Create;
-    use Methods\Edit;
+    use Methods\Store;
+    use Methods\Update;
     use Methods\Destroy;
 }

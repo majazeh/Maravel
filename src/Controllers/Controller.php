@@ -7,15 +7,15 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use \Maravel\Lib\Response;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests, Methods;
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     public static $result;
+    public $statusMessage = ':)';
     public function __construct(Request $request)
     {
-        static::$result = new \StdClass;
         $namespace = explode('\\',get_class($this));
         $class_name = substr(end($namespace), 0, -10);
         if(!isset($this->model))
@@ -50,56 +50,6 @@ class Controller extends BaseController
         }
     }
 
-    public function toView($request)
-    {
-        $as = $request->route()->getAction('as');
-        $paths = explode('.', $as);
-        $route_resource = preg_replace('/\.[^\.]*$/', '', $as);
-        static::$result->module = isset(static::$result->module) ? static::$result->module : new \stdClass;
-        static::$result->layouts = isset(static::$result->layouts) ? static::$result->layouts : new \stdClass;
-        static::$result->global = isset(static::$result->global) ? static::$result->global : new \stdClass;
-
-        static::$result->module->name = $as;
-        static::$result->module->resource = join('.', array_splice($paths, 0, -1));
-        static::$result->module->action = last($paths);
-        static::$result->module->header = _t($as);
-        static::$result->module->desc = _t($as, '.desc');
-        static::$result->module->icons = [
-            'index' => 'fas fa-list-alt',
-            'create' => 'fas fa-plus-square',
-            'edit' => 'fas fa-edit',
-            'show' => 'fas fa-atom'
-        ];
-
-        static::$result->global->title = _t('Maravel');
-
-
-        static::$result->layouts->mode = 'html';
-        if (request()->ajax() && !strstr(request()->header('accept'), 'application/json')) {
-            static::$result->layouts->mode = 'template';
-        }
-        elseif (request()->ajax() && strstr(request()->header('accept'), 'application/json')) {
-            static::$result->layouts->mode = 'json';
-        }
-        // dd(self::$result);
-        // dd($request->route());
-        // dd($request->route()->getController());
-        // dd(get_class_methods($request->route()));
-        $view = $as;
-        $views = method_exists($this, 'views') ? $this->views() : (isset($this->views) ? $this->views : []);
-        if(array_key_exists($as, $views))
-        {
-            $view = $views[$as];
-        }
-        return response(\View::make($view, (array) self::$result));
-    }
-
-    public function response($result, $title = 'data')
-    {
-        static::$result->$title = $result;
-        return new Response($result, $title);
-    }
-
     public function findOrFail($id, $model = null)
     {
         if (!$model) {
@@ -111,12 +61,25 @@ class Controller extends BaseController
             if (!$model) {
                 $name = explode('\\', $model);
                 $name = end($name);
-                abort('404', $name . ' no found');
+                throw (new ModelNotFoundException)->setModel(trim($model, '\\'), $id);
             }
             return $model;
         } else {
             return $id;
         }
+    }
+
+    public function findArgs($request, $arg1 = null, $arg2 = null)
+    {
+        if ($arg2) {
+            $model = $this->findOrFail($arg2, $this->model);
+            $parent = $this->findOrFail($arg1, $this->parentModel);
+            self::$result->{$this->class_name($this->parent, false, 2)} = $parent;
+        } else {
+            $model = $this->findOrFail($arg1, $this->model);
+            $parent = null;
+        }
+        return [$parent, $model];
     }
 
     public function __call($method, $parameters)

@@ -1,5 +1,5 @@
-<div class="{{ $module->divPanel ?: 'col-12 col-md-8 col-xl-5 mx-auto' }}">
-    <form method="POST" {!! isset($multipart) ? 'enctype="multipart/form-data"' : '' !!} action="{{ $module->post_action ?: route($module->resource . ($module->action == 'edit' ? '.update' : '.store'), isset($id) ? $id : null) }}">
+<div class="{{'col-12 col-md-8 col-xl-5 mx-auto' }}">
+    <form method="POST" {!! isset($multipart) ? 'enctype="multipart/form-data"' : '' !!} action="{{ $module->post_action}}">
         @csrf
         @if ($module->action == 'edit')
             @method('PUT')

@@ -4,15 +4,15 @@
 <div class="glass"></div>
 <div class="enter-card">
     <div class="mb-4">
-        <div class="text-center mb-2"><img src="{{ asset('images/logo-40.png') }}" alt="{{ _d('title.dashio') }}" width="50" height="50"></div>
-        <h1 class="mb-0">{{ _d('title.dashio') }}</h1>
+        <div class="text-center mb-2"><img src="{{ asset('images/logo-40.png') }}" alt="{{ _t('title.dashio') }}" width="50" height="50"></div>
+        <h1 class="mb-0">{{ _t('title.dashio') }}</h1>
     </div>
     <form method="POST">
         @csrf
         <div class="form-group">
             <div class="form-input">
-                <input class="form-control {{ $errors->hasAny(['username', 'email', 'mobile']) ? 'is-invalid' : '' }}" type="text" name="username" id="username" placeholder="{{ ucfirst(_d('username')) }}">
-                <label class="form-icon" for="username" data-toggle="tooltip" data-placement="auto" title="{{ ucfirst(_d('mobile')) }}"><i class="fas fa-user"></i></label>
+                <input class="form-control {{ $errors->hasAny(['username', 'email', 'mobile']) ? 'is-invalid' : '' }}" type="text" name="username" id="username" placeholder="{{ ucfirst(_t('username')) }}">
+                <label class="form-icon" for="username" data-toggle="tooltip" data-placement="auto" title="{{ ucfirst(_t('mobile')) }}"><i class="fas fa-user"></i></label>
                 @if ($errors->hasAny(['username', 'email', 'mobile']))
                 <div class="invalid-feedback">{{ $errors->first('username') | $errors->first('email') | $errors->first('mobile') }}</div>
                 @endif
@@ -20,8 +20,8 @@
         </div>
         <div class="form-group">
             <div class="form-input">
-                <input class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" type="password" name="password" id="password" placeholder="{{ ucfirst(_d('password')) }}">
-                <label class="form-icon" for="password" data-toggle="tooltip" data-placement="auto" title="{{ ucfirst(_d('password')) }}"><i class="fas fa-shield-alt"></i></label>
+                <input class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" type="password" name="password" id="password" placeholder="{{ ucfirst(_t('password')) }}">
+                <label class="form-icon" for="password" data-toggle="tooltip" data-placement="auto" title="{{ ucfirst(_t('password')) }}"><i class="fas fa-shield-alt"></i></label>
                 @if ($errors->has('password'))
                 <div class="invalid-feedback">{{ $errors->first('password') }}</div>
                 @endif
@@ -33,20 +33,20 @@
             <span>{{ \Session::get('registerMsg') }}</span>
             @endif
             @if (isset($token))
-                <button type="submit" class="btn btn-block btn-primary btn-gradient">{{ ucfirst(_d('reset.password')) }}</button>
-                <a href="{{route('login')}}" class="btn btn-block btn-success btn-gradient">{{ ucfirst(_d('login')) }} / {{ ucfirst(_d('register')) }}</a>
+                <button type="submit" class="btn btn-block btn-primary btn-gradient">{{ ucfirst(_t('reset.password')) }}</button>
+                <a href="{{route('login')}}" class="btn btn-block btn-success btn-gradient">{{ ucfirst(_t('login')) }} / {{ ucfirst(_t('register')) }}</a>
             @else
-                <button type="submit" class="btn btn-block btn-primary btn-gradient">{{ ucfirst(_d('login')) }}
+                <button type="submit" class="btn btn-block btn-primary btn-gradient">{{ ucfirst(_t('login')) }}
                     @if (config('auth.enter.register', false))
-                    / {{ ucfirst(_d('register')) }}
+                    / {{ ucfirst(_t('register')) }}
                     @endif
                 </button>
                 @if (config('auth.enter.revovery', false))
-                <button name="reset" value="true" type="submit" class="btn btn-block btn-secondary btn-gradient">{{ _d('Password reset') }}</button>
+                <button name="reset" value="true" type="submit" class="btn btn-block btn-secondary btn-gradient">{{ _t('Password reset') }}</button>
                 @endif
                 @if (config('services.google.client_id'))
                 <a class="btn btn-block btn-secondary btn-gradient direct" href="/login/google">
-                    <span>{{ _d('Login with Google') }}</span>
+                    <span>{{ _t('Login with Google') }}</span>
                     <img src="/images/google.svg" alt="Google" width="18">
                 </a>
                 @endif

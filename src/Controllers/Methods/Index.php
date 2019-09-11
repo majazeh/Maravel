@@ -8,8 +8,21 @@ trait Index
 {
     public function _index(Request $request)
     {
-        $model = $this->queryIndex(...func_get_args());
-        return $this->response(new $this->resourceCollectionClass($model), $this->class_name(null, true, 2));
+        list($parent, $model, $order_list, $default_order, $filters, $current_filter) = $this->queryIndex(...func_get_args());
+        $resutl = new $this->resourceCollectionClass($model);
+        $resutl->additional([
+            'meta' => [
+                'orders' => [
+                    'allowed' => $order_list,
+                    'default' => $default_order,
+                ],
+                'filters' => [
+                    'allowed' => $filters,
+                    'current' => $current_filter,
+                ]
+            ]
+        ]);
+        return $resutl;
     }
 
     public function queryIndex($request, $parent = null)
@@ -21,13 +34,12 @@ trait Index
             $model = $this->model::select('*');
             $parent = null;
         }
+        list($filters, $current_filter) = [null, null];
         if (method_exists($this, 'filters')) {
-            $this->filters($request, $model, $parent = null);
+            list($filters, $current_filter) = $this->filters($request, $model, $parent = null);
         }
-        if (method_exists($this, 'paginate')) {
-            $model = $this->paginate($request, $model, $parent = null);
-        }
-        return $model;
+        list($model, $order_list, $default_order) = $this->paginate($request, $model, $parent = null);
+        return [$parent, $model, $order_list, $default_order, $filters, $current_filter];
     }
 
     public function paginate($request, $model, $parent = null, $order_list = [], $default = [])
@@ -55,6 +67,6 @@ trait Index
         {
             $paginate->appends($request->all(... array_keys($this->filters)));
         }
-        return $paginate;
+        return [$paginate, $order_list, $default];
     }
 }

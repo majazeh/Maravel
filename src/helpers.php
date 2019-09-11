@@ -18,3 +18,10 @@ function order_link($order, $sort)
     $query['sort'] = $sort;
     return Request::create(url()->current(), 'GET', $query)->getUri();
 }
+
+function result_message(&$array, $text)
+{
+    $text = strtoupper(preg_replace("/[\.!]/", '', str_replace(' ', '_', $text)));
+    $array['message'] = $text;
+    $array['message_text'] = _t($text);
+}

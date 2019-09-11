@@ -1,5 +1,5 @@
 <?php
-namespace App\Traits;
+namespace App\Models;
 
 use Maravel\Lib\Serial as Engine;
 
@@ -31,6 +31,7 @@ trait Serial
     }
     public function resolveRouteBinding($value)
     {
+        $value = self::id($value);
         return parent::resolveRouteBinding($value);
     }
 }

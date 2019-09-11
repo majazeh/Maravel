@@ -37,7 +37,7 @@ class RouteServiceProvider extends ServiceProvider
     public function apiRoutes(Router $router)
     {
         $router->group([
-            'namespace' => '\Maravel\Controllers\Dashboard',
+            'namespace' => '\Maravel\Controllers\API',
             'prefix' => 'api',
             'middleware' => 'api'
         ], function ($router) {

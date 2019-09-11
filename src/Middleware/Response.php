@@ -3,18 +3,40 @@
 namespace Maravel\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Http\JsonResponse;
+
 class Response
 {
     public function handle($request, Closure $next)
     {
         $response = $next($request);
-        $controller = $request->route()->getController();
-        if($response instanceof \Illuminate\Http\JsonResponse)
-        {
-            $type = is_array($request->route()->getAction('middleware')) ? $request->route()->getAction('middleware') : [$request->route()->getAction('middleware')];
-            if(in_array('web', $type)){
-                return $controller->toView($request);
+        if ($response instanceof JsonResponse || ($request->segment(1) == 'api' && $response->exception)) {
+            if ($response->exception) {
+                return $response;
+            }
+            else
+            {
+                $result = json_decode($response->content(), true);
+                $result = array_merge_recursive([
+                    'is_ok' => true
+                ],$result);
+                if($request->route()->getAction('controller'))
+                {
+                    $controller = $request->route()->getController();
+                    if (isset($controller->statusMessage))
+                    {
+                        result_message($result, $controller->statusMessage);
+                    }
+                    else
+                    {
+                        result_message($result, ':)');
+                    }
+                }
+                $response = response()->json(
+                    $result,
+                    $response->status(),
+                    $response->headers->all()
+                );
             }
         }
         return $response;

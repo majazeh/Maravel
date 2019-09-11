@@ -14,13 +14,21 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
-
-        $this->publishes([maravel_path('assets') => public_path('/')]);
-
+        if ($this->app->request->is('api/*') || $this->app->request->ajax()) {
+            if($this->app->request->is('api/*'))
+            {
+                $this->app->request->headers->set('Accept', 'application/json');
+            }
+            $this->app->bind(
+                \Illuminate\Contracts\Debug\ExceptionHandler::class,
+                \Maravel\Exceptions\ExceptionHandler::class
+            );
+        }
+        $this->publishes([
+            maravel_path('assets/public') => public_path('/'),
+            maravel_path('assets/resources') => resource_path('/')
+            ]);
         $router = $this->app['router'];
-
-        $GuardioMiddleware = \Maravel\Middleware\Guardio::class;
-
         $this->registerGuardio();
 
         $ResponseMiddleware = \Maravel\Middleware\Response::class;
@@ -39,6 +47,10 @@ class AppServiceProvider extends ServiceProvider
             $query['sort'] = 'desc';
             $desc = Request::create(url()->current(), 'GET', $query)->getUri();
             return "<?php echo isset(\$_GET['order']) && strtolower(\$_GET['order']) == strtolower('$key') ? (isset(\$_GET['sort']) && strtolower(\$_GET['sort']) == 'asc' ? '<a href=\"'. order_link('$key', 'desc') .'\"><i class=\"fas text-primary fa-sort-up\"></i></a>' : '<a href=\"'. order_link('$key', 'asc') .'\"><i class=\"fas text-primary fa-sort-down\"></i></a>') : '<a href=\"'. order_link('$key', 'desc') .'\"><i class=\"fas fa-sort text-black-50\"></i></a>' ?>";
+        });
+
+        $this->app['validator']->resolver(function ($translator, $data, $rules, $messages) {
+            return new \App\Validators\Maravel($translator, $data, $rules, $messages);
         });
 
     }

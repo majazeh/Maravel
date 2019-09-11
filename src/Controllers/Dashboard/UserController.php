@@ -2,23 +2,14 @@
 
 namespace Maravel\Controllers\Dashboard;
 
-use Maravel\Controllers\Controller as BaseController;
-use Maravel\Controllers\Methods;
-use Maravel\Requests\User as Request;
+use Maravel\Controllers\WebController;
+use App\Requests\Maravel as Request;
 use App\User;
-class UserController extends BaseController
+use Maravel\Controllers\API\UserController as API;
+
+class UserController extends WebController
 {
-    public $order_list = ['id', 'name', 'username', 'status', 'type', 'gender'];
-
-    public $filters = [
-        'test' => true
-    ];
-
-    public function __construct(Request $request)
-    {
-        parent::__construct($request);
-    }
-
+    public $endpoint = API::class;
     public function index(Request $request)
     {
         return $this->_index($request);
@@ -41,16 +32,16 @@ class UserController extends BaseController
 
     public function edit(Request $request, User $user)
     {
-        return $this->_edit($request);
+        return $this->_edit($request, $user);
     }
 
     public function update(Request $request, User $user)
     {
-        return $this->_update($request);
+        return $this->_update($request, $user);
     }
 
     public function destroy(Request $request, User $user)
     {
-        return $this->_destroy($request);
+        return $this->_destroy($request, $user);
     }
 }

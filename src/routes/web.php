@@ -1,5 +1,5 @@
 <?php
-Route::resource('users', 'UserController', ['as' => 'dashboard']);
+Route::resource('users', 'UserController', ['as' => 'dashboard', 'except' => []]);
 Route::resource('guards', 'UserController', ['as' => 'dashboard']);
 Route::resource('larators', 'UserController', ['as' => 'dashboard']);
 

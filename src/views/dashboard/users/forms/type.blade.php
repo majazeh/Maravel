@@ -1,12 +1,12 @@
 @if (\Auth::guardio('users.change.type'))
 <div class="form-group">
-    <label for="type">{{ _d('user.type') }}</label>
+    <label for="type">{{ _t('user.type') }}</label>
     <select class="custom-select form-control" name="type" id="type">
-        @foreach ($userTypes as $type => $value)
+        @foreach (config('guardio.type', ['admin', 'user']) as $type => $value)
         @isset ($user)
-        <option value="{{ $type }}" {{ $user->type == $type ? 'selected="selected"' : '' }}>{{ $value }}</option>
+        <option value="{{ $value }}" {{ $user->type == $value ? 'selected="selected"' : '' }}>{{ _t("user.type.$value") }}</option>
         @else
-        <option value="{{ $type }}" {{ $type == 'user' ? 'selected="selected"' : '' }}>{{ $value }}</option>
+        <option value="{{ $value }}" {{ $value == 'user' ? 'selected="selected"' : '' }}>{{ _t("user.type.$value") }}</option>
         @endisset
         @endforeach
     </select>
