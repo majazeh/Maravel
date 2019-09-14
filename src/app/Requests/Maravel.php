@@ -12,6 +12,7 @@ class Maravel extends FormRequest
     protected function validationData()
     {
         $data = parent::validationData();
+        if(!$this->route()->controller) return $data;
         $this->numberTypes($data);
         $this->mobileRule($data);
         if (method_exists($this->route()->getController(), 'validationData')) {
@@ -46,41 +47,41 @@ class Maravel extends FormRequest
 
     public function authorize()
     {
-        if (method_exists($this->route()->getController(), 'authorizations')) {
-            $action = $this->route()->getActionMethod();
-            switch ($action) {
-                case 'index':
-                    $action = 'viewAny';
-                    break;
-                case 'show':
-                    $action = 'view';
-                    break;
-                case 'create':
-                case 'store':
-                    $action = 'create';
-                    break;
-                case 'edit':
-                case 'update':
-                    $action = 'update';
-                    break;
-                case 'destroy':
-                    $action = 'delete';
-                    break;
-            }
-            $action = $this->route()->getController()->class_name(null, true, 2) . "." . $action;
-            if(in_array($action, array_keys(Gate::abilities())))
-            {
-                $args = array_values($this->route()->parameters());
-                array_unshift($args, $action);
-                array_unshift($args, $this);
-                return $this->route()->getController()->authorize('guardio', $args);
-            }
+        if(!$this->route()->controller) return true;
+        $action = $this->route()->getActionMethod();
+        switch ($action) {
+            case 'index':
+                $action = 'viewAny';
+                break;
+            case 'show':
+                $action = 'view';
+                break;
+            case 'create':
+            case 'store':
+                $action = 'create';
+                break;
+            case 'edit':
+            case 'update':
+                $action = 'update';
+                break;
+            case 'destroy':
+                $action = 'delete';
+                break;
+        }
+        $action = $this->route()->getController()->class_name(null, true, 2) . "." . $action;
+        if(in_array($action, array_keys(Gate::abilities())))
+        {
+            $args = array_values($this->route()->parameters());
+            array_unshift($args, $action);
+            array_unshift($args, $this);
+            return $this->route()->getController()->authorize('guardio', $args);
         }
         return true;
     }
 
     public function rules()
     {
+        if (!$this->route()->controller) return [];
         if (method_exists($this->route()->getController(), 'rules')) {
             return $this->route()->getController()->rules($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));
         }

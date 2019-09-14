@@ -1,2 +1,4 @@
 <?php
-Route::apiResource('users', 'UserController', ['as' => 'api']);
+Route::group(['middleware' => ['auth:api']], function () {
+    Route::apiResource('users', 'UserController', ['as' => 'api']);
+});

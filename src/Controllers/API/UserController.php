@@ -16,12 +16,6 @@ class UserController extends APIController
         'test' => true
     ];
 
-    public function __construct(Request $request)
-    {
-        parent::__construct($request);
-        $this->authorizeResource(User::class, 'users');
-    }
-
     public function index(Request $request)
     {
         return $this->_index($request);
