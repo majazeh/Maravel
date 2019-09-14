@@ -3,6 +3,8 @@
 namespace App\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Laravel\Passport\Passport;
+use Illuminate\Support\Facades\Gate;
 
 class Maravel extends FormRequest
 {
@@ -44,10 +46,35 @@ class Maravel extends FormRequest
 
     public function authorize()
     {
-        \Auth::loginUsingId(1);
         if (method_exists($this->route()->getController(), 'authorizations')) {
-            $action = $this->route()->getController()->class_name(null, true, 2) . "." . $this->route()->getActionMethod();
-            return $this->route()->getController()->authorizations($this, $action, ...array_values($this->route()->parameters()));
+            $action = $this->route()->getActionMethod();
+            switch ($action) {
+                case 'index':
+                    $action = 'viewAny';
+                    break;
+                case 'show':
+                    $action = 'view';
+                    break;
+                case 'create':
+                case 'store':
+                    $action = 'create';
+                    break;
+                case 'edit':
+                case 'update':
+                    $action = 'update';
+                    break;
+                case 'destroy':
+                    $action = 'delete';
+                    break;
+            }
+            $action = $this->route()->getController()->class_name(null, true, 2) . "." . $action;
+            if(in_array($action, array_keys(Gate::abilities())))
+            {
+                $args = array_values($this->route()->parameters());
+                array_unshift($args, $action);
+                array_unshift($args, $this);
+                return $this->route()->getController()->authorize('guardio', $args);
+            }
         }
         return true;
     }

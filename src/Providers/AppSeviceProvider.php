@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 use Blade;
 use Maravel\Providers\Guardio\GuardioRegistration;
+use Illuminate\Support\Facades\Config;
+use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -53,5 +55,17 @@ class AppServiceProvider extends ServiceProvider
             return new \App\Validators\Maravel($translator, $data, $rules, $messages);
         });
 
+        // Set passport config
+        Config::set([
+            'auth.guards.api.driver' => 'passport'
+        ]);
+
+        // Set Passport route
+        Passport::routes();
+
+        // Set expire date
+        Passport::tokensExpireIn(now()->addDays(15));
+        Passport::refreshTokensExpireIn(now()->addDays(30));
+        Passport::personalAccessTokensExpireIn(now()->addMonths(6));
     }
 }

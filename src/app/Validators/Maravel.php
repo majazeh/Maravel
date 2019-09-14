@@ -22,4 +22,18 @@ class Maravel extends Validator
         }
         return true;
     }
+
+    public function validateOneOf($attribute, $value, $parameters, $validator)
+    {
+        array_push($parameters, $attribute);
+        $one_of = false;
+        foreach ($parameters as $key => $value) {
+            if(isset($this->data[$value]) && $this->data[$value])
+            {
+                $one_of = true;
+                break;
+            }
+        }
+        return $one_of;
+    }
 }

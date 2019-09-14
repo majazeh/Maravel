@@ -25,7 +25,7 @@
             <select name="status" data-lijax="change" data-state='true'>
                 <option {{!request()->status ? 'selected="selected"' : ''}} value="">{{_t('account.status')}}</option>
                 @foreach (config('guardio.status', ['awaiting', 'active', 'disable']) as $key => $status)
-                    <option {{request()->status == $key ? 'selected="selected"' : ''}} value="{{$key}}">{{$status}}</option>
+                    <option {{request()->status == $status ? 'selected="selected"' : ''}} value="{{$status}}">{{_t("user.status.$status")}}</option>
                 @endforeach
             </select>
             @sort_icon(status)
@@ -34,7 +34,7 @@
             <select name="type" data-lijax="change" data-state='true'>
                 <option {{!request()->type ? 'selected="selected"' : ''}} value="">{{_t('account.type')}}</option>
                 @foreach (config('guardio.type', ['admin', 'user']) as $key => $type)
-                    <option {{request()->type == $key ? 'selected="selected"' : ''}} value="{{$key}}">{{$type}}</option>
+                    <option {{request()->type == $type ? 'selected="selected"' : ''}} value="{{$type}}">{{_t("user.status.$type")}}</option>
                 @endforeach
             </select>
             @sort_icon(type)
@@ -63,9 +63,9 @@
         <td>{{ $user->email }}</td>
         <td>{{ $user->mobile }}</td>
         <td>
-            {{ _t('status.' . $user->status) }}
+            {{ _t('user.status.' . $user->status) }}
         </td>
-        <td>{{ _t('type.' . $user->type) }}</td>
+        <td>{{ _t('user.type.' . $user->type) }}</td>
         <td class="text-center">
             <i class="fas fa-{{ $user->gender ?: 'genderless' }} {{ $user->gender == 'male' ? 'text-primary' : ($user->gender == 'female' ? 'text-info' : '')}}"></i>
         </td>

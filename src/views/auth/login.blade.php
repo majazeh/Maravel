@@ -1,4 +1,4 @@
-@extends('dashboard.layouts.app')
+@extends('layouts.app')
 
 @section('body')
 <div class="glass"></div>

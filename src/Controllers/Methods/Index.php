@@ -8,12 +8,13 @@ trait Index
 {
     public function _index(Request $request)
     {
-        list($parent, $model, $order_list, $default_order, $filters, $current_filter) = $this->queryIndex(...func_get_args());
+        list($parent, $model, $order_list, $current_order, $default_order, $filters, $current_filter) = $this->queryIndex(...func_get_args());
         $resutl = new $this->resourceCollectionClass($model);
         $resutl->additional([
             'meta' => [
                 'orders' => [
                     'allowed' => $order_list,
+                    'current' => $current_order,
                     'default' => $default_order,
                 ],
                 'filters' => [
@@ -38,8 +39,12 @@ trait Index
         if (method_exists($this, 'filters')) {
             list($filters, $current_filter) = $this->filters($request, $model, $parent = null);
         }
-        list($model, $order_list, $default_order) = $this->paginate($request, $model, $parent = null);
-        return [$parent, $model, $order_list, $default_order, $filters, $current_filter];
+        list($model, $order_list, $current_order, $default_order) = $this->paginate($request, $model, $parent = null);
+        if($current_filter)
+        {
+            $model->appends($request->all(...array_keys($current_filter)));
+        }
+        return [$parent, $model, $order_list, $current_order, $default_order, $filters, $current_filter];
     }
 
     public function paginate($request, $model, $parent = null, $order_list = [], $default = [])
@@ -52,21 +57,19 @@ trait Index
 
         $sort_string = $request->sort ?: $default[1];
         $sorts = explode(',', $sort_string);
+        $current = [];
         foreach ($orders as $key => $order) {
             if (isset($order_list[$order]) || in_array($order, $order_list)) {
                 $order = isset($order_list[$order]) ? $order_list[$order] : $order;
                 $sort = isset($sorts[$key]) && in_array(strtolower($sorts[$key]), ['asc', 'desc']) ? strtolower($sorts[$key]) : 'desc';
                 $model->orderBy($order, $sort);
+                $current[$order] = $sort;
             }
         }
         $paginate = $model->paginate();
         if ($order_string != $default[0] || $sort_string != $default[1]) {
             $paginate->appends($request->all('order', 'sort'));
         }
-        if(isset($this->filters))
-        {
-            $paginate->appends($request->all(... array_keys($this->filters)));
-        }
-        return [$paginate, $order_list, $default];
+        return [$paginate, $order_list, $current, $default];
     }
 }

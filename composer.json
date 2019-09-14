@@ -15,7 +15,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "App\\": "src/Models",
+            "App\\": "src/app/",
             "Maravel\\": "src/"
         },
         "files": [
@@ -27,7 +27,8 @@
         "laravel": {
             "providers": [
                 "Maravel\\Providers\\AppServiceProvider",
-                "Maravel\\Providers\\RouteServiceProvider"
+                "Maravel\\Providers\\RouteServiceProvider",
+                "Maravel\\Providers\\AuthServiceProvider"
             ]
         }
     },

@@ -22,6 +22,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->webRoutes($router);
         $this->apiRoutes($router);
+        $this->authRoutes($router);
     }
 
     public function webRoutes(Router $router)
@@ -31,7 +32,7 @@ class RouteServiceProvider extends ServiceProvider
             'prefix' => 'dashboard',
             'middleware' => 'web'
         ], function ($router) {
-            require_once(__DIR__ . '/../routes/web.php');
+            require_once(maravel_path('routes/web.php'));
         });
     }
     public function apiRoutes(Router $router)
@@ -41,7 +42,17 @@ class RouteServiceProvider extends ServiceProvider
             'prefix' => 'api',
             'middleware' => 'api'
         ], function ($router) {
-            require_once(__DIR__ . '/../routes/api.php');
+            require_once(maravel_path('routes/api.php'));
+        });
+    }
+    public function authRoutes(Router $router)
+    {
+        $router->group([
+            'namespace' => '\Maravel\Controllers\Auth',
+            'prefix' => '',
+            'middleware' => 'web'
+        ], function ($router) {
+            require_once(maravel_path('routes/auth.php'));
         });
     }
 }

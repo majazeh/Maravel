@@ -14,8 +14,13 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define('guardio', function ($user, $request, $guardio) {
-            return false;
+        Gate::define('guardio', function ($user, $request, $guardio, ...$args) {
+            if (!\Auth::guardio($guardio)) {
+                return false;
+            }
+            array_unshift($args, $request);
+            return Gate::allows($guardio, $args);
         });
+        // Gate::resource('users', 'App\Policies\UserPolicy');
     }
 }

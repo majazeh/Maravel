@@ -11,6 +11,7 @@ class WebController extends Controller
     public function __construct(Request $request)
     {
         self::$result = new \StdClass;
+        if (!$request->route()) return;
         parent::__construct($request);
         $this->designConstruct($request);
     }

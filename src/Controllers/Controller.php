@@ -16,6 +16,7 @@ class Controller extends BaseController
     public $statusMessage = ':)';
     public function __construct(Request $request)
     {
+        if(!$request->route()) return;
         $namespace = explode('\\',get_class($this));
         $class_name = substr(end($namespace), 0, -10);
         if(!isset($this->model))
@@ -25,9 +26,16 @@ class Controller extends BaseController
         if(!isset($this->resourceClass))
         {
             $this->resourceClass = '\\App\\Http\\Resources\\'.$class_name;
+            if(!class_exists($this->resourceClass))
+            {
+                $this->resourceClass = \Illuminate\Http\Resources\Json\JsonResource::class;
+            }
         }
         if (!isset($this->resourceCollectionClass)) {
             $this->resourceCollectionClass = '\\App\\Http\\Resources\\' . str_plural($class_name);
+            if (!class_exists($this->resourceCollectionClass)) {
+                $this->resourceCollectionClass = \Illuminate\Http\Resources\Json\ResourceCollection::class;
+            }
         }
     }
 

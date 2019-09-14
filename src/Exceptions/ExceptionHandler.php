@@ -7,6 +7,7 @@ use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\QueryException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ExceptionHandler extends Handler
 {
     use QueryExceptionCode;
@@ -49,7 +50,7 @@ class ExceptionHandler extends Handler
             'message' => null,
             'message_text' => null
         ], $data);
-        result_message($data, $data['message']);
+        result_message($data, $data['message'] ?: Response::$statusTexts[$render->getStatusCode()]);
         if(!config('app.debug'))
         {
             if ($exception instanceof ModelNotFoundException) {
