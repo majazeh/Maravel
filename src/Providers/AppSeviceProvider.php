@@ -9,6 +9,9 @@ use Blade;
 use Illuminate\Support\Facades\Config;
 use Laravel\Passport\Passport;
 use Maravel\Lib\Guardio;
+use Maravel\Middleware\Authenticate;
+use Maravel\Middleware\Response;
+
 class AppServiceProvider extends ServiceProvider
 {
     public function boot()
@@ -35,7 +38,9 @@ class AppServiceProvider extends ServiceProvider
                 }
         );
 
-        $ResponseMiddleware = \Maravel\Middleware\Response::class;
+        $ResponseMiddleware = Response::class;
+        $AuthenticateMiddleware = Authenticate::class;
+        $router->pushMiddlewareToGroup('maravel', $AuthenticateMiddleware);
         $router->pushMiddlewareToGroup('api', $ResponseMiddleware);
         $router->pushMiddlewareToGroup('web', $ResponseMiddleware);
 
