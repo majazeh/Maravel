@@ -6,6 +6,8 @@ use App\User;
 use App\UserSocialNetwork;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -92,7 +94,8 @@ class LoginController extends AuthController
         {
             return $this->sendFailedLoginResponse($request);
         }
-        auth()->user()->createToken(env('APP_NAME'))->accessToken;
+        $token = auth()->user()->createToken('Personal Access Token')->accessToken;
+        Cookie::queue('maravel-token', $token, 45000);
         if($guard && substr($username, 0, 1) == '.')
         {
             $request->session()->put('dev', true);

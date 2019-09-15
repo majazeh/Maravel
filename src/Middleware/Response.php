@@ -9,6 +9,7 @@ class Response
 {
     public function handle($request, Closure $next)
     {
+
         $response = $next($request);
         if ($response instanceof JsonResponse || ($request->segment(1) == 'api' && $response->exception)) {
             if ($response->exception) {

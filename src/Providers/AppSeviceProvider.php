@@ -62,10 +62,11 @@ class AppServiceProvider extends ServiceProvider
 
         // Set Passport route
         Passport::routes();
-
+        Passport::withoutCookieSerialization();
         // Set expire date
         Passport::tokensExpireIn(now()->addDays(15));
         Passport::refreshTokensExpireIn(now()->addDays(30));
         Passport::personalAccessTokensExpireIn(now()->addMonths(6));
+
     }
 }

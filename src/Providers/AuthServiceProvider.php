@@ -21,6 +21,6 @@ class AuthServiceProvider extends ServiceProvider
             array_unshift($args, $request);
             return Gate::allows($guardio, $args);
         });
-        Gate::resource('users', 'App\Policies\UserPolicy');
+        //Gate::resource('users', 'App\Policies\UserPolicy');
     }
 }
