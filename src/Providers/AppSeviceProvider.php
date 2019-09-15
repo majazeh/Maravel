@@ -6,14 +6,11 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 use Blade;
-use Maravel\Providers\Guardio\GuardioRegistration;
 use Illuminate\Support\Facades\Config;
 use Laravel\Passport\Passport;
-
+use Maravel\Lib\Guardio;
 class AppServiceProvider extends ServiceProvider
 {
-    use GuardioRegistration;
-
     public function boot()
     {
         if ($this->app->request->is('api/*') || $this->app->request->ajax()) {
@@ -31,7 +28,12 @@ class AppServiceProvider extends ServiceProvider
             maravel_path('assets/resources') => resource_path('/')
             ]);
         $router = $this->app['router'];
-        $this->registerGuardio();
+        \Illuminate\Auth\SessionGuard::macro(
+                'guardio', function($access)
+                {
+                    return Guardio::has($access);
+                }
+        );
 
         $ResponseMiddleware = \Maravel\Middleware\Response::class;
         $router->pushMiddlewareToGroup('api', $ResponseMiddleware);

@@ -51,22 +51,22 @@ class Maravel extends FormRequest
         $action = $this->route()->getActionMethod();
         switch ($action) {
             case 'index':
-                $action = 'viewAny';
-                break;
+            $action = 'viewAny';
+            break;
             case 'show':
-                $action = 'view';
-                break;
+            $action = 'view';
+            break;
             case 'create':
             case 'store':
-                $action = 'create';
-                break;
+            $action = 'create';
+            break;
             case 'edit':
             case 'update':
-                $action = 'update';
-                break;
+            $action = 'update';
+            break;
             case 'destroy':
-                $action = 'delete';
-                break;
+            $action = 'delete';
+            break;
         }
         $action = $this->route()->getController()->class_name(null, true, 2) . "." . $action;
         if(in_array($action, array_keys(Gate::abilities())))
@@ -85,7 +85,6 @@ class Maravel extends FormRequest
         if (method_exists($this->route()->getController(), 'rules')) {
             return $this->route()->getController()->rules($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));
         }
-
         return [];
     }
     public function parseRules()

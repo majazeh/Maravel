@@ -15,6 +15,10 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::define('guardio', function ($user, $request, $guardio, ...$args) {
+            if(\Auth::guardio('@@'))
+            {
+                return true;
+            }
             if (!\Auth::guardio($guardio)) {
                 return false;
             }

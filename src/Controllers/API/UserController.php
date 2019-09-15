@@ -35,7 +35,7 @@ class UserController extends APIController
     {
         if($request->password)
         {
-            $request->replace(['password' => Hash::make($request->password)]);
+            $request->merge(['password' => Hash::make($request->password)]);
         }
         return $this->_store($request);
     }
@@ -75,7 +75,7 @@ class UserController extends APIController
                 ];
                 if(!$request->password)
                 {
-                    $request->request->remove('password');
+                    unset($rules);
                 }
                 return $rules;
                 break;

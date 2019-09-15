@@ -6,7 +6,7 @@ use Maravel\Controllers\WebController;
 use App\Requests\Maravel as Request;
 use App\User;
 use Maravel\Controllers\API\UserController as API;
-
+use Maravel\Lib\Guardio;
 class UserController extends WebController
 {
     public $endpoint = API::class;
