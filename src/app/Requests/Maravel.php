@@ -12,7 +12,7 @@ class Maravel extends FormRequest
     protected function validationData()
     {
         $data = parent::validationData();
-        if(!$this->route()->controller) return $data;
+        if(!$this->route() || !$this->route()->controller) return $data;
         $this->numberTypes($data);
         $this->mobileRule($data);
         if (method_exists($this->route()->getController(), 'validationData')) {
@@ -47,7 +47,7 @@ class Maravel extends FormRequest
 
     public function authorize()
     {
-        if(!$this->route()->controller) return true;
+        if(!$this->route() || !$this->route()->controller) return true;
         $action = $this->route()->getActionMethod();
         switch ($action) {
             case 'index':
@@ -81,7 +81,7 @@ class Maravel extends FormRequest
 
     public function rules()
     {
-        if (!$this->route()->controller) return [];
+        if (!$this->route() || !$this->route()->controller) return [];
         if (method_exists($this->route()->getController(), 'rules')) {
             return $this->route()->getController()->rules($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));
         }

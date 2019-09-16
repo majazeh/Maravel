@@ -1,5 +1,5 @@
 <?php
-Route::group(['middleware' => ['auth:api', 'maravel']], function () {
+Route::group(['middleware' => ['auth:api']], function () {
     Route::get('me', 'UserController@me');
     Route::apiResource('users', 'UserController', ['as' => 'api']);
 });

@@ -6,9 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 use Blade;
-use Illuminate\Support\Facades\Config;
-use Laravel\Passport\Passport;
-use Maravel\Lib\Guardio;
+use App\Guardio;
 use Maravel\Middleware\Authenticate;
 use Maravel\Middleware\Response;
 
@@ -25,12 +23,23 @@ class AppServiceProvider extends ServiceProvider
                 \Illuminate\Contracts\Debug\ExceptionHandler::class,
                 \Maravel\Exceptions\ExceptionHandler::class
             );
+            if($this->app->request->cookie('maravel-token'))
+            {
+                $this->app->request->headers->set('Authorization', 'Bearer ' . $this->app->request->cookie('maravel-token'));
+            }
         }
-        $this->publishes([
-            maravel_path('assets/public') => public_path('/'),
-            maravel_path('assets/resources') => resource_path('/')
-            ]);
+
+        if($this->app->runningInConsole())
+        {
+            $this->publishes([
+                maravel_path('assets/public') => public_path('/'),
+                maravel_path('assets/resources') => resource_path('/')
+                ]);
+            $this->loadMigrationsFrom(maravel_path('migrations'));
+        }
         $router = $this->app['router'];
+        $router->prependMiddlewareToGroup('api', Authenticate::class);
+        // dd(get_class_methods($router));
         \Illuminate\Auth\SessionGuard::macro(
                 'guardio', function($access)
                 {
@@ -39,12 +48,10 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $ResponseMiddleware = Response::class;
-        $AuthenticateMiddleware = Authenticate::class;
-        $router->pushMiddlewareToGroup('maravel', $AuthenticateMiddleware);
+        // $this->app['router']->aliasMiddleware('maravel-auth', Authenticate::class);
         $router->pushMiddlewareToGroup('api', $ResponseMiddleware);
         $router->pushMiddlewareToGroup('web', $ResponseMiddleware);
 
-        $this->loadMigrationsFrom(maravel_path('migrations'));
 
         View::addLocation(maravel_path('views'));
 
@@ -61,19 +68,5 @@ class AppServiceProvider extends ServiceProvider
         $this->app['validator']->resolver(function ($translator, $data, $rules, $messages) {
             return new \App\Validators\Maravel($translator, $data, $rules, $messages);
         });
-
-        // Set passport config
-        Config::set([
-            'auth.guards.api.driver' => 'passport'
-        ]);
-
-        // Set Passport route
-        Passport::routes();
-        Passport::withoutCookieSerialization();
-        // Set expire date
-        Passport::tokensExpireIn(now()->addDays(15));
-        Passport::refreshTokensExpireIn(now()->addDays(30));
-        Passport::personalAccessTokensExpireIn(now()->addMonths(6));
-
     }
 }

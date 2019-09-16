@@ -20,16 +20,22 @@ use Illuminate\Support\Str;
 Route::get('/redirect', function (Request $request) {
     $request->session()->put('state', $state = Str::random(40));
 
+    // $query = http_build_query([
+    //     'grant_type' => 'authorization_code',
+    //     'client_id' => 5,
+    //     'redirect_uri' => 'http://dashboard.local/redirect',
+    //     'response_type' => 'token',
+    //     'scope' => '',
+    //     'state' => $state,
+    // ]);
     $query = http_build_query([
-        'grant_type' => 'authorization_code',
-        'client_id' => auth()->id(),
-        'redirect_uri' => 'http://127.0.0.1:9083/redirect',
-        'response_type' => 'token',
+        'client_id' => '5',
+        'redirect_uri' => 'http://dashboard.local/callback',
+        'response_type' => 'code',
         'scope' => '',
-        'state' => $state,
     ]);
 
-    return redirect('http://127.0.0.1:9083/oauth/authorize?'.$query);
+    return redirect('http://dashboard.local/oauth/authorize?'.$query);
 });
 
 Route::get('/callback', function (Request $request) {
@@ -42,12 +48,12 @@ Route::get('/callback', function (Request $request) {
 
     $http = new GuzzleHttp\Client;
 
-    $response = $http->post('http://127.0.0.1:9083/oauth/token', [
+    $response = $http->post('http://dashboard.local/oauth/token', [
         'form_params' => [
             'grant_type' => 'authorization_code',
             'client_id' => 'client-id',
             'client_secret' => 'client-secret',
-            'redirect_uri' => 'http://127.0.0.1:9083/callback',
+            'redirect_uri' => 'http://dashboard.local/callback',
             'code' => $request->code,
         ],
     ]);
@@ -66,4 +72,19 @@ Route::get('/token', function (Request $request) {
     return Cookie::get('laravel_token');
 });
 
+Route::get('xxxxx', function(){
+    $http = new GuzzleHttp\Client;
 
+    $response = $http->post('http://dashboard.local/oauth/token', [
+        'form_params' => [
+            'grant_type' => 'password',
+            'client_id' => '7',
+            'client_secret' => '81tIpH55FgQkK8AsUbvVzMsf07ql7KZOlEYrx18J',
+            'username' => 'manager',
+            'password' => '111111',
+            'scope' => '',
+        ],
+    ]);
+        // dd(json_decode((string) $response->getBody(), true));
+    return json_decode((string) $response->getBody(), true);
+});

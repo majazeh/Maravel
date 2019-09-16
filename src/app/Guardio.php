@@ -1,5 +1,8 @@
 <?php
-namespace Maravel\Lib;
+namespace App;
+
+use Illuminate\Support\Facades\Gate;
+
 class Guardio
 {
     static protected $users = [];
@@ -21,5 +24,12 @@ class Guardio
             static::$users[auth()->id()] = new GuardioCheck(auth()->user());
         }
         return static::$users[auth()->id()]->has($access);
+    }
+
+    public static function gates()
+    {
+        $laravelGates = array_keys(Gate::abilities());
+        $configGates = config('guardio.gates');
+        return array_merge_recursive($laravelGates, $configGates);
     }
 }

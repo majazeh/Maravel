@@ -1,10 +1,8 @@
 <?php
-namespace Maravel\Lib;
-use App\GuardPosition;
+namespace App;
 
 class GuardioCheck
 {
-
     public function __construct($user)
     {
         $this->user = $user;
@@ -12,22 +10,22 @@ class GuardioCheck
 
     public function has($access)
     {
-        if (in_array($this->user->type, config('guardio.admins', ['admin']))) {
+        if (in_array($this->user->type, config('guardio.admins', ['admins']))) {
             return true;
         }
         $access = !is_array($access) ? [$access] : $access;
-        $guardioConfig = config('guardio');
+        $gates = Guardio::gates();
 
         $groups = $this->groups();
         if (!isset($this->guardio)) {
             $this->guardio = GuardPosition::whereIn('guard', $groups)->get();
         }
-
         $permissions = [];
         foreach ($groups as $key => $value) {
             $permissions = array_merge($permissions, config("guardio.groups.{$value}") ?: []);
         }
         $permissions = array_unique($permissions);
+        dd($this->guardio->pluck('position'));
         foreach ($access as $key => $value) {
             $value = str_replace(" ", "", $value);
             if (strpos($value, '|')) {

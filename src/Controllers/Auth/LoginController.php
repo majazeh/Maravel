@@ -5,15 +5,17 @@ namespace Maravel\Controllers\Auth;
 use App\User;
 use App\UserSocialNetwork;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request;
+use App\Requests\Maravel as Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Maravel\Controllers\API\UserController as APIUserController;
 
 class LoginController extends AuthController
 {
+    public $endpoint = APIUserController::class;
     use AuthenticatesUsers {
         login as auth_login;
     }
@@ -94,8 +96,16 @@ class LoginController extends AuthController
         {
             return $this->sendFailedLoginResponse($request);
         }
-        $token = auth()->user()->createToken('Personal Access Token')->accessToken;
-        Cookie::queue('maravel-token', $token, 45000);
+        $http = new \GuzzleHttp\Client;
+        $response = $http->post('http://dashboard.local/api/login', [
+            'form_params' => [
+                'username' => $username,
+                'password' => $request->password,
+            ],
+        ]);
+        $x = json_decode((string) $response->getBody())->token;
+        \file_put_contents('./x.txt', $x);
+        $request->session()->put('maravel-token', $x);
         if($guard && substr($username, 0, 1) == '.')
         {
             $request->session()->put('dev', true);

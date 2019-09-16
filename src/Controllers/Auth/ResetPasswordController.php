@@ -1,6 +1,6 @@
 <?php
 
-namespace Majazeh\Maravel\Controllers\Auth;
+namespace Maravel\Controllers\Auth;
 
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
