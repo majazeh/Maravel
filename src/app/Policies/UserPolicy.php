@@ -3,31 +3,28 @@
 namespace App\Policies;
 
 use App\User;
-use Illuminate\Auth\Access\HandlesAuthorization;
 use App\Requests\Maravel as Request;
 
-class UserPolicy
+class UserPolicy extends \App\Guardio
 {
-    use HandlesAuthorization;
-
-    /**
-     * Create a new policy instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
     public function viewAny(User $user, Request $request)
     {
-        return true;
+        $type = $request->type ?: null;
+        if(!$type && !static::has('users.viewAny.all')) {
+            return false;
+        } else {
+            return static::has('users.viewAny.'.$type);
+        }
     }
 
     public function view(User $user, Request $request, User $show)
     {
-        return true;
+        if($user->id == $show->id || static::has('users.viewAny.all'))
+        {
+            return true;
+        } else {
+            return static::has('users.viewAny.' . $show->type);
+        }
     }
 
     public function update(User $user, Request $request, User $show)

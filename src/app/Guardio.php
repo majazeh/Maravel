@@ -2,9 +2,11 @@
 namespace App;
 
 use Illuminate\Support\Facades\Gate;
-
+use Illuminate\Auth\Access\HandlesAuthorization;
+use \Illuminate\Auth\Access\AuthorizationException;
 class Guardio
 {
+    use HandlesAuthorization;
     static protected $users = [];
 
     public static function user($user)
@@ -31,5 +33,24 @@ class Guardio
         $laravelGates = array_keys(Gate::abilities());
         $configGates = config('guardio.gates');
         return array_merge_recursive($laravelGates, $configGates);
+    }
+
+    public static function permissions($key = false)
+    {
+        return static::user(auth()->user())->permissions($key);
+    }
+    public static function get($key)
+    {
+        return static::user(auth()->user())->get($key);
+    }
+
+    public static function users()
+    {
+        return static::$users;
+    }
+
+    protected function denyAccess($message = 'This action is unauthorized.')
+    {
+        abort(403, $message);
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Laravel\Passport\Passport;
+use App\Guardio;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -29,16 +30,12 @@ class AuthServiceProvider extends ServiceProvider
         Passport::personalAccessTokensExpireIn(now()->addMonths(6));
 
         Gate::define('guardio', function ($user, $request, $guardio, ...$args) {
-            if(\Auth::guardio('@@'))
-            {
+            if (!Guardio::has($guardio)) {
                 return true;
-            }
-            if (!\Auth::guardio($guardio)) {
-                return false;
             }
             array_unshift($args, $request);
             return Gate::allows($guardio, $args);
         });
-        //Gate::resource('users', 'App\Policies\UserPolicy');
+        Gate::resource('users', 'App\Policies\UserPolicy');
     }
 }

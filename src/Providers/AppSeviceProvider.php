@@ -38,11 +38,9 @@ class AppServiceProvider extends ServiceProvider
             $this->loadMigrationsFrom(maravel_path('migrations'));
         }
         $router = $this->app['router'];
-        $router->prependMiddlewareToGroup('api', Authenticate::class);
-        // dd(get_class_methods($router));
         \Illuminate\Auth\SessionGuard::macro(
-                'guardio', function($access)
-                {
+                'guardio',
+                function($access){
                     return Guardio::has($access);
                 }
         );

@@ -77,7 +77,7 @@ class UserController extends APIController
                 ];
                 if(!$request->password)
                 {
-                    unset($rules);
+                    unset($rules['password']);
                 }
                 return $rules;
                 break;

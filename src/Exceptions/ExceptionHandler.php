@@ -7,7 +7,7 @@ use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\QueryException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 class ExceptionHandler extends Handler
 {
     use QueryExceptionCode;

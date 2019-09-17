@@ -21,14 +21,20 @@ trait WebMethods
 
     public function _create(Request $request)
     {
-        self::$result->module->post_action = route(self::$result->module->resource . '.store');
+        self::$result->module->post_action =
+        \Route::has(self::$result->module->apiResource . '.store')
+        ? route(self::$result->module->apiResource . '.store')
+        : route(self::$result->module->resource . '.store');
         return $this->view($request);
     }
 
     public function _edit(Request $request, $arg1, $arg2 = null)
     {
         $model = self::$result->{$this->class_name(null, false, 2)} = $this->endpoint($request)->show($request, $arg1, $arg2);
-        self::$result->module->post_action = route(self::$result->module->resource . '.update', $model->serial ?: $model->id);
+        self::$result->module->post_action =
+            \Route::has(self::$result->module->apiResource . '.update')
+            ? route(self::$result->module->apiResource . '.update', $model->serial ?: $model->id)
+            : route(self::$result->module->resource . '.update', $model->serial ?: $model->id);
         return $this->view($request);
     }
 

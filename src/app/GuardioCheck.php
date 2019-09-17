@@ -3,29 +3,53 @@ namespace App;
 
 class GuardioCheck
 {
+    protected $permissions = null;
+    protected $user = null;
+
     public function __construct($user)
     {
         $this->user = $user;
+
+        $groups = $this->groups();
+        $guardio = GuardPosition::whereIn('guard', $groups)->get();
+
+        $permissions = [];
+        foreach ($groups as $key => $value) {
+            $default = config("guardio.groups.{$value}", []);
+            foreach ($default as $k => $v) {
+                if(ctype_digit($k) || is_integer($k))
+                {
+                    $permissions[$v] = null;
+                }
+                else
+                {
+                    $permissions[$k] = $v;
+                }
+            }
+        }
+        foreach ($guardio as $key => $value) {
+            $permissions[$value->position] = $value->value;
+        }
+        $this->permissions = $permissions;
+    }
+
+    public function permissions($keys = false)
+    {
+        return $keys ? array_keys($this->permissions) : $this->permissions;
+    }
+
+    public function get($key)
+    {
+        return $this->has($key) ? (isset($this->permissions[$key]) ? $this->permissions[$key] : null) : false;
     }
 
     public function has($access)
     {
-        if (in_array($this->user->type, config('guardio.admins', ['admins']))) {
+        if (in_array($this->user->type, config('guardio.admins', ['admin']))) {
             return true;
         }
         $access = !is_array($access) ? [$access] : $access;
-        $gates = Guardio::gates();
-
-        $groups = $this->groups();
-        if (!isset($this->guardio)) {
-            $this->guardio = GuardPosition::whereIn('guard', $groups)->get();
-        }
-        $permissions = [];
-        foreach ($groups as $key => $value) {
-            $permissions = array_merge($permissions, config("guardio.groups.{$value}") ?: []);
-        }
-        $permissions = array_unique($permissions);
-        dd($this->guardio->pluck('position'));
+        $permissions = $this->permissions(true);
         foreach ($access as $key => $value) {
             $value = str_replace(" ", "", $value);
             if (strpos($value, '|')) {

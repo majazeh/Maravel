@@ -96,20 +96,7 @@ class LoginController extends AuthController
         {
             return $this->sendFailedLoginResponse($request);
         }
-        $http = new \GuzzleHttp\Client;
-        $response = $http->post('http://dashboard.local/api/login', [
-            'form_params' => [
-                'username' => $username,
-                'password' => $request->password,
-            ],
-        ]);
-        $x = json_decode((string) $response->getBody())->token;
-        \file_put_contents('./x.txt', $x);
-        $request->session()->put('maravel-token', $x);
-        if($guard && substr($username, 0, 1) == '.')
-        {
-            $request->session()->put('dev', true);
-        }
+        session(['api-token' => auth()->user()->createToken('Android')->accessToken]);
         return $guard;
     }
 

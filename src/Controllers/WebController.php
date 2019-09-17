@@ -29,7 +29,11 @@ class WebController extends Controller
         if (!isset($this->resource)) {
             $this->resource = join('.', array_splice($paths, 0, -1));
         }
+        if (!isset($this->apiResource)) {
+            $this->apiResource = 'api.' . preg_replace('/^dashboard\./', '', $this->resource);
+        }
         self::$result->module->resource = $this->resource;
+        self::$result->module->apiResource = $this->apiResource;
         self::$result->module->action = last($paths);
         self::$result->module->header = _t($as);
         self::$result->module->desc = _t($as, '.desc');
