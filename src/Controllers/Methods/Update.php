@@ -26,7 +26,7 @@ trait Update
         ]);
 
         if ($this->clientController && $request->webAccess()) {
-            $client = new $this->clientController(...fun_get_args());
+            $client = new $this->clientController(...func_get_args());
             $client->webUpdate($request, $result);
         }
 

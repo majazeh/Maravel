@@ -11,7 +11,7 @@ trait Destroy
         list($parent, $model) = $this->findArgs($request, $arg1, $arg2);
         $result = new $this->resourceClass($model);
         if ($this->clientController && $request->webAccess()) {
-            $client = new $this->clientController(...fun_get_args());
+            $client = new $this->clientController(... func_get_args());
             $client->webDestroy($request, $result);
         }
         $model->delete();
