@@ -24,6 +24,12 @@ trait Update
         $result->additional([
             'changed' => $original,
         ]);
+
+        if ($this->clientController && $request->webAccess()) {
+            $client = new $this->clientController(...fun_get_args());
+            $client->webUpdate($request, $result);
+        }
+
         if(!empty($changed))
         {
             $this->statusMessage = $this->class_name() . " changed";

@@ -71,7 +71,7 @@
         </td>
         <td class="text-center">
             @include('layouts.compomnents.edit-link', ['link' => route($module->resource . '.edit', $user->serial ?: $user->id)])
-            @include('layouts.compomnents.delete-link', ['link' => route($module->resource . '.destroy', $user->serial ?: $user->id)])
+            @include('layouts.compomnents.delete-link', ['link' => route($module->apiResource . '.destroy', $user->serial ?: $user->id)])
         </td>
     </tr>
     @endforeach

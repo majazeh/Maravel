@@ -9,8 +9,8 @@ trait Index
     public function _index(Request $request)
     {
         list($parent, $model, $order_list, $current_order, $default_order, $filters, $current_filter) = $this->queryIndex(...func_get_args());
-        $resutl = new $this->resourceCollectionClass($model);
-        $resutl->additional([
+        $result = new $this->resourceCollectionClass($model);
+        $result->additional([
             'meta' => [
                 'orders' => [
                     'allowed' => $order_list,
@@ -23,7 +23,7 @@ trait Index
                 ]
             ]
         ]);
-        return $resutl;
+        return $result;
     }
 
     public function queryIndex($request, $parent = null)

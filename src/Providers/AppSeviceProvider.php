@@ -7,8 +7,11 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 use Blade;
 use App\Guardio;
-use Maravel\Middleware\Authenticate;
 use Maravel\Middleware\Response;
+use Illuminate\Routing\Router;
+use Illuminate\Routing\ResourceRegistrar;
+use Illuminate\Routing\PendingResourceRegistration;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,16 +40,40 @@ class AppServiceProvider extends ServiceProvider
                 ]);
             $this->loadMigrationsFrom(maravel_path('migrations'));
         }
-        $router = $this->app['router'];
         \Illuminate\Auth\SessionGuard::macro(
                 'guardio',
                 function($access){
                     return Guardio::has($access);
                 }
         );
+        Router::macro('mResource', function($name, $controller, array $options = []){
+            if(!isset($options['except']))
+            {
+                $options['except'] = ['store', 'update', 'destroy'];
+            }
+            if (!isset($options['as'])) {
+                $options['as'] = 'dashboard';
+            }
+            if ($this->container && $this->container->bound(ResourceRegistrar::class)) {
+                $registrar = $this->container->make(ResourceRegistrar::class);
+            } else {
+                $registrar = new ResourceRegistrar($this);
+            }
+
+            return new PendingResourceRegistration(
+                $registrar,
+                $name,
+                $controller,
+                $options
+            );
+        });
+
+        Request::macro('webAccess', function(){
+            return $this->headers->get('Web-Access') ? true : false;
+        });
 
         $ResponseMiddleware = Response::class;
-        // $this->app['router']->aliasMiddleware('maravel-auth', Authenticate::class);
+        $router = $this->app['router'];
         $router->pushMiddlewareToGroup('api', $ResponseMiddleware);
         $router->pushMiddlewareToGroup('web', $ResponseMiddleware);
 

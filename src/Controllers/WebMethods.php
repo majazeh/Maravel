@@ -38,75 +38,63 @@ trait WebMethods
         return $this->view($request);
     }
 
-    public function _update(Request $request, $arg1 = null, $arg2 = null)
+    public function webUpdate(Request $request, $resource)
     {
-        $result = tap($this->endpoint($request)->update($request, $arg1, $arg2), function ($user) use($request) {
-            if(!$request->no_redirect || $request->redirect)
+        if(!$request->no_redirect || $request->redirect)
+        {
+            $redirect = $request->redirect;
+            if(!$redirect)
             {
-                $redirect = $request->redirect;
-                if(!$redirect)
-                {
-                    $redirect = \Route::has($this->resource . '.edit')
-                    ? route($this->resource . '.edit', $user->serial ?: $user->id)
-                    : (\Route::has($this->resource . '.show') ? route($this->resource . '.show', $user->serial ?: $user->id) : null);
-                }
-                if($redirect)
-                {
-                    $user->additional(
-                        array_replace_recursive($user->additional, [
-                            'redirect' => $redirect,
-                        ])
-                    );
-                }
+                $redirect = \Route::has($this->resource . '.edit')
+                ? route($this->resource . '.edit', $resource->serial ?: $resource->id)
+                : (\Route::has($this->resource . '.show') ? route($this->resource . '.show', $resource->serial ?: $resource->id) : null);
             }
-            $this->statusMessage = $this->endpoint($request)->statusMessage;
-        });
-        return $result;
+            if($redirect)
+            {
+                $resource->additional(
+                    array_replace_recursive($resource->additional, [
+                        'redirect' => $redirect,
+                    ])
+                );
+            }
+        }
     }
 
-    public function _store(Request $request, $arg1 = null, $arg2 = null)
+    public function webStore(Request $request, $resource)
     {
-        $result = tap($this->endpoint($request)->store($request, $arg1, $arg2), function ($user) use ($request) {
-            if (!$request->no_redirect || $request->redirect) {
-                $redirect = $request->redirect;
-                if (!$redirect) {
-                    $redirect = \Route::has($this->resource . '.create')
-                        ? route($this->resource . '.create')
-                        : (\Route::has($this->resource . '.show') ? route($this->resource . '.show', $user->serial ?: $user->id) : null);
-                }
-                if ($redirect) {
-                    $user->additional(
-                        array_replace_recursive($user->additional, [
-                            'redirect' => $redirect,
-                        ])
-                    );
-                }
+        if (!$request->no_redirect || $request->redirect) {
+            $redirect = $request->redirect;
+            if (!$redirect) {
+                $redirect = \Route::has($this->resource . '.create')
+                    ? route($this->resource . '.create')
+                    : (\Route::has($this->resource . '.show') ? route($this->resource . '.show', $resource->serial ?: $resource->id) : null);
             }
-            $this->statusMessage = $this->endpoint($request)->statusMessage;
-        });
-        return $result;
+            if ($redirect) {
+                $resource->additional(
+                    array_replace_recursive($resource->additional, [
+                        'redirect' => $redirect,
+                    ])
+                );
+            }
+        }
     }
 
-    public function _destroy(Request $request, $arg1 = null, $arg2 = null)
+    public function webDestroy(Request $request, $resource)
     {
-        $result = tap($this->endpoint($request)->destroy($request, $arg1, $arg2), function ($user) use ($request) {
-            if (!$request->no_redirect || $request->redirect) {
-                $redirect = $request->redirect;
-                if (!$redirect) {
-                    $redirect = \Route::has($this->resource . '.index')
-                        ? route($this->resource . '.index')
-                        : null;
-                }
-                if ($redirect) {
-                    $user->additional(
-                        array_replace_recursive($user->additional, [
-                            'redirect' => $redirect,
-                        ])
-                    );
-                }
+        if (!$request->no_redirect || $request->redirect) {
+            $redirect = $request->redirect;
+            if (!$redirect) {
+                $redirect = \Route::has($this->resource . '.index')
+                    ? route($this->resource . '.index')
+                    : null;
             }
-            $this->statusMessage = $this->endpoint($request)->statusMessage;
-        });
-        return $result;
+            if ($redirect) {
+                $resource->additional(
+                    array_replace_recursive($resource->additional, [
+                        'redirect' => $redirect,
+                    ])
+                );
+            }
+        }
     }
 }

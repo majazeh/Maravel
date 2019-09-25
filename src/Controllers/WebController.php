@@ -10,15 +10,15 @@ class WebController extends Controller
 
     public function __construct(Request $request)
     {
-        self::$result = new \StdClass;
         if (!$request->route()) return;
         parent::__construct($request);
+        self::$result = new \StdClass;
         $this->designConstruct($request);
     }
 
     public function designConstruct(Request $request)
     {
-        $as = $request->route()->getAction('as');
+        $as = preg_replace('/^api\./', 'dashboard.', $request->route()->getAction('as'));
         $paths = explode('.', $as);
         $route_resource = preg_replace('/\.[^\.]*$/', '', $as);
         self::$result->module = new \stdClass;

@@ -13,7 +13,7 @@ class UserController extends APIController
 {
     public $order_list = ['id', 'name', 'username', 'status', 'type', 'gender'];
     public $username_method;
-
+    public $clientController = \Maravel\Controllers\Dashboard\UserController::class;
     public $filters = [
         'test' => true
     ];
