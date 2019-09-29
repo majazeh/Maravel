@@ -11,6 +11,7 @@ use Maravel\Middleware\Response;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\ResourceRegistrar;
 use Illuminate\Routing\PendingResourceRegistration;
+use Illuminate\Foundation\AliasLoader;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -26,30 +27,24 @@ class AppServiceProvider extends ServiceProvider
                 \Illuminate\Contracts\Debug\ExceptionHandler::class,
                 \Maravel\Exceptions\ExceptionHandler::class
             );
-            if($this->app->request->cookie('maravel-token'))
-            {
-                $this->app->request->headers->set('Authorization', 'Bearer ' . $this->app->request->cookie('maravel-token'));
-            }
         }
-
         if($this->app->runningInConsole())
         {
             $this->publishes([
                 maravel_path('assets/public') => public_path('/'),
-                maravel_path('assets/resources') => resource_path('/')
+                maravel_path('assets/resources') => resource_path('/'),
+                maravel_path('assets/webpack.mix.js') => base_path('/webpack.mix.js')
                 ]);
             $this->loadMigrationsFrom(maravel_path('migrations'));
         }
-        \Illuminate\Auth\SessionGuard::macro(
-                'guardio',
-                function($access){
-                    return Guardio::has($access);
-                }
-        );
         Router::macro('mResource', function($name, $controller, array $options = []){
             if(!isset($options['except']))
             {
                 $options['except'] = ['store', 'update', 'destroy'];
+            }
+            else
+            {
+                $options['except'] = array_merge_recursive($options['except'], ['store', 'update', 'destroy']);
             }
             if (!isset($options['as'])) {
                 $options['as'] = 'dashboard';
@@ -72,10 +67,9 @@ class AppServiceProvider extends ServiceProvider
             return $this->headers->get('Web-Access') ? true : false;
         });
 
-        $ResponseMiddleware = Response::class;
         $router = $this->app['router'];
-        $router->pushMiddlewareToGroup('api', $ResponseMiddleware);
-        $router->pushMiddlewareToGroup('web', $ResponseMiddleware);
+        $router->pushMiddlewareToGroup('api', Response::class);
+        $router->pushMiddlewareToGroup('web', Response::class);
 
 
         View::addLocation(maravel_path('views'));
@@ -92,6 +86,13 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app['validator']->resolver(function ($translator, $data, $rules, $messages) {
             return new \App\Validators\Maravel($translator, $data, $rules, $messages);
+        });
+    }
+    public function register()
+    {
+        $this->app->booting(function () {
+            $loader = AliasLoader::getInstance();
+            $loader->alias('Guardio', \App\Guardio::class);
         });
     }
 }

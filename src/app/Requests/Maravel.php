@@ -16,7 +16,7 @@ class Maravel extends FormRequest
         $this->numberTypes($data);
         $this->mobileRule($data);
         if (method_exists($this->route()->getController(), 'validationData')) {
-            $this->route()->getController()->validationData($this, $this->route()->getActionMethod(), $data, ...$this->route()->parameters());
+            $this->route()->getController()->validationData($this, $this->route()->getActionMethod(), $data, ...array_values($this->route()->parameters()));
         }
         $this->merge($data);
         return $data;

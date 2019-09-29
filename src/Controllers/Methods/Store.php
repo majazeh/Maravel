@@ -6,14 +6,14 @@ use Illuminate\Http\Request;
 
 trait Store
 {
-    public function _store(Request $request, $parent = null)
+    public function _store(Request $request, $parent = null, ...$args)
     {
         if($parent)
         {
             $parent = $this->findOrFail($parent, $this->parentModel);
         }
 
-        $fields = array_keys($this->rules($request, 'store'));
+        $fields = array_keys($this->rules($request, 'store', $parent, ...$args));
         $data = [];
         foreach ($fields as $value) {
             if ($request->has($value)) {

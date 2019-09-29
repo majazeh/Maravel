@@ -1,4 +1,4 @@
-@if (\Auth::guardio('users.change.status'))
+@if (Guardio::has('users.change.status'))
 <div class="form-group">
     <label>{{ _t('account.status') }}</label>
     @foreach (config('guardio.status', ['awaiting', 'active', 'disable']) as $type => $value)

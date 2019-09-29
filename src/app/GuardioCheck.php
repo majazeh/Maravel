@@ -11,7 +11,9 @@ class GuardioCheck
         $this->user = $user;
 
         $groups = $this->groups();
-        $guardio = GuardPosition::whereIn('guard', $groups)->get();
+        $guardio = Guard::select('guard_positions.*')
+        ->whereIn('guards.title', $groups)
+        ->join('guard_positions', 'guards.id', 'guard_positions.guard_id')->get();
 
         $permissions = [];
         foreach ($groups as $key => $value) {
@@ -28,7 +30,7 @@ class GuardioCheck
             }
         }
         foreach ($guardio as $key => $value) {
-            $permissions[$value->position] = $value->value;
+            $permissions[$value->gate] = $value->value;
         }
         $this->permissions = $permissions;
     }

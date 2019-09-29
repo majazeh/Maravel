@@ -21,6 +21,17 @@ class Response
                 $result = array_merge_recursive([
                     'is_ok' => true
                 ],$result);
+                if(isset($result['links']))
+                {
+                    $links = $result['links'];
+                    unset($result['links']);
+                    $result['links'] = $links;
+                }
+                if (isset($result['meta'])) {
+                    $meta = $result['meta'];
+                    unset($result['meta']);
+                    $result['meta'] = $meta;
+                }
                 if($request->route()->getAction('controller'))
                 {
                     $controller = $request->route()->getController();

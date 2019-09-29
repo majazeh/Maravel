@@ -1,0 +1,24 @@
+<?php
+Breadcrumbs::for('dashboard', function ($trail, $data) {
+    $trail->push(_t('dashboard'), route('dashboard'));
+});
+
+Breadcrumbs::for('dashboard.users.index', function ($trail, $data) {
+    $trail->parent('dashboard', $data);
+    $trail->push(_t('dashboard.users.index') . (isset($data['users']) ? ' (' . $data['users']->total() . ')' : ''), route('dashboard.users.index'));
+});
+
+Breadcrumbs::for('dashboard.users.create', function ($trail, $data) {
+    $trail->parent('dashboard.users.index', $data);
+    $trail->push(_t('dashboard.users.create'), route('dashboard.users.create'));
+});
+
+Breadcrumbs::for('dashboard.users.show', function ($trail, $data) {
+    $trail->parent('dashboard.users.index', $data);
+    $trail->push($data['user']->name, route('dashboard.users.show', $data['user']->serial ?: $data['user']->id));
+});
+
+Breadcrumbs::for('dashboard.users.edit', function ($trail, $data) {
+    $trail->parent('dashboard.users.show', $data);
+    $trail->push(_t('dashboard.users.edit'), route('dashboard.users.edit', $data['user']->serial ?: $data['user']->id));
+});

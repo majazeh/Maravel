@@ -11,12 +11,9 @@ use Illuminate\Auth\AuthenticationException;
 
 class UserController extends APIController
 {
-    public $order_list = ['id', 'name', 'username', 'status', 'type', 'gender'];
+    public $order_list = ['id', 'name', 'username', 'status', 'type', 'gender', 'daily' => 'created_at'];
     public $username_method;
     public $clientController = \Maravel\Controllers\Dashboard\UserController::class;
-    public $filters = [
-        'test' => true
-    ];
 
     public function index(Request $request)
     {
@@ -28,11 +25,6 @@ class UserController extends APIController
         return $this->_show($request, $user);
     }
 
-    public function create(Request $request)
-    {
-        return $this->_create($request);
-    }
-
     public function store(Request $request)
     {
         if($request->password)
@@ -40,11 +32,6 @@ class UserController extends APIController
             $request->merge(['password' => Hash::make($request->password)]);
         }
         return $this->_store($request);
-    }
-
-    public function edit(Request $request, User $user)
-    {
-        return $this->_edit($request, $user);
     }
 
     public function update(Request $request, User $user)

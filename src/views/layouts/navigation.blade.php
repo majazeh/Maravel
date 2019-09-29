@@ -34,7 +34,7 @@
                                 </a>
                             </div>
                             <div class="modal-footer">
-                                <form action="route('logout')" method="post" class="w-100 direct">
+                                <form action="{{route('logout')}}" method="post" class="w-100 direct">
                                     @csrf
                                     <button class="btn btn-danger btn-gradient btn-block">
                                         {{ _t('exit') }}
@@ -56,7 +56,7 @@
                     <a tabindex='0'
                     class='navigation-profile-image action'
                     role='button'
-                    data-content='<div><form action="route('logout')" method="post">@csrf<button class="btn btn-sm btn-danger btn-gradient action" data-method="post" href="route('logout')" class="text-danger f2">خروج</button></form></div>'
+                    data-content='<div><form action="route('logout')" method="post">@csrf<button class="btn btn-sm btn-danger btn-gradient action" data-method="post" href="{{route('logout')}}" class="text-danger f2">خروج</button></form></div>'
                     data-toggle='popover'
                     data-html='true'
                     data-placement='bottom' href="javascript:return false">

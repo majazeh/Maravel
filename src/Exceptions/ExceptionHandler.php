@@ -48,7 +48,8 @@ class ExceptionHandler extends Handler
         $data = array_replace_recursive([
             'is_ok' => false,
             'message' => null,
-            'message_text' => null
+            'message_text' => null,
+            'referer' => $request->headers->get('referer')
         ], $data);
         result_message($data, $data['message'] ?: Response::$statusTexts[$render->getStatusCode()]);
         if(!config('app.debug'))

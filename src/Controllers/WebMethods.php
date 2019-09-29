@@ -10,6 +10,11 @@ trait WebMethods
     public function _index(Request $request, $arg1 = null, $arg2 = null)
     {
         self::$result->{$this->class_name(null, true, 2)} = $this->endpoint($request)->index($request, $arg1, $arg2);
+        if(isset(self::$result->{$this->class_name(null, true, 2)}->additional['meta']['parent']))
+        {
+            $parent_name = self::$result->{$this->class_name(null, true, 2)}->additional['meta']['parent'];
+            self::$result->parent = self::$result->{$this->class_name(null, true, 2)}->additional[$parent_name];
+        }
         return $this->view($request);
     }
 
@@ -79,13 +84,18 @@ trait WebMethods
         }
     }
 
-    public function webDestroy(Request $request, $resource)
+    public function webDestroy(Request $request, $resource, $arg1, $arg2 = null)
     {
+        $parent = null;
+        if (isset($resource->additional['meta']['parent'])) {
+            $parent_name = $resource->additional['meta']['parent'];
+            $parent = $resource->additional[$parent_name];
+        }
         if (!$request->no_redirect || $request->redirect) {
             $redirect = $request->redirect;
             if (!$redirect) {
                 $redirect = \Route::has($this->resource . '.index')
-                    ? route($this->resource . '.index')
+                    ? route($this->resource . '.index', $parent ? ($parent->serial ?: $parent->id) : null)
                     : null;
             }
             if ($redirect) {

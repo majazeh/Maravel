@@ -57,7 +57,7 @@
             <a href="{{route($module->resource .'.show', $user->serial)}}">{{$user->serial }}</a>
         </td>
         <td>
-            <a class="text-dark" href="{{ route($module->resource . '.edit', $user->id) }}">{{ $user->name }}</a>
+            {{ $user->name }}
         </td>
         <td>{{ $user->username }}</td>
         <td>{{ $user->email }}</td>

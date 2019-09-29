@@ -32,6 +32,7 @@ class Guardio
     {
         $laravelGates = array_keys(Gate::abilities());
         $configGates = config('guardio.gates');
+        array_shift($laravelGates);
         return array_merge_recursive($laravelGates, $configGates);
     }
 

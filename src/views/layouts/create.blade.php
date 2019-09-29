@@ -9,7 +9,7 @@
     {{ _t($module->resource.'.index') }}
 </a>
 @if ($module->action == 'edit')
-<a href="{{ route($module->resource . '.create') }}" class="btn btn-sm btn-success btn-gradient">
+<a href="{{ route($module->resource . '.create', isset($parent) ? ($parent->serial ?: $parent->id) : null) }}" class="btn btn-sm btn-success btn-gradient">
     <i class="{{ $module->icons['create'] }}"></i>
     {{ _t($module->resource.'.create') }}
 </a>

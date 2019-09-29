@@ -36,7 +36,7 @@ class WebController extends Controller
         self::$result->module->apiResource = $this->apiResource;
         self::$result->module->action = last($paths);
         self::$result->module->header = _t($as);
-        self::$result->module->desc = _t($as, '.desc');
+        self::$result->module->desc = _t($as . '.desc');
         self::$result->module->icons = [
             'index' => 'fas fa-list-alt',
             'create' => 'fas fa-plus-square',

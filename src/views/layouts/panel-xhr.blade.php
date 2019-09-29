@@ -9,7 +9,7 @@
                 <span>{{ $module->desc ?: '' }}</span>
             @endif
             @if (Breadcrumbs::exists(\Request::route()->getName()))
-                {{ Breadcrumbs::render(\Request::route()->getName(), \Data::all()) }}
+                {{ Breadcrumbs::render(\Request::route()->getName(), get_defined_vars()) }}
             @endif
         </div>
         </div>

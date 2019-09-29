@@ -199,14 +199,6 @@
 												options.context.trigger('statio:done');
 								}
 
-								if (options.type != 'render') {
-												try {
-																options.replace ? history.replaceState(options.data, options.title, ajax_send_url || options.url) : history.pushState(options.data, options.title, ajax_send_url || options.url);
-												} catch (e) {
-																console.error(e);
-												}
-								}
-
 								function ajx_complete(jqXHR, textStatus) {
 												if (jqXHR.responseJSON) {
 																response.data = jqXHR.responseJSON;
@@ -217,6 +209,13 @@
 																response.body = jqXHR.responseText;
 																response_parse();
 																if (textStatus == 'success') {
+																				if (options.type != 'render') {
+																								try {
+																												options.replace ? history.replaceState(options.data, options.title, ajax_send_url || options.url) : history.pushState(options.data, options.title, ajax_send_url || options.url);
+																								} catch (e) {
+																												console.error(e);
+																								}
+																				}
 																				$(document).trigger('statio:global:success', [options.context, response.data, response.body, jqXHR]);
 																				options.context.trigger('statio:success', [response.data, response.body, jqXHR]);
 																				if (options.type != 'url') {

@@ -32,9 +32,23 @@ class Controller extends BaseController
             }
         }
         if (!isset($this->resourceCollectionClass)) {
-            $this->resourceCollectionClass = '\\App\\Http\\Resources\\' . str_plural($class_name);
+            $this->resourceCollectionClass = '\\App\\Http\\Resources\\' . $this->class_name(null, true, 1);
             if (!class_exists($this->resourceCollectionClass)) {
                 $this->resourceCollectionClass = \Illuminate\Http\Resources\Json\ResourceCollection::class;
+            }
+        }
+
+        if (!isset($this->parentResourceCollectionClass)) {
+            if(!isset($this->parentModel))
+            {
+                $this->parentResourceCollectionClass = \Illuminate\Http\Resources\Json\JsonResource::class;
+            }
+            else
+            {
+                $this->parentResourceCollectionClass = '\\App\\Http\\Resources\\' . $this->class_name($this->parentModel, null, 2);
+                if (!class_exists($this->parentResourceCollectionClass)) {
+                    $this->parentResourceCollectionClass = \Illuminate\Http\Resources\Json\JsonResource::class;
+                }
             }
         }
     }
@@ -82,7 +96,6 @@ class Controller extends BaseController
         if ($arg2) {
             $model = $this->findOrFail($arg2, $this->model);
             $parent = $this->findOrFail($arg1, $this->parentModel);
-            self::$result->{$this->class_name($this->parent, false, 2)} = $parent;
         } else {
             $model = $this->findOrFail($arg1, $this->model);
             $parent = null;

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class ResetPasswordController extends AuthController
 {
 
-    use ResetsPasswords;
+    // use ResetsPasswords;
 
     public function showResetForm(Request $request, $token = null)
     {

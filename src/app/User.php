@@ -13,7 +13,7 @@ class User extends Authenticatable
     use Models\Serial;
 
     protected $guarded = [
-        'id', 'remember_token', 'created_at', 'updated_at'
+        'id', 'remember_token'
     ];
 
 

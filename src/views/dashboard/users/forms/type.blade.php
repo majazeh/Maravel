@@ -1,4 +1,4 @@
-@if (\Auth::guardio('users.change.type'))
+@if (Guardio::has('users.change.type'))
 <div class="form-group">
     <label for="type">{{ _t('user.type') }}</label>
     <select class="custom-select form-control" name="type" id="type">
