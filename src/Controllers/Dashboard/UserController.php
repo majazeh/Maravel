@@ -6,7 +6,7 @@ use Maravel\Controllers\WebController;
 use App\Requests\Maravel as Request;
 use App\User;
 use Maravel\Controllers\API\UserController as API;
-
+use App\Guardio;
 class UserController extends WebController
 {
     public $endpoint = API::class;
@@ -27,6 +27,7 @@ class UserController extends WebController
 
     public function edit(Request $request, User $user)
     {
+        static::$result->groups = Guardio::allGroups();
         return $this->_edit($request, $user);
     }
 

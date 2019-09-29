@@ -15,6 +15,7 @@ class CreateGuardsTable extends Migration
     {
         Schema::create('guards', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('group');
             $table->string('title');
             $table->string('description')->nullable();
             $table->text('meta')->nullable();

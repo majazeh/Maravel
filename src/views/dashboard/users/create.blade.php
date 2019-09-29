@@ -32,6 +32,10 @@
 @include('dashboard.users.forms.type')
 @endsection
 
+@section('form-groups')
+@include('dashboard.users.forms.groups')
+@endsection
+
 @section('form')
 
     @yield('form-name')
@@ -42,5 +46,6 @@
     @yield('form-status')
     @yield('form-gender')
     @yield('form-type')
+    @yield('form-groups')
 
 @endsection

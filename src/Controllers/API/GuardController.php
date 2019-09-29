@@ -41,6 +41,7 @@ class GuardController extends APIController
             case 'update':
             case 'store':
                 $rules = [
+                    'group' => 'required|alpha',
                     'title' => 'required|min:3'
                 ];
                 return $rules;

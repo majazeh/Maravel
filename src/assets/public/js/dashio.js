@@ -60,7 +60,7 @@
 																				data = Data;
 																} else {
 																				Data.forEach(function (value, name) {
-																								data[name] = value;
+																								data[name] = /\[.*\]$/.test(name) ? Data.getAll(name) : Data.get(name);
 																				});
 																}
 																state = false;

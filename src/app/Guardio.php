@@ -4,6 +4,7 @@ namespace App;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use \Illuminate\Auth\Access\AuthorizationException;
+use App\Guard;
 class Guardio
 {
     use HandlesAuthorization;
@@ -22,10 +23,14 @@ class Guardio
         {
             return false;
         }
-        if (!isset(static::$users[auth()->id()])) {
-            static::$users[auth()->id()] = new GuardioCheck(auth()->user());
-        }
-        return static::$users[auth()->id()]->has($access);
+        return static::user(auth()->user())->has($access);
+    }
+
+    public static function allGroups()
+    {
+        $guards = Guard::all()->pluck('group')->toArray();
+        $groups = array_unique(array_merge($guards, array_keys(config('guardio.groups'))));
+        return $groups;
     }
 
     public static function gates()

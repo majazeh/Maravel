@@ -61,6 +61,7 @@ class UserController extends APIController
                     'type' => 'required|in:'. join(config('guardio.type', ['admin', 'user']), ','),
                     'mobile' => 'nullable|mobile',
                     'gender' => 'nullable|in:male,female',
+                    'groups' => 'nullable',
                 ];
                 if(!$request->password)
                 {
@@ -71,6 +72,21 @@ class UserController extends APIController
             default:
                 return [];
                 break;
+        }
+    }
+
+    public function validationData(Request $request, $action, &$data)
+    {
+        if (in_array($action, ['store', 'update']) && isset($data['groups'])) {
+            $groups = \App\Guardio::allGroups();
+            $parse = [];
+            foreach ($data['groups'] as $key => $value) {
+                if(in_array($value, $groups))
+                {
+                    $parse[] = $value;
+                }
+            }
+            $data['groups'] = join('|', $parse);
         }
     }
 

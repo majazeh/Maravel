@@ -31,4 +31,9 @@ class User extends Authenticatable
     {
         dispatch(new \Majazeh\Dashboard\Jobs\SendEmail('emails.recovery', ['email' => $this->email, 'token' => $token, 'title' => _t('change.password.verify.code')]));
     }
+
+    public function getGroupsAttribute()
+    {
+        return isset($this->original['groups']) ? explode('|', $this->original['groups']) : null;
+    }
 }
