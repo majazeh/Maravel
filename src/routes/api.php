@@ -7,6 +7,8 @@ Route::group(['middleware' => ['auth:api']], function () {
         'except' => ['show'],
         'as' => 'api.guards'
     ]);
+    Route::apiResource('attachments', 'AttachmentController', ['as' => 'api']);
+
 });
 Route::post('login', 'UserController@login');
 Route::post('logout', 'UserController@logout');

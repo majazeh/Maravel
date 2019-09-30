@@ -15,16 +15,17 @@ class CreateFilesTable extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('post_id')->unsigned();
-            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
-            $table->string('title');
+            $table->unsignedBigInteger('post_id')->unsigned();
             $table->string('slug')->unique();
-            $table->string('dir');
-            $table->longText('mood');
-            $table->string('group');
+            $table->string('dir')->unique();
+            $table->string('url')->unique();
+            $table->string('mode');
+            $table->string('type');
             $table->string('mime');
             $table->string('exec');
             $table->timestamps();
+            $table->unique(['post_id', 'mode']);
+
         });
     }
 

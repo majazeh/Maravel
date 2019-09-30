@@ -14,10 +14,16 @@ trait Store
         }
 
         $fields = array_keys($this->rules($request, 'store', $parent, ...$args));
-        $data = [];
-        foreach ($fields as $value) {
-            if ($request->has($value)) {
-                $data[$value] = $request->$value;
+        if(method_exists($this, 'fields'))
+        {
+            $data = $this->fields($request, 'store', $parent, ...$args);
+        }
+        else
+        {
+            foreach ($fields as $value) {
+                if ($request->has($value)) {
+                    $data[$value] = $request->$value;
+                }
             }
         }
         $model = $this->model::create($data);

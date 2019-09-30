@@ -8,14 +8,11 @@ use Carbon\Carbon;
 use Maravel\Controllers\APIController;
 use App\Requests\Maravel as Request;
 
-class FileController extends APIController
+class AttachmentController extends APIController
 {
-    public $table = Post::class;
-    public $order_list = [ 'id', 'slug', 'group', 'mime', 'exec'];
-    public $clientController = \Maravel\Controllers\Dashboard\FileController::class;
-    public $filters = [
-        'test' => true
-    ];
+    public $model = Post::class;
+
+    public $clientController = \Maravel\Controllers\Dashboard\AttachmentController::class;
 
     public function index(Request $request)
     {
@@ -34,8 +31,16 @@ class FileController extends APIController
 
     public function store(Request $request)
     {
-        $request->merge(['type' => 'attachment']);
-        return $this->_store($request);
+        \DB::beginTransaction();
+        $request->request->remove('file');
+        $post_record = $this->_store($request);
+        $slug = "/attachments/$post_record->serial". ($post_record->title ? '_'. $post_record->title : '');
+        $post_record->resource->slug = $slug;
+        $post_record->resource->url = asset($slug);
+        $post_record->resource->save();
+        $file = File::move($post_record->resource, $request->file('file'));
+        \DB::commit();
+        return new $this->resourceClass(Post::find($post_record->id));
     }
 
     public function edit(Request $request, File $file)
@@ -59,7 +64,10 @@ class FileController extends APIController
             case 'update':
             case 'store':
                 $rules = [
-                    'upload' => 'required',
+                    'file' => 'required',
+                    'status' => 'nullable|in:draft,publish,disable',
+                    'title' => 'nullable',
+                    'content' => 'nullable',
                 ];
                 return $rules;
                 break;
@@ -67,6 +75,21 @@ class FileController extends APIController
                 return [];
                 break;
         }
+    }
+
+    public function fields(Request $request, $action)
+    {
+        $data = [
+            'status' => $request->status ?: '',
+            'title' => $request->title,
+            'content' => $request->content,
+        ];
+        if($action == 'store')
+        {
+            $data['type'] = 'attachment';
+            $data['creator_id'] = auth()->id();
+        }
+        return $data;
     }
 
     public function filters($request, $model, $parent = null)
