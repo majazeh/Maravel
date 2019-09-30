@@ -18,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+
         if ($this->app->request->is('api/*') || $this->app->request->ajax()) {
             if($this->app->request->is('api/*'))
             {

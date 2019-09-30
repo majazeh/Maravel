@@ -36,4 +36,5 @@ class User extends Authenticatable
     {
         return isset($this->original['groups']) ? explode('|', $this->original['groups']) : null;
     }
+    
 }
