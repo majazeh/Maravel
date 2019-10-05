@@ -37,6 +37,7 @@ class LoginController extends AuthController
 
     public function login(Request $request)
     {
+        $this->username_method($request);
         if($request->has('reset'))
         {
             if(!config('auth.enter.recovery', true))
@@ -105,7 +106,7 @@ class LoginController extends AuthController
      */
     public function username()
     {
-        return $this->username_method();
+        return $this->username_method;
     }
 
     /**

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Str;
 
 class Controller extends BaseController
 {
@@ -63,7 +64,7 @@ class Controller extends BaseController
     {
         $namespace = explode('\\', $class_name ?: get_class($this));
         $class_name = substr(end($namespace), -10, 10) == 'Controller' ? substr(end($namespace), 0, -10) : end($namespace);
-        $class_name = $plural ? str_plural($class_name) : $class_name;
+        $class_name = $plural ? Str::plural($class_name) : $class_name;
         switch ($lower) {
             case 1: return ucfirst($class_name);
             case 2: return strtolower($class_name);

@@ -44,11 +44,12 @@ class RegisterController extends AuthController
 
     public function register(Request $request)
     {
+        $this->username_method($request);
         $UserModel = config('auth.providers.users.model');
         if(!config('auth.enter.register', true) && !$UserModel::count())
         {
             throw ValidationException::withMessages([
-                $this->username_method() => [_t('auth.register.disabled')],
+                $this->username_method($request) => [_t('auth.register.disabled')],
             ]);
         }
         $this->validator($request)->validate();
@@ -70,7 +71,7 @@ class RegisterController extends AuthController
             'email'  => 'required|string|email|max:255|unique:users',
             'mobile' => 'required',
         ];
-        $username = $this->username_method() == 'username' ? 'email' : $this->username_method();
+        $username = $this->username_method($request) == 'username' ? 'email' : $this->username_method($request);
 
         return Validator::make($request->all(), [
             'password' => 'required|string|min:6',
@@ -86,16 +87,16 @@ class RegisterController extends AuthController
      */
     protected function create(array $data)
     {
-        $username = request($this->username_method());
+        $username = $data[$this->username_method];
 
         $register = $this->user_create([
             'name' => _t('anonymous'),
             'password' => Hash::make($data['password']),
         ], [
-            $this->username_method() => $username,
+            $this->username_method => $username,
         ]);
 
-        if($this->username_method() == 'email')
+        if($this->username_method == 'email')
         {
             $token = md5(time() . $username . rand());
             UserSocialNetwork::create([

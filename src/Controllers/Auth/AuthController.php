@@ -17,21 +17,21 @@ class AuthController extends WebController
         $type = auth()->check() ? auth()->user()->type : 'user';
         $this->redirectTo = config("auth.redirects.{$type}_auth",'/dashboard');
     }
-    public function username_method()
+    public function username_method(Request $request)
     {
         if($this->username_method) return $this->username_method;
-        $username = request('username');
+        $username = $request->username;
         $type = 'username';
         if(ctype_digit($username)){
             $type = 'mobile';
-            request()->request->remove('username');
-            request()->request->add([$type => $username]);
+            $request->request->remove('username');
+            $request->request->add([$type => $username]);
         }
         elseif(strpos($username, '@'))
         {
             $type = 'email';
-            request()->request->remove('username');
-            request()->request->add([$type => $username]);
+            $request->request->remove('username');
+            $request->request->add([$type => $username]);
 
         }
         $this->username_method = $type;

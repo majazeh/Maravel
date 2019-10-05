@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Gate;
 class Maravel extends FormRequest
 {
     public $parseRules;
-    protected function validationData()
+    public function validationData()
     {
         $data = parent::validationData();
         if(!$this->route() || !$this->route()->controller) return $data;
