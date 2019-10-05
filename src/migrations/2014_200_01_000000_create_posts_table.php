@@ -22,8 +22,8 @@ class CreatePostsTable extends Migration
             $table->text('summary')->nullable();
             $table->string('type')->default('post');
             $table->string('status')->default('draft');
-            $table->integer('creator_id')->unsigned();
-            $table->integer('parent')->nullable()->unsigned();
+            $table->unsignedBigInteger('creator_id');
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->integer('order')->nullable();
             $table->text('meta')->nullable();
             $table->timestamp('published_at')->nullable();

@@ -15,7 +15,7 @@ class AddFkToPostsTable extends Migration
     {
         Schema::table('posts', function (Blueprint $table) {
             $table->foreign('creator_id')->references('id')->on('users');
-            // $table->foreign('parent')->references('id')->on('posts');
+            $table->foreign('parent_id')->references('id')->on('posts');
 
         });
     }
@@ -29,7 +29,7 @@ class AddFkToPostsTable extends Migration
     {
         Schema::table('posts', function (Blueprint $table) {
             $table->dropForeign(['creator_id']);
-            // $table->dropForeign(['parent']);
+            $table->dropForeign(['parent_id']);
         });
     }
 }
