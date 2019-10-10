@@ -1,27 +1,5 @@
-@section('body-menu')
-    @include('layouts.menu')
+@section('body')
+    <body data-page="{{ Route::current()->getName() }}" class="kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--fixed kt-subheader--solid kt-aside--enabled kt-aside--fixed kt-page--loading">
+        @include('layouts.page')
+    </body>
 @show
-
-{{-- <button id="btn-menu" class="d-none d-sm-none btn-menu menu-open" type="button">
-    <i class="fas fa-btn-menu"></i>
-</button> --}}
-
-<div class="d-flex flex-column body">
-    @section('body-navigation')
-        @include('layouts.navigation')
-    @show
-
-    <div class="d-flex body-content">
-        @if (false)
-            @section('body-desktop')
-                @include('layouts.desktop')
-            @show
-        @endif
-
-        @section('body-main')
-            @include('layouts.main')
-        @show
-    </div>
-</div>
-
-@include('layouts.footer')

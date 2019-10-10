@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<html lang="{{ config('app.locale') }}">
-
+<html lang="{{ config('app.locale') }}" direction="rtl" dir="rtl" style="direction: rtl">
 <head>
-    @include('layouts.header')
+    @include('layouts.head')
 </head>
 
-@include('layouts.body-options')
-@include('layouts.body-tag')
+@include('layouts.body')
 
 </html>

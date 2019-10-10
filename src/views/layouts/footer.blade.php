@@ -1,14 +1,14 @@
-@section('footer')
-	<script src="{{ asset('vendors/jquery-3.3.1.min.js') }}"></script>
-	<script src="{{ asset('vendors/popper.min.js') }}"></script>
-	<script src="{{ asset('vendors/bootstrap-4.2.1/js/bootstrap.min.js') }}"></script>
-	<script src="{{ asset('vendors/iziToast/js/iziToast.min.js') }}"></script>
-    <script src="{{ asset('vendors/jquery-touchswipe/jquery.touchSwipe.min.js') }}"></script>
-    <script src="{{ asset('vendors/select2/select2.min.js') }}"></script>
-    <script src="{{ asset('vendors/moment.min.js') }}"></script>
-    <script src="{{ asset('vendors/Date-Time-Picker-Bootstrap-4/js/bootstrap-datetimepicker.min.js') }}"></script>
-    <script src="{{ asset('js/dashio.min.js') . '?v=' . filemtime(public_path('js/dashio.min.js'))  }}"></script>
-    @if (file_exists(public_path('js/app.js')))
-	    <script src="{{ asset('js/app.js') . '?v=' . filemtime(public_path('js/app.js'))  }}"></script>
-    @endif
-@show
+<div class="kt-footer  kt-grid__item kt-grid kt-grid--desktop kt-grid--ver-desktop" id="kt_footer">
+    <div class="kt-container  kt-container--fluid">
+        @section('footer')
+            <div class="kt-footer__copyright">
+                2019&nbsp;&copy;&nbsp;<a href="#" target="_blank" class="kt-link">Keenthemes</a>
+            </div>
+            <div class="kt-footer__menu">
+                <a href="#" target="_blank" class="kt-footer__menu-link kt-link">About</a>
+                <a href="#" target="_blank" class="kt-footer__menu-link kt-link">Team</a>
+                <a href="#" target="_blank" class="kt-footer__menu-link kt-link">Contact</a>
+            </div>
+        @show
+    </div>
+</div>

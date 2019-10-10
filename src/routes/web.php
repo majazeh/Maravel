@@ -10,3 +10,14 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get(null, 'UserController@index')->name('dashboard');
 });
+
+Route::get('test-design', function(){
+    return View('layouts.app', [
+        'global' => (object) [
+            'title' => 'test'
+        ],
+        'module' => (object) [
+            'header' => 'test'
+        ]
+    ]);
+});
