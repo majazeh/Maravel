@@ -1,7 +1,7 @@
 <div class="kt-header__topbar-item dropdown">
     <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="30px,0px" aria-expanded="true">
         <span class="kt-header__topbar-icon">
-            <img src="{{ asset('assets/media/icons/svg/Shopping/Cart%233.svg') }}" alt="">
+            <img src="{{ asset('media/icons/svg/Shopping/Cart%233.svg') }}" alt="">
         </span>
     </div>
     <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-xl">
