@@ -23,7 +23,6 @@ class RouteServiceProvider extends ServiceProvider
         $this->webRoutes($router);
         $this->apiRoutes($router);
         $this->authRoutes($router);
-        require_once(maravel_path('routes/‌breadcrumbs.php'));
 
     }
 

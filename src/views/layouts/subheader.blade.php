@@ -4,16 +4,9 @@
             <h3 class="kt-subheader__title">{{ $module->header ?: _t('Page Title') }}</h3>
             <span class="kt-subheader__separator kt-subheader__separator--v"></span>
             <div class="kt-subheader__breadcrumbs">
-                <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
-                <span class="kt-subheader__breadcrumbs-separator"></span>
-                <a href="" class="kt-subheader__breadcrumbs-link">Crud</a>
-                <span class="kt-subheader__breadcrumbs-separator"></span>
-                <a href="" class="kt-subheader__breadcrumbs-link">KTDatatable</a>
-                <span class="kt-subheader__breadcrumbs-separator"></span>
-                <a href="" class="kt-subheader__breadcrumbs-link">Base</a>
-                <span class="kt-subheader__breadcrumbs-separator"></span>
-                <a href="" class="kt-subheader__breadcrumbs-link">Local Data</a>
-                <!-- <span class="kt-subheader__breadcrumbs-link kt-subheader__breadcrumbs-link--active">Active link</span> -->
+                @if (Breadcrumbs::exists(\Request::route()->getName()))
+                    {{ Breadcrumbs::render(\Request::route()->getName(), get_defined_vars()) }}
+                @endif
             </div>
 
             @if (false)
