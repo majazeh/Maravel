@@ -3,28 +3,47 @@
         <div class="kt-subheader__main">
             <h3 class="kt-subheader__title">{{ $module->header ?: _t('Page Title') }}</h3>
             <span class="kt-subheader__separator kt-subheader__separator--v"></span>
-            <span class="kt-subheader__desc">#XRS-45670</span>
-            <a href="#" class="btn btn-label-primary btn-bold btn-sm btn-icon-h kt-margin-l-10">Add New</a>
-            <div class="kt-input-icon kt-input-icon--right kt-subheader__search">
-                <input type="text" class="form-control" placeholder="Search order..." id="generalSearch">
-                <span class="kt-input-icon__icon kt-input-icon__icon--right">
-                    <span>
-                        <i class="flaticon2-search-1"></i>
-                    </span>
-                </span>
+            <div class="kt-subheader__breadcrumbs">
+                <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+                <span class="kt-subheader__breadcrumbs-separator"></span>
+                <a href="" class="kt-subheader__breadcrumbs-link">Crud</a>
+                <span class="kt-subheader__breadcrumbs-separator"></span>
+                <a href="" class="kt-subheader__breadcrumbs-link">KTDatatable</a>
+                <span class="kt-subheader__breadcrumbs-separator"></span>
+                <a href="" class="kt-subheader__breadcrumbs-link">Base</a>
+                <span class="kt-subheader__breadcrumbs-separator"></span>
+                <a href="" class="kt-subheader__breadcrumbs-link">Local Data</a>
+                <!-- <span class="kt-subheader__breadcrumbs-link kt-subheader__breadcrumbs-link--active">Active link</span> -->
             </div>
+
+            @if (false)
+                <span class="kt-subheader__desc">#XRS-45670</span>
+                <a href="#" class="btn btn-label-primary btn-bold btn-sm btn-icon-h kt-margin-l-10">Add New</a>
+                <div class="kt-input-icon kt-input-icon--right kt-subheader__search">
+                    <input type="text" class="form-control" placeholder="Search order..." id="generalSearch">
+                    <span class="kt-input-icon__icon kt-input-icon__icon--right">
+                        <span>
+                            <i class="flaticon2-search-1"></i>
+                        </span>
+                    </span>
+                </div>
+            @endif
         </div>
         <div class="kt-subheader__toolbar">
             <div class="kt-subheader__wrapper">
                 @section('subheader-tools')
-                    <a href="#" class="btn kt-subheader__btn-secondary">Today</a>
-                    <a href="#" class="btn kt-subheader__btn-secondary">Month</a>
-                    <a href="#" class="btn kt-subheader__btn-secondary">Year</a>
-                    <a href="#" class="btn kt-subheader__btn-daterange" id="kt_dashboard_daterangepicker" data-toggle="kt-tooltip" title="Select dashboard daterange" data-placement="left">
-                        <span class="kt-subheader__btn-daterange-title" id="kt_dashboard_daterangepicker_title">Today</span>&nbsp;
-                        <span class="kt-subheader__btn-daterange-date" id="kt_dashboard_daterangepicker_date">Aug 16</span>
-                        <i class="flaticon2-calendar-1"></i>
-                    </a>
+                    @if (false)
+                        <a href="#" class="btn kt-subheader__btn-secondary">Today</a>
+                        <a href="#" class="btn kt-subheader__btn-secondary">Month</a>
+                        <a href="#" class="btn kt-subheader__btn-secondary">Year</a>
+                        <a href="#" class="btn kt-subheader__btn-daterange" id="kt_dashboard_daterangepicker" data-toggle="kt-tooltip" title="Select dashboard daterange" data-placement="left">
+                            <span class="kt-subheader__btn-daterange-title" id="kt_dashboard_daterangepicker_title">Today</span>&nbsp;
+                            <span class="kt-subheader__btn-daterange-date" id="kt_dashboard_daterangepicker_date">Aug 16</span>
+                            <i class="flaticon2-calendar-1"></i>
+                        </a>
+                    @endif
+
+                    <a href="#" class="btn btn-label-primary btn-bold btn-sm btn-icon-h kt-margin-l-10">Add New</a>
                     <div class="dropdown dropdown-inline" data-toggle-="kt-tooltip" title="Quick actions" data-placement="left">
                         <a href="#" class="btn btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon kt-svg-icon--success kt-svg-icon--md">

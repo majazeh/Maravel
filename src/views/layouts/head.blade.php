@@ -9,10 +9,7 @@
     <!--begin::Fonts -->
     <!--end::Fonts -->
 
-    <!--begin::Page Vendors Styles (used by this page) -->
-    <link rel="stylesheet" href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.rtl.css') }}">
-
-    <!--end::Page Vendors Styles -->
+    <link rel="stylesheet" href="{{ asset('assets/css/pages/login/login-1.css') }}">
 
     <!--begin::Global Theme Styles (used by all pages) -->
     <link rel="stylesheet" href="{{ asset('assets/plugins/global/plugins.bundle.rtl.css') }}">

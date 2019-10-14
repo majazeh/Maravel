@@ -39,10 +39,18 @@
 
     <!--end::Global Theme Bundle -->
 
+    <!--begin::Page Vendors(used by this page) -->
+    <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
+
+    <!--end::Page Vendors -->
+
     <!--begin::Page Scripts (used by this page) -->
-    <script src="{{ asset('assets/js/pages/dashboard.js') }}"></script>
+    <script src="{{ asset('assets/js/pages/custom/login/login-1.js') }}"></script>
+    <script src="assets/js/pages/crud/metronic-datatable/base/data-local.js" type="text/javascript"></script>
 
     <!--end::Page Scripts -->
+
+    <script src="{{ asset('js/dashio.min.js') }}?v={{ filemtime(public_path('js/dashio.min.js')) }}"></script>
 
     @if (file_exists(public_path('js/app.js')))
         <script src="{{ asset('js/app.js') }}?v={{ filemtime(public_path('js/app.js')) }}"></script>
