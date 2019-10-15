@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('templates.app')
 
 @section('main')
 

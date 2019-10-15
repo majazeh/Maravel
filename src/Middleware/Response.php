@@ -11,7 +11,20 @@ class Response
     {
 
         $response = $next($request);
-        if ($response instanceof JsonResponse || ($request->segment(1) == 'api' && $response->exception)) {
+        if($request->ajax() && $response instanceof \Illuminate\Http\RedirectResponse)
+        {
+            $result = [
+                'is_ok' => true,
+                'redirect' => $response->getTargetUrl()
+            ];
+            result_message($result, 'redirect');
+            $response = response()->json(
+                $result,
+                200,
+                $response->headers->all()
+            );
+        }
+        else if ($response instanceof JsonResponse || ($request->segment(1) == 'api' && $response->exception)) {
             if ($response->exception) {
                 return $response;
             }

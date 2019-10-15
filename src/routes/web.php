@@ -8,7 +8,7 @@ Route::group(['middleware' => ['auth']], function () {
         ]);
     Route::mResource('larators', 'UserController');
 
-    Route::get(null, 'UserController@index')->name('dashboard');
+    Route::get(null, 'DashboardController@index')->name('dashboard');
 });
 
 Route::get('test-design', function(){

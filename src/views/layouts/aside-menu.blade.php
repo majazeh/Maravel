@@ -4,11 +4,20 @@
             <ul class="kt-menu__nav ">
                 @section('menus')
                     <li class="kt-menu__item  kt-menu__item--active" aria-haspopup="true">
-                        <a href="index.html" class="kt-menu__link ">
+                        <a href="{{route('dashboard')}}" class="kt-menu__link ">
                             <span class="kt-menu__link-icon">
                                 <img src="{{ asset('media/icons/svg/Design/Layers.svg') }}" alt="">
                             </span>
-                            <span class="kt-menu__link-text">Dashboard</span>
+                            <span class="kt-menu__link-text">{{_t('Dashboard')}}</span>
+                        </a>
+                    </li>
+
+                    <li class="kt-menu__item  kt-menu__item--active" aria-haspopup="true">
+                        <a href="{{route('dashboard.users.index')}}" class="kt-menu__link ">
+                            <span class="kt-menu__link-icon">
+                                <img src="{{ asset('media/icons/svg/General/User.svg') }}" alt="">
+                            </span>
+                            <span class="kt-menu__link-text">{{_t('dashboard.users')}}</span>
                         </a>
                     </li>
 

@@ -1,4 +1,4 @@
-@extends('layouts.create')
+@extends('templates.app')
 
 @section('form-name')
 @include('dashboard.users.forms.name')
@@ -36,7 +36,7 @@
 @include('dashboard.users.forms.groups')
 @endsection
 
-@section('form')
+@section('main')
 
     @yield('form-name')
     @yield('form-username')

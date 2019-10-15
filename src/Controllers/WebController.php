@@ -29,6 +29,7 @@ class WebController extends Controller
         if (!isset($this->resource)) {
             $this->resource = join('.', array_splice($paths, 0, -1));
         }
+
         if (!isset($this->apiResource)) {
             $this->apiResource = 'api.' . preg_replace('/^dashboard\./', '', $this->resource);
         }
@@ -50,7 +51,7 @@ class WebController extends Controller
     public function view($request)
     {
         if ($request->ajax() && !strstr($request->header('accept'), 'application/json')) {
-            self::$result->layouts->mode = 'template';
+            self::$result->layouts->mode = 'xhr';
         } elseif ($request->ajax() && strstr($request->header('accept'), 'application/json')) {
             self::$result->layouts->mode = 'json';
         }
@@ -64,7 +65,7 @@ class WebController extends Controller
             self::$result->module->resource . '.edit' => self::$result->module->resource . '.create'
         ]);
         if (array_key_exists($as, $views)) {
-            $view = $views[$as];
+            $view = self::$result->layouts->mode == 'xhr' && view()->exists($views[$as] . '-xhr') ? $views[$as] . '-xhr' : $views[$as];
         }
         return response(view()->make($view, (array) self::$result));
     }
