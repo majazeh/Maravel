@@ -1,4 +1,3 @@
-
-<a class="text-secondary" href="{{ $link }}">
-	<i class="far fa-eye"></i>
+<a class="btn btn-sm btn-clean btn-icon btn-icon-md" href="{{ $link }}">
+	<i class="la la-eye"></i>
 </a>
