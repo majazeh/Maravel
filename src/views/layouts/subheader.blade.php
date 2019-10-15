@@ -2,7 +2,7 @@
     <div class="kt-container  kt-container--fluid ">
         <div class="kt-subheader__main">
             <h3 class="kt-subheader__title">{{ $module->header ?: _t('Page Title') }}</h3>
-            <span class="kt-subheader__separator kt-subheader__separator--v"></span>
+            @if (false) <span class="kt-subheader__separator kt-subheader__separator--v"></span> @endif
             <div class="kt-subheader__breadcrumbs">
                 @if (Breadcrumbs::exists(\Request::route()->getName()))
                     {{ Breadcrumbs::render(\Request::route()->getName(), get_defined_vars()) }}

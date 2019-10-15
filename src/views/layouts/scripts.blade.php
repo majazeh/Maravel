@@ -39,14 +39,11 @@
 
     <!--end::Global Theme Bundle -->
 
-    <!--begin::Page Vendors(used by this page) -->
-    <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
-
-    <!--end::Page Vendors -->
-
     <!--begin::Page Scripts (used by this page) -->
     <script src="{{ asset('assets/js/pages/custom/login/login-1.js') }}"></script>
-    <script src="assets/js/pages/crud/metronic-datatable/base/data-local.js" type="text/javascript"></script>
+    <script>
+        $('#kt_form_status,#kt_form_type').selectpicker();
+    </script>
 
     <!--end::Page Scripts -->
 

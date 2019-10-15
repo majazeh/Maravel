@@ -64,47 +64,53 @@
             </div>
         </div>
     </div>
+    @if (false)
     <div class="kt-portlet__body">
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered table-hover" id="">
-                <thead>
+        Hi
+    </div>
+    @endif
+    <div class="kt-portlet__body kt-portlet__body--fit">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>{{ _t('ID') }}</th>
+                    <th>{{ _t('Name') }}</th>
+                    <th>{{ _t('Username') }}</th>
+                    <th>{{ _t('Email') }}</th>
+                    <th>{{ _t('Mobile') }}</th>
+                    <th>{{ _t('Status') }}</th>
+                    <th>{{ _t('Type') }}</th>
+                    <th>{{ _t('Gender') }}</th>
+                    <th>{{ _t('Actions') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($users as $user)
                     <tr>
-                        <th>{{ _t('Record ID') }}</th>
-                        <th>{{ _t('ID') }}</th>
-                        <th>{{ _t('Name') }}</th>
-                        <th>{{ _t('Username') }}</th>
-                        <th>{{ _t('Email') }}</th>
-                        <th>{{ _t('Mobile') }}</th>
-                        <th>{{ _t('Status') }}</th>
-                        <th>{{ _t('Type') }}</th>
-                        <th>{{ _t('Gender') }}</th>
-                        <th>{{ _t('Actions') }}</th>
+                        <td>{{ $user->serial }}</td>
+                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->username }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td>{{ $user->mobile }}</td>
+                        <td>{{ $user->status }}</td>
+                        <td>{{ $user->type }}</td>
+                        <td>{{ $user->gender ?: '-' }}</td>
+                        <td style="width: 150px;">
+                            <a href="#" class="btn btn-sm btn-clean btn-icon btn-icon-md">
+                                <i class="la la-cog"></i>
+                            </a>
+                            <a href="#" class="btn btn-sm btn-clean btn-icon btn-icon-md">
+                                <i class="la la-edit"></i>
+                            </a>
+                            <a href="#" class="btn btn-sm btn-clean btn-icon btn-icon-md">
+                                <i class="la la-trash"></i>
+                            </a>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach ($users as $user)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $user->serial }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->username }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>{{ $user->mobile }}</td>
-                            <td>{{ $user->status }}</td>
-                            <td>{{ $user->type }}</td>
-                            <td>{{ $user->gender ?: '-' }}</td>
-                            <td>
-                                <div class="d-flex justify-content-around">
-                                    @include('layouts.compomnents.edit-link', ['link' => route($module->resource . '.edit', $user->serial ?: $user->id)])
-                                    @include('layouts.compomnents.delete-link', ['link' => route($module->apiResource . '.destroy', $user->serial ?: $user->id)])
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            {{ $users->links() }}
-        </div>
+                @endforeach
+            </tbody>
+        </table>
+        {{ $users->links() }}
     </div>
 </div>
 
