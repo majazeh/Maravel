@@ -96,15 +96,8 @@
                         <td>{{ $user->type }}</td>
                         <td>{{ $user->gender ?: '-' }}</td>
                         <td style="width: 150px;">
-                            <a href="#" class="btn btn-sm btn-clean btn-icon btn-icon-md">
-                                <i class="la la-cog"></i>
-                            </a>
-                            <a href="#" class="btn btn-sm btn-clean btn-icon btn-icon-md">
-                                <i class="la la-edit"></i>
-                            </a>
-                            <a href="#" class="btn btn-sm btn-clean btn-icon btn-icon-md">
-                                <i class="la la-trash"></i>
-                            </a>
+                            @include('layouts.compomnents.edit-link', ['link' => route($module->resource . '.edit', $user->serial ?: $user->id)])
+                            @include('layouts.compomnents.delete-link', ['link' => route($module->apiResource . '.destroy', $user->serial ?: $user->id)])
                         </td>
                     </tr>
                 @endforeach
