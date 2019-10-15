@@ -75,7 +75,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>{{ _t('ID') }}</th>
+                    <th>{{ _t('#') }}</th>
                     <th>{{ _t('Name') }}</th>
                     <th>{{ _t('Username') }}</th>
                     <th>{{ _t('Email') }}</th>
@@ -89,11 +89,11 @@
             <tbody>
                 @foreach ($users as $user)
                     <tr>
-                        <td>{{ $user->serial }}</td>
+                        <td><span class="kt-font-boldest kt-shape-font-color-4 d-inline-block direction-ltr">{{ $user->serialText }}</span></td>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->username }}</td>
                         <td>{{ $user->email }}</td>
-                        <td>{{ $user->mobile }}</td>
+                        <td><span class="d-inline-block direction-ltr">{{ $user->mobileText }}</span></td>
                         <td>{{ $user->status }}</td>
                         <td>{{ $user->type }}</td>
                         <td>{{ $user->gender ?: '-' }}</td>

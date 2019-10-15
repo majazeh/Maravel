@@ -17,5 +17,12 @@ trait Model
 	public function setMetaAttribute($value)
 	{
 		return $this->attributes['meta'] = json_encode($value);
-	}
+    }
+
+    public function getMobileTextAttribute()
+    {
+        list($mobile, $country, $code) = \Maravel\Lib\MobileRV::parse($this->mobile);
+        if(!$mobile) return ;
+        return '+' . $code . ' ' . $mobile;
+    }
 }
