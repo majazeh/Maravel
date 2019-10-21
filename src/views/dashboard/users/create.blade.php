@@ -1,13 +1,13 @@
-@extends('templates.app')
+@extends('templates.form')
 
-@section('main')
+@section('form')
 
 <div class="row justify-content-center">
     <div class="col-lg-6">
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title">{{ _t('Create') }}</h3>
+                    <h3 class="kt-portlet__head-title">{{ !isset($user) ? _t('Create') : _t('Edit') }}</h3>
                 </div>
             </div>
             <form class="kt-form">
@@ -46,12 +46,12 @@
                             <div class="kt-radio-list">
                                 @isset ($user)
                                     <label class="kt-radio">
-                                        <input type="radio" value="{{ $value }}" id="{{ $value }}" {{ $user->status == $value ? 'checked="checked"' : '' }} name="status">{{ _t("user.status.$value") }}>
+                                        <input type="radio" value="{{ $value }}" id="{{ $value }}" {{ $user->status == $value ? 'checked="checked"' : '' }} name="status">{{ _t("user.status.$value") }}
                                         <span></span>
                                     </label>
                                 @else
                                     <label class="kt-radio">
-                                        <input type="radio" value="{{ $value }}" id="{{ $value }}" {{ $value == 'waiting' ? 'checked="checked"' : '' }} name="status">{{ _t("user.status.$value") }}>
+                                        <input type="radio" value="{{ $value }}" id="{{ $value }}" {{ $value == 'waiting' ? 'checked="checked"' : '' }} name="status">{{ _t("user.status.$value") }}
                                         <span></span>
                                     </label>
                                 @endisset

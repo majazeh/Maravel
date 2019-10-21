@@ -39,7 +39,7 @@ class Maravel extends FormRequest
                 if($k == 'mobile' && isset($data[$key]))
                 {
                     list($mobile, $country, $code) = \Maravel\Lib\MobileRV::parse($data[$key]);
-                    $data[$key] = "$code$mobile";
+                    $data[$key] = $mobile ? "$code$mobile" : $data[$key];
                 }
             }
         }
