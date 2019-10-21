@@ -1,16 +1,21 @@
-@extends('layouts.index')
+@extends('templates.app')
 
-@section('container-fluid')
+@section('main')
+
 <div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    {{$user->id}} - {{$user->name}}
-
-                </div>
+    <div class="col-3">
+        @include('dashboard.users.show.info')
+    </div>
+    <div class="col-9">
+        <div class="row">
+            <div class="col-6">
+                @include('dashboard.users.show.order')
+            </div>
+            <div class="col-6">
+                @include('dashboard.users.show.tasks')
             </div>
         </div>
     </div>
 </div>
+
 @endsection

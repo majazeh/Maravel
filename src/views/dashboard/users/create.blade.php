@@ -13,6 +13,19 @@
             <form class="kt-form">
                 <div class="kt-portlet__body">
                     <div class="form-group">
+                        <div class="kt-avatar kt-avatar--outline" id="kt_user_avatar">
+                            <div class="kt-avatar__holder" style="background-image: url({{ asset('assets/media/users/default.jpg') }})"></div>
+                            <label class="kt-avatar__upload" data-toggle="kt-tooltip" data-original-title="{{ _t('Change avatar') }}" title>
+                                <i class="fa fa-pen"></i>
+                                <input type="file" name="profile_avatar" accept=".png, .jpg, .jpeg">
+                            </label>
+                            <span class="kt-avatar__cancel" data-toggle="kt-tooltip" title="" data-original-title="Cancel avatar">
+                                <i class="fa fa-times"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label for="name">
                             {{ _t('Name') }} <small class="d-inline-block text-secondary">{{_t('optional')}}</small>
                         </label>
