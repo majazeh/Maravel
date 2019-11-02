@@ -82,22 +82,31 @@
                     <th>{{ _t('Mobile') }}</th>
                     <th>{{ _t('Status') }}</th>
                     <th>{{ _t('Type') }}</th>
-                    <th>{{ _t('Gender') }}</th>
                     <th>{{ _t('Actions') }}</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($users as $user)
                     <tr>
-                        <td><span class="kt-font-boldest kt-shape-font-color-4 d-inline-block direction-ltr">{{ $user->serialText }}</span></td>
-                        <td>{{ $user->name }}</td>
+                        <td>
+                            <a href="{{route($module->resource . '.show', $user->serial ?: $user->id)}}" class="kt-font-boldest kt-shape-font-color-4 d-inline-block direction-ltr">{{ $user->serialText }}</a>
+                        </td>
+                        <td>
+                            @include('dashboard.users.td.displayname')
+                        </td>
                         <td>{{ $user->username }}</td>
                         <td>{{ $user->email }}</td>
-                        <td><span class="d-inline-block direction-ltr">{{ $user->mobileText }}</span></td>
-                        <td>{{ $user->status }}</td>
-                        <td>{{ $user->type }}</td>
-                        <td>{{ $user->gender ?: '-' }}</td>
+                        <td>
+                            @include('dashboard.users.td.mobile')
+                        </td>
+                        <td>
+                            @include('dashboard.users.td.status')
+                        </td>
+                        <td>
+                            @include('dashboard.users.td.type')
+                        </td>
                         <td style="width: 150px;">
+                            @include('layouts.compomnents.show-link', ['link' => route($module->resource . '.show', $user->serial ?: $user->id)])
                             @include('layouts.compomnents.edit-link', ['link' => route($module->resource . '.edit', $user->serial ?: $user->id)])
                             @include('layouts.compomnents.delete-link', ['link' => route($module->apiResource . '.destroy', $user->serial ?: $user->id)])
                         </td>

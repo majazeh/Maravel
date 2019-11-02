@@ -20,7 +20,9 @@ trait WebMethods
 
     public function _show(Request $request, $arg1 = null, $arg2 = null)
     {
-        self::$result->{$this->class_name(null, false, 2)} = $this->endpoint($request)->show($request, $arg1, $arg2);
+        $response = $this->endpoint($request)->show($request, $arg1, $arg2);
+        self::$result->{$this->class_name(null, false, 2)} = $response;
+        self::$result->id = $response->serial ?: $response->id;
         return $this->view($request);
     }
 
@@ -35,7 +37,9 @@ trait WebMethods
 
     public function _edit(Request $request, $arg1, $arg2 = null)
     {
-        $model = self::$result->{$this->class_name(null, false, 2)} = $this->endpoint($request)->show($request, $arg1, $arg2);
+        $response = $this->endpoint($request)->show($request, $arg1, $arg2);
+        $model = self::$result->{$this->class_name(null, false, 2)} = $response;
+        self::$result->id = $response->serial ?: $response->id;
         self::$result->module->post_action =
             \Route::has(self::$result->module->apiResource . '.update')
             ? route(self::$result->module->apiResource . '.update', $model->serial ?: $model->id)

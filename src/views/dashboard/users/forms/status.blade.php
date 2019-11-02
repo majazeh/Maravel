@@ -1,15 +1,20 @@
 @if (Guardio::has('users.change.status'))
-<div class="form-group">
-    <label>{{ _t('account.status') }}</label>
-    @foreach (config('guardio.status', ['awaiting', 'active', 'disable']) as $type => $value)
-    <div class="custom-control custom-radio">
-        @isset ($user)
-        <input type="radio" value="{{ $value }}" id="{{ $value }}" {{ $user->status == $value ? 'checked="checked"' : '' }} name="status" class="custom-control-input">
-        @else
-        <input type="radio" value="{{ $value }}" id="{{ $value }}" {{ $value == 'waiting' ? 'checked="checked"' : '' }} name="status" class="custom-control-input">
-        @endisset
-        <label class="custom-control-label f2 text-secondary" for="{{ $value }}">{{ _t("user.status.$value") }}</label>
+    <div class="form-group">
+        <label>{{ _t('account.status') }}</label>
+        @foreach (config('guardio.status', ['awaiting', 'active', 'disable']) as $type => $value)
+        <div class="kt-radio-list">
+            @isset ($user)
+                <label class="kt-radio">
+                    <input type="radio" value="{{ $value }}" id="{{ $value }}" {{ $user->status == $value ? 'checked="checked"' : '' }} name="status">{{ _t("status.$value") }}
+                    <span></span>
+                </label>
+            @else
+                <label class="kt-radio">
+                    <input type="radio" value="{{ $value }}" id="{{ $value }}" {{ $value == 'waiting' ? 'checked="checked"' : '' }} name="status">{{ _t("status.$value") }}
+                    <span></span>
+                </label>
+            @endisset
+        </div>
+        @endforeach
     </div>
-    @endforeach
-</div>
 @endif

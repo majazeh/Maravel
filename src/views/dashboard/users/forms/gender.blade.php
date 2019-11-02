@@ -1,13 +1,15 @@
 <div class="form-group">
     <label>
-        {{ _t('gender') }} <small class="text-secondary">{{_t('optional')}}</small>
+        {{ _t('gender') }} <small class="d-inline-block text-secondary">{{_t('optional')}}</small>
     </label>
-    <div class="custom-control custom-radio">
-        <input type="radio" value="female" id="female" name="gender" class="custom-control-input" {{ isset($user->gender) && $user->gender == 'female' ? 'checked="checked"' : '' }}>
-        <label class="custom-control-label f2 text-secondary" for="female">{{ _t('female') }}</label>
-    </div>
-    <div class="custom-control custom-radio">
-        <input type="radio" value="male" id="male" name="gender" class="custom-control-input" {{ isset($user->gender) && $user->gender == 'male' ? 'checked="checked"' : '' }}>
-        <label class="custom-control-label f2 text-secondary" for="male">{{ _t('male') }}</label>
+    <div class="kt-radio-list">
+        <label class="kt-radio">
+            <input type="radio" value="female" id="female" name="gender" {{ isset($user->gender) && $user->gender == 'female' ? 'checked="checked"' : '' }}>{{ _t('female') }}
+            <span></span>
+        </label>
+        <label class="kt-radio">
+            <input type="radio" value="male" id="male" name="gender" {{ isset($user->gender) && $user->gender == 'male' ? 'checked="checked"' : '' }}>{{ _t('male') }}
+            <span></span>
+        </label>
     </div>
 </div>
