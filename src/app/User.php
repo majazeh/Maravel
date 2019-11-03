@@ -37,4 +37,8 @@ class User extends Authenticatable
         return isset($this->original['groups']) ? explode('|', $this->original['groups']) : null;
     }
 
+    public function getAvatarAttribute()
+    {
+        return File::where('post_id', $this->original['avatar_id'])->get()->keyBy('mode');
+    }
 }

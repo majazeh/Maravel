@@ -10,7 +10,7 @@
             </span>
             <h3 class="kt-portlet__head-title">{{ _t('Users') }}</h3>
         </div>
-        @if (false)
+        @if (true)
             <div class="kt-portlet__head-toolbar">
                 <div class="kt-portlet__head-wrapper">
                     <div class="kt-portlet__head-actions">
@@ -66,11 +66,6 @@
             </div>
         @endif
     </div>
-    @if (false)
-    <div class="kt-portlet__body">
-        Hi
-    </div>
-    @endif
     <div class="kt-portlet__body">
         <table class="table">
             <thead>

@@ -1,4 +1,8 @@
 module.exports = function (event, base, context){
+    $('.kt-avatar', this).each(function(){
+        new KTAvatar(this);
+    });
+
     $('[data-Lijax], .lijax', this).each(function () {
         new Lijax(this);
     });

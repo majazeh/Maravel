@@ -5,7 +5,7 @@ namespace Maravel\Controllers\API;
 use Maravel\Controllers\APIController;
 use App\Requests\Maravel as Request;
 use App\User;
-use Illuminate\Support\Facades\Gate;
+use App\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\AuthenticationException;
 
@@ -39,12 +39,37 @@ class UserController extends APIController
         if ($request->password) {
             $request->replace(['password' => Hash::make($request->password)]);
         }
-        return $this->_update($request, $user);
+        $avatar = $request->file('avatar');
+        $request->files->remove('avatar');
+        $update = $this->_update($request, $user);
+        if($avatar)
+        {
+            $attachment = File::upload($request, 'avatar');
+            if($attachment)
+            {
+                $update->resource->avatar_id = $attachment->id;
+                $update->resource->save();
+                $this->statusMessage = $this->class_name() . " changed";
+            }
+            File::imageSize($attachment, 500);
+            File::imageSize($attachment, 250);
+            File::imageSize($attachment, 150);
+        }
+        return $update;
     }
+
 
     public function destroy(Request $request, User $user)
     {
         return $this->_destroy($request, $user);
+    }
+    public function except(Request $request, $action)
+    {
+        switch ($action) {
+            case 'update':
+            case 'store':
+            return ['avatar'];
+        }
     }
 
     public function rules(Request $request, $action)
@@ -62,6 +87,7 @@ class UserController extends APIController
                     'mobile' => 'nullable|mobile',
                     'gender' => 'nullable|in:male,female',
                     'groups' => 'nullable',
+                    'avatar' => 'nullable|mimes:jpeg,jpg,png,gif|max:5120|dimensions:ratio=1',
                 ];
                 if(!$request->password)
                 {

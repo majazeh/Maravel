@@ -13,13 +13,20 @@ trait Store
             $parent = $this->findOrFail($parent, $this->parentModel);
         }
 
-        $fields = array_keys($this->rules($request, 'store', $parent, ...$args));
         if(method_exists($this, 'fields'))
         {
             $data = $this->fields($request, 'store', $parent, ...$args);
         }
         else
         {
+            $fields = array_keys($this->rules($request, 'store', $parent, ...$args));
+            $except = method_exists($this, 'except') ? $this->except($request, 'store', $parent, ...$args) : [];
+            foreach ($except as $key => $value) {
+                $index = array_search($value, $fields);
+                if ($index !== -1) {
+                    unset($fields[$index]);
+                }
+            }
             foreach ($fields as $value) {
                 if ($request->has($value)) {
                     $data[$value] = $request->$value;

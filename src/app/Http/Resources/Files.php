@@ -10,7 +10,8 @@ class Files extends ResourceCollection
     {
         $data = [];
         foreach ($this->resource as $key => $value) {
-            $data[] = new File($value);
+            $file = new File($value);;
+            $data[$file->mode] = $file;
         }
         return $data;
     }

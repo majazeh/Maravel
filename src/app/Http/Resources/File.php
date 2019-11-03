@@ -9,6 +9,7 @@ class File extends JsonResource
     {
         $data = parent::toArray($request);
         $data['id'] = $this->serial;
+        unset($data['mode']);
         unset($data['post_id']);
         unset($data['dir']);
         return $data;

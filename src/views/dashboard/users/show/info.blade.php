@@ -20,7 +20,7 @@
                     </div>
                     <div class="kt-widget__info">
                         <span class="kt-widget__label">{{ _t('Mobile') }}</span>
-                        <a href="#" class="kt-widget__data">{{ $user->mobile }}</a>
+                        <a href="tel:+{{$user->mobile}}" class="kt-widget__data d-inline-block direction-ltr text-dark direct">{{ $user->mobileText }}</a>
                     </div>
                 </div>
                 <div class="kt-widget__items">
