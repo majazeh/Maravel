@@ -89,7 +89,8 @@
                 @foreach ($users as $user)
                     <tr>
                         <td>
-                            <a href="{{route($module->resource . '.show', $user->serial ?: $user->id)}}" class="kt-font-boldest kt-shape-font-color-4 d-inline-block direction-ltr">{{ $user->serialText }}</a>
+                            @include('layouts.compomnents.serial-link', ['row' => $user])
+
                         </td>
                         <td>
                             @include('dashboard.users.td.displayname')
