@@ -4,6 +4,6 @@
     @include('layouts.head')
 </head>
 
-@include('layouts.body')
+@yield('body')
 
 </html>

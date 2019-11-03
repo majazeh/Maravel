@@ -3,5 +3,3 @@
 @include('layouts.root')
 
 @include('layouts.quick-panel')
-
-@include('layouts.scripts')

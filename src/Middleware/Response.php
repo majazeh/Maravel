@@ -15,13 +15,13 @@ class Response
         {
             $result = [
                 'is_ok' => true,
-                'redirect' => $response->getTargetUrl()
+                'redirect' => $response->getTargetUrl(),
+                'direct' => true
             ];
             result_message($result, 'redirect');
             $response = response()->json(
                 $result,
-                200,
-                $response->headers->all()
+                200
             );
         }
         else if ($response instanceof JsonResponse || ($request->segment(1) == 'api' && $response->exception)) {

@@ -40,7 +40,6 @@
     <!--end::Global Theme Bundle -->
 
     <!--begin::Page Scripts (used by this page) -->
-    <script src="{{ asset('assets/js/pages/custom/login/login-1.js') }}"></script>
     <script src="{{ asset('assets/js/pages/crud/forms/widgets/bootstrap-select.js') }}"></script>
     <script>
         $('#kt_form_status,#kt_form_type').selectpicker();
