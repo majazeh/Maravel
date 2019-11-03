@@ -1,4 +1,4 @@
-@extends($layouts->mode =='html' ? 'layouts.app' : 'templates.app-xhr')
+@extends($layouts->mode =='html' ? 'layouts.app' : 'templates.body-xhr')
 
 @section('head-styles')
     @include('layouts.head-styles')
