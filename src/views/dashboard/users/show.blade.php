@@ -1,4 +1,4 @@
-@extends('dashboard.home')
+@extends('templates.app')
 
 @section('main')
 

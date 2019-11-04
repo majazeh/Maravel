@@ -41,4 +41,8 @@ class User extends Authenticatable
     {
         return File::where('post_id', $this->original['avatar_id'])->get()->keyBy('mode');
     }
+
+    public function getLocationTextAttribute(){
+        return $this->original['location'];
+    }
 }

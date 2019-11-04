@@ -5,6 +5,6 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="api-token" content="{{ session('api-token') }}">
 
-@yield('head-styles')
+@include('layouts.head-styles')
 
 <title>{{ $global->title ?: _t('App Title') }}</title>

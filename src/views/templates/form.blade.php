@@ -1,4 +1,4 @@
-@extends($layouts->mode =='html' ? 'layouts.app' : 'templates.app-xhr')
+@extends($layouts->mode =='html' ? 'templates.app' : 'templates.app-xhr')
 
 @section('main')
     <div class="row justify-content-center">
