@@ -2,11 +2,11 @@
 
 @section('main')
     <div class="row justify-content-center">
-        <div class="col-lg-6">
+        <div class="col-md-10 col-lg-8 col-xl-6">
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title">{{ !isset($user) ? _t('Create') : _t('Edit') }}</h3>
+                        <h3 class="kt-portlet__head-title">{{ $module->action == 'create' ? _t('Create') : _t('Edit') }}</h3>
                     </div>
                 </div>
                 <form method="POST" {!! isset($multipart) ? 'enctype="multipart/form-data"' : '' !!} action="{{ $module->post_action }}" class="kt-form">

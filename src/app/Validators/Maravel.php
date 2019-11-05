@@ -36,4 +36,10 @@ class Maravel extends Validator
         }
         return $one_of;
     }
+
+    public function validateDouble($attribute, $value, $parameters, $validator)
+    {
+        $parameters = ['/^\d*(\.\d{1,2})?$/'];
+        return $this->validateRegex($attribute, $value, $parameters);
+    }
 }
