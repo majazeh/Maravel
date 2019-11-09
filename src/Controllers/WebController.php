@@ -51,7 +51,7 @@ class WebController extends Controller
     public function view($request)
     {
         if ($request->ajax() && !strstr($request->header('accept'), 'application/json')) {
-            self::$result->layouts->mode = 'xhr';
+            self::$result->layouts->mode = $request->header('data-xhr-base') ?: 'xhr';
         } elseif ($request->ajax() && strstr($request->header('accept'), 'application/json')) {
             self::$result->layouts->mode = 'json';
         }
@@ -65,7 +65,7 @@ class WebController extends Controller
             self::$result->module->resource . '.edit' => self::$result->module->resource . '.create'
         ]);
         if (array_key_exists($as, $views)) {
-            $view = self::$result->layouts->mode == 'xhr' && view()->exists($views[$as] . '-xhr') ? $views[$as] . '-xhr' : $views[$as];
+            $view = self::$result->layouts->mode == 'html' ? $views[$as] : (view()->exists($views[$as] . '-'. self::$result->layouts->mode) ? $views[$as] . '-'. self::$result->layouts->mode : $views[$as]);
         }
         return response(view()->make($view, (array) self::$result));
     }
