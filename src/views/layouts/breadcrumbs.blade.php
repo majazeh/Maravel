@@ -10,7 +10,7 @@
                 <a href="{{ $breadcrumb->url }}" class="kt-subheader__breadcrumbs-link">{{ $breadcrumb->title }}</a>
                 <span class="kt-subheader__breadcrumbs-separator"></span>
             @else
-                <a class="kt-subheader__breadcrumbs-link">{{ $breadcrumb->title }}</a>
+                <span class="kt-subheader__breadcrumbs-link">{{ $breadcrumb->title }}</span>
             @endif
 
         @endforeach

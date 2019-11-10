@@ -27,7 +27,7 @@ class ChangeUsersTable extends Migration
             $table->string('type')->default('user')->after('status'); // ['guest', 'user', 'admin']
             $table->string('groups')->nullable()->after('type');
 
-            $table->string('avatar')->nullable()->after('status');
+            $table->unsignedBigInteger('avatar_id')->nullable()->after('status');
 
         });
     }

@@ -14,8 +14,6 @@ class ChangeUsersTableAddAvatarId extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('avatar_id')->nullable()->after('avatar');
-            $table->dropColumn('avatar');
             $table->foreign('avatar_id')->references('id')->on('posts');
         });
     }
@@ -28,8 +26,6 @@ class ChangeUsersTableAddAvatarId extends Migration
     public function down()
     {
         Schema::table('users', function($table) {
-            $table->string('avatar')->nullable()->after('avatar_id');
-            $table->dropColumn('avatar_id');
        });
     }
 }
