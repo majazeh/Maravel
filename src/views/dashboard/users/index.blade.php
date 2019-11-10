@@ -84,7 +84,7 @@
                 @foreach ($users as $user)
                     <tr>
                         <td>
-                            @include('layouts.compomnents.serial-link', ['row' => $user])
+                            @include('layouts.components.serial-link', ['row' => $user])
 
                         </td>
                         <td>
@@ -102,9 +102,9 @@
                             @include('dashboard.users.td.type')
                         </td>
                         <td style="width: 150px;">
-                            @include('layouts.compomnents.show-link', ['link' => route($module->resource . '.show', $user->serial ?: $user->id)])
-                            @include('layouts.compomnents.edit-link', ['link' => route($module->resource . '.edit', $user->serial ?: $user->id)])
-                            @include('layouts.compomnents.delete-link', ['link' => route($module->apiResource . '.destroy', $user->serial ?: $user->id)])
+                            @include('layouts.components.show-link', ['link' => route($module->resource . '.show', $user->serial ?: $user->id)])
+                            @include('layouts.components.edit-link', ['link' => route($module->resource . '.edit', $user->serial ?: $user->id)])
+                            @include('layouts.components.delete-link', ['link' => route($module->apiResource . '.destroy', $user->serial ?: $user->id)])
                         </td>
                     </tr>
                 @endforeach

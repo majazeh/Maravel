@@ -26,7 +26,7 @@
         <td>{{ $position->description }}</td>
         <td class="text-center">
             @if ($position->serial)
-                @include('layouts.compomnents.delete-link', ['link' => route('api.guards.positions.destroy', [$parent->serial, $position->gate])])
+                @include('layouts.components.delete-link', ['link' => route('api.guards.positions.destroy', [$parent->serial, $position->gate])])
             @else
                 <a class="text-secondary" data-lijax="click" href="{{route('api.guards.positions.store', $parent->serial)}}" data-method="POST" data-name="gate" data-value="{{$position->gate}}">
                     <i class="far fa-shield-check"></i>

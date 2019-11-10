@@ -27,8 +27,8 @@
                 <a class="text-secondary" href="{{route('dashboard.guards.positions.index', $guard->serial)}}">
                     <i class="far fa-shield-alt"></i>
                 </a>
-                @include('layouts.compomnents.edit-link', ['link' => route($module->resource . '.edit', $guard->serial)])
-                @include('layouts.compomnents.delete-link', ['link' => route($module->apiResource . '.destroy', $guard->serial)])
+                @include('layouts.components.edit-link', ['link' => route($module->resource . '.edit', $guard->serial)])
+                @include('layouts.components.delete-link', ['link' => route($module->apiResource . '.destroy', $guard->serial)])
             </div>
         </td>
     </tr>

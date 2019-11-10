@@ -23,6 +23,7 @@ trait WebMethods
         $response = $this->endpoint($request)->show($request, $arg1, $arg2);
         self::$result->{$this->class_name(null, false, 2)} = $response;
         self::$result->id = $response->serial ?: $response->id;
+        self::$result->resultName = $this->class_name(null, false, 2);
         return $this->view($request);
     }
 
@@ -40,6 +41,7 @@ trait WebMethods
         $response = $this->endpoint($request)->show($request, $arg1, $arg2);
         $model = self::$result->{$this->class_name(null, false, 2)} = $response;
         self::$result->id = $response->serial ?: $response->id;
+        self::$result->resultName = $this->class_name(null, false, 2);
         self::$result->module->post_action =
             \Route::has(self::$result->module->apiResource . '.update')
             ? route(self::$result->module->apiResource . '.update', $model->serial ?: $model->id)
