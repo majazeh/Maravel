@@ -89,6 +89,10 @@ class WebController extends Controller
 
     public function endpoint(Request $request)
     {
+        if(!isset($this->endpoint))
+        {
+            return false;
+        }
         $endpoint = $this->endpoint;
         if(gettype($this->endpoint) !== 'object')
         {
