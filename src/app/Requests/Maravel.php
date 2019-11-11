@@ -15,6 +15,7 @@ class Maravel extends FormRequest
         if(!$this->route() || !$this->route()->controller) return $data;
         $this->numberTypes($data);
         $this->mobileRule($data);
+        $this->serialRule($data);
         if (method_exists($this->route()->getController(), 'validationData')) {
             $this->route()->getController()->validationData($this, $this->route()->getActionMethod(), $data, ...array_values($this->route()->parameters()));
         }
@@ -43,6 +44,18 @@ class Maravel extends FormRequest
                 {
                     list($mobile, $country, $code) = \Maravel\Lib\MobileRV::parse($data[$key]);
                     $data[$key] = $mobile ? "$code$mobile" : $data[$key];
+                }
+            }
+        }
+    }
+
+    public function serialRule(&$data)
+    {
+        foreach ($this->parseRules() as $key => $value) {
+            foreach ($value as $k => $v) {
+                if ($k == 'serial' && isset($data[$key]) && $data[$key]) {
+                    $model = '\App\\' . ucfirst($v);
+                    $data[$key] = $model::id($data[$key]);
                 }
             }
         }

@@ -123,10 +123,43 @@ class UserController extends APIController
             [
                 'status' => config('guardio.status', ['awaiting', 'active', 'disable']),
                 'type' => config('guardio.type', ['admin', 'user']),
-                'gender' => ['male', 'female']
+                'gender' => ['male', 'female'],
+                'username' => ''
             ]
         ];
         $current = [];
+        if ($request->username && $request->has('unique')) {
+            $id = User::id($request->user);
+            if ($id) {
+                $model->where('id', '<>', $id);
+            }
+            $model->where('username', $request->username)->limit(1);
+            return [$filters, ['username' => $request->username]];
+        }
+        if ($request->email && $request->has('unique')) {
+            $id = User::id($request->user);
+            if ($id) {
+                $model->where('id', '<>', $id);
+            }
+            $model->where('email', $request->email)->limit(1);
+            return [$filters, ['email' => $request->email]];
+        }
+        if ($request->mobile && $request->has('unique')) {
+            list($mobile, $country, $code) = \Maravel\Lib\MobileRV::parse($request->mobile);
+            if($mobile)
+            {
+                $id = User::id($request->user);
+                if ($id) {
+                    $model->where('id', '<>', $id);
+                }
+                $model->where('mobile', "Like", "%$mobile%")->limit(1);
+                return [$filters, ['mobile' => $request->mobile]];
+            }
+            else
+            {
+                $model->limit(0);
+            }
+        }
         if(in_array($request->status, $filters[0]['status']))
         {
             $model->where('status', $request->status);

@@ -8,10 +8,7 @@ class Maravel extends Validator
 {
     public function validateSerial($attribute, $value, $parameters, $validator)
     {
-        $type = ucfirst($parameters[0]);
-        $model = "\\App\\$type";
-
-        return $model::serialCheck($value);
+        return is_integer($value);
     }
     public function validateMobile($attribute, $value, $parameters, $validator)
     {
