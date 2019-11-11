@@ -110,11 +110,14 @@ class Maravel extends FormRequest
             $rules = $this->rules();
             $parse = [];
             foreach ($rules as $key => $value) {
-                $value = explode('|', trim($value));
+                $value = is_array($value) ? $value : explode('|', trim($value));
                 $p_values = [];
                 foreach ($value as $k => $v) {
-                    $v = explode(':', $v, 2);
-                    $p_values[$v[0]] = isset($v[1]) ? $v[1] : null;
+                    if(is_string($v))
+                    {
+                        $v = explode(':', $v, 2);
+                        $p_values[$v[0]] = isset($v[1]) ? $v[1] : null;
+                    }
                 }
                 $parse[$key] = $p_values;
             }

@@ -8,9 +8,20 @@ trait Update
 {
     public function _update(Request $request, $arg1, $arg2 = null)
     {
+        $callback = null;
+        if($arg2 instanceof \Closure)
+        {
+            $callback = $arg2;
+            $arg2 = null;
+        }
         list($parent, $model) = $this->findArgs($request, $arg1, $arg2);
-        $fields = array_keys($this->rules($request, 'update', $parent, $model));
-        $except = method_exists($this, 'except') ? $this->except($request, 'update', $parent, $model) : [];
+        $args = [$model];
+        if($parent)
+        {
+            array_unshift($args, $parent);
+        }
+        $fields = array_keys($this->rules($request, 'update', ...$args));
+        $except = method_exists($this, 'except') ? $this->except($request, 'update', ...$args) : [];
         foreach ($except as $key => $value) {
             $index = array_search($value, $fields);
             if($index !== -1)
@@ -27,7 +38,16 @@ trait Update
                 $original[$value] = $model->$value;
             }
         }
-        $model->update($changed);
+        if($callback)
+        {
+            array_push($args, $changed);
+            array_unshift($args, $request);
+            call_user_func_array($callback, $args);
+        }
+        else
+        {
+            $model->update($changed);
+        }
         $result = new $this->resourceClass($model);
         $result->additional([
             'changed' => $original,
