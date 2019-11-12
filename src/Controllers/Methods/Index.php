@@ -100,9 +100,16 @@ trait Index
                 $current[$order] = $sort;
             }
         }
-        $paginate = $model->paginate();
-        if ($order_string != $default[0] || $sort_string != $default[1]) {
-            $paginate->appends($request->all('order', 'sort'));
+        if(isset($this->disablePagination))
+        {
+            $paginate = $model->get();
+        }
+        else
+        {
+            $paginate = $model->paginate();
+            if ($order_string != $default[0] || $sort_string != $default[1]) {
+                $paginate->appends($request->all('order', 'sort'));
+            }
         }
         return [$paginate, $order_list, $current, $default];
     }
