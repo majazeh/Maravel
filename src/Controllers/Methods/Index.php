@@ -68,6 +68,16 @@ trait Index
     {
         $order_list = $order_list ?: (isset($this->order_list) ? $this->order_list : ['id']);
         $default = $default ?: (isset($this->order_default) ? $this->order_default : ['id', 'desc']);
+
+        $default_column = explode(',', $default[0]);
+        foreach ($default_column as $key => $value) {
+            $value = trim($value);
+            if(!in_array($value, $order_list))
+            {
+                $order_list[] = $value;
+            }
+        }
+
         $keys = array_keys($order_list);
         $order_string = $request->order && in_array($request->order, $keys) ? strtolower($request->order) : $default[0];
         $orders = explode(',', $order_string);

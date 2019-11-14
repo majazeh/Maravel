@@ -120,12 +120,11 @@ class UserController extends APIController
     {
 
         $filters = [
-            [
-                'status' => config('guardio.status', ['awaiting', 'active', 'disable']),
-                'type' => config('guardio.type', ['admin', 'user']),
-                'gender' => ['male', 'female'],
-                'username' => ''
-            ]
+            'status' => config('guardio.status', ['awaiting', 'active', 'disable']),
+            'type' => config('guardio.type', ['admin', 'user']),
+            'gender' => ['male', 'female'],
+            'username' => '',
+            'q' => null
         ];
         $current = [];
         if ($request->username && $request->has('unique')) {
@@ -160,20 +159,35 @@ class UserController extends APIController
                 $model->limit(0);
             }
         }
-        if(in_array($request->status, $filters[0]['status']))
+        if(in_array($request->status, $filters['status']))
         {
             $model->where('status', $request->status);
             $current['status'] = $request->status;
         }
-        if (in_array($request->type, $filters[0]['type'])) {
+        if (in_array($request->type, $filters['type'])) {
             $model->where('type', $request->type);
             $current['type'] = $request->type;
         }
-        if (in_array($request->gender, $filters[0]['gender'])) {
+        if (in_array($request->gender, $filters['gender'])) {
             $model->where('gender', $request->gender);
             $current['gender'] = $request->gender;
         }
+        if ($request->q) {
+            $this->searchQ($request, $model, $parent);
+            $current['q'] = $request->q;
+        }
         return [$filters, $current];
+    }
+
+    public function searchQ($request, $model, $parent)
+    {
+        $q = $request->q;
+        $model->where(function($query) use($q){
+            $query->where('users.name', 'LIKE', "%$q%")
+            ->orWhere('users.username', 'LIKE', "%$q%")
+            ->orWhere('users.mobile', 'LIKE', "%$q%")
+            ->orWhere('users.nikname', 'LIKE', "%$q%");
+        });
     }
 
     public function login(Request $request)
