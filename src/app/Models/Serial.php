@@ -40,4 +40,9 @@ trait Serial
         $value = self::id($value);
         return parent::resolveRouteBinding($value);
     }
+
+    public static function findBySerial($serial)
+    {
+        return static::serialCheck($serial) ? static::find(static::id($serial)) : null;
+    }
 }
