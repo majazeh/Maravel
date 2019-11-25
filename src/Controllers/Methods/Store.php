@@ -8,6 +8,14 @@ trait Store
 {
     public function _store(Request $request, $parent = null, ...$args)
     {
+        $callback = null;
+        if (last($args) instanceof \Closure) {
+            $callback = last($args);
+            array_pop($args);
+        } elseif ($parent instanceof \Closure) {
+            $callback = $parent;
+            $parent = null;
+        }
         if($parent)
         {
             $parent = $this->findOrFail($parent, $this->parentModel);
@@ -33,7 +41,13 @@ trait Store
                 }
             }
         }
-        $model = $this->model::create($data);
+        if ($callback) {
+            array_unshift($args, $parent);
+            array_unshift($args, $request);
+            $model = call_user_func_array($callback, $args);
+        } else {
+            $model = $this->model::create($data);
+        }
         $model = $this->model::findOrFail($model->id);
         $result = new $this->resourceClass($model);
         if ($this->clientController && $request->webAccess()) {

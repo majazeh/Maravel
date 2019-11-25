@@ -51,7 +51,7 @@ class GuardPositionController extends APIController
         }
     }
 
-    public function validationData(Request $request, $action, &$data, Guard $guard)
+    public function requestData(Request $request, $action, &$data, Guard $guard)
     {
         if(in_array($action, ['store']) && isset($data['gate']))
         {

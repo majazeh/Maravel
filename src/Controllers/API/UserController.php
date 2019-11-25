@@ -101,7 +101,7 @@ class UserController extends APIController
         }
     }
 
-    public function validationData(Request $request, $action, &$data)
+    public function requestData(Request $request, $action, &$data)
     {
         if (in_array($action, ['store', 'update']) && isset($data['groups'])) {
             $groups = \App\Guardio::allGroups();
