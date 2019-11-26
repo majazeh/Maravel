@@ -20,13 +20,19 @@ trait Update
         {
             array_unshift($args, $parent);
         }
-        $fields = array_keys($this->rules($request, 'update', ...$args));
-        $except = method_exists($this, 'except') ? $this->except($request, 'update', ...$args) : [];
-        foreach ($except as $key => $value) {
-            $index = array_search($value, $fields);
-            if($index !== -1)
-            {
-                unset($fields[$index]);
+        if (method_exists($this, 'fields')) {
+            $fields = $this->fields($request, 'update', $parent, ...$args);
+        }
+        else
+        {
+            $fields = array_keys($this->rules($request, 'update', ...$args));
+            $except = method_exists($this, 'except') ? $this->except($request, 'update', ...$args) : [];
+            foreach ($except as $key => $value) {
+                $index = array_search($value, $fields);
+                if($index !== -1)
+                {
+                    unset($fields[$index]);
+                }
             }
         }
         $changed = [];
@@ -42,7 +48,11 @@ trait Update
         {
             array_push($args, $changed);
             array_unshift($args, $request);
-            call_user_func_array($callback, $args);
+            $func_changed = call_user_func_array($callback, $args);
+            if(is_array($func_changed))
+            {
+                $changed = $func_changed;
+            }
         }
         else
         {
