@@ -1,6 +1,6 @@
 <!--begin::Fonts -->
 <!--end::Fonts -->
-
+@section('head-styles')
 <link rel="stylesheet" href="{{ asset('assets/css/pages/login/login-1.css') }}">
 
 <!--begin::Global Theme Styles (used by all pages) -->
@@ -47,3 +47,4 @@
 
 <meta name="msapplication-TileColor" content="#ffde00">
 <meta name="theme-color" content="#ffde00">
+@show

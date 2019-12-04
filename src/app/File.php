@@ -29,13 +29,14 @@ class File extends Eloquent
         return $attachment;
     }
 
-    public static function move(Post $post, UploadedFile $temp, $mode = 'original')
+    public static function move(Post $post, UploadedFile $temp, $mode = 'original', $data = [])
     {
         $type = explode('/', $temp->getMimeType());
         $type = $type[0];
 
         $file_name = $post->serial . '_original.' . $temp->extension();
-        $file = static::create([
+        $file = static::create(
+            array_merge_recursive([
             'post_id' => $post->id,
             'mode' => 'original',
             'slug' => '',
@@ -44,7 +45,7 @@ class File extends Eloquent
             'mime' => $temp->getMimeType(),
             'exec' => $temp->extension(),
             'type' => $type,
-        ]);
+            ], $data));
         $folder_int = (string) (ceil($file->id / 1000) * 1000);
         $folder = 'storage/Files_' . $folder_int;
         $file_slug = "$folder/$file_name";

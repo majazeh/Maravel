@@ -1,1 +1,2 @@
 require('./root');
+require('./map');

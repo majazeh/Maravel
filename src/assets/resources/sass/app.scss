@@ -1,0 +1,337 @@
+@font-face {
+	font-family: dana;
+	font-style: normal;
+	font-weight: 10;
+	src: url('../fonts/Dana/eot/dana-thin.eot');
+	src: url('../fonts/Dana/eot/dana-thin.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-thin.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-thin.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: normal;
+	font-weight: 200;
+	src: url('../fonts/Dana/eot/dana-extralight.eot');
+	src: url('../fonts/Dana/eot/dana-extralight.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-extralight.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-extralight.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: normal;
+	font-weight: 300;
+	src: url('../fonts/Dana/eot/dana-light.eot');
+	src: url('../fonts/Dana/eot/dana-light.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-light.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-light.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: normal;
+	font-weight: 500;
+	src: url('../fonts/Dana/eot/dana-medium.eot');
+	src: url('../fonts/Dana/eot/dana-medium.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-medium.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-medium.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: normal;
+	font-weight: 600;
+	src: url('../fonts/Dana/eot/dana-demibold.eot');
+	src: url('../fonts/Dana/eot/dana-demibold.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-demibold.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-demibold.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: normal;
+	font-weight: 750;
+	src: url('../fonts/Dana/eot/dana-ultrabold.eot');
+	src: url('../fonts/Dana/eot/dana-ultrabold.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-ultrabold.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-ultrabold.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: normal;
+	font-weight: 800;
+	src: url('../fonts/Dana/eot/dana-extrabold.eot');
+	src: url('../fonts/Dana/eot/dana-extrabold.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-extrabold.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-extrabold.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: normal;
+	font-weight: 900;
+	src: url('../fonts/Dana/eot/dana-black.eot');
+	src: url('../fonts/Dana/eot/dana-black.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-black.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-black.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: normal;
+	font-weight: bold;
+	src: url('../fonts/Dana/eot/dana-bold.eot');
+	src: url('../fonts/Dana/eot/dana-bold.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-bold.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-bold.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: normal;
+	font-weight: normal;
+	src: url('../fonts/Dana/eot/dana-regular.eot');
+	src: url('../fonts/Dana/eot/dana-regular.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-regular.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-regular.woff') format('woff');
+}
+
+/**
+Iranic fonts
+**/
+@font-face {
+	font-family: dana;
+	font-style: italic;
+	font-weight: 10;
+	src: url('../fonts/Dana/eot/dana-thinitalic.eot');
+	src: url('../fonts/Dana/eot/dana-thinitalic.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-thinitalic.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-thinitalic.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: italic;
+	font-weight: 200;
+	src: url('../fonts/Dana/eot/dana-extralightitalic.eot');
+	src: url('../fonts/Dana/eot/dana-extralightitalic.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-extralightitalic.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-extralightitalic.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: italic;
+	font-weight: 300;
+	src: url('../fonts/Dana/eot/dana-lightitalic.eot');
+	src: url('../fonts/Dana/eot/dana-lightitalic.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-lightitalic.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-lightitalic.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: italic;
+	font-weight: 500;
+	src: url('../fonts/Dana/eot/dana-mediumitalic.eot');
+	src: url('../fonts/Dana/eot/dana-mediumitalic.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-mediumitalic.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-mediumitalic.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: italic;
+	font-weight: 600;
+	src: url('../fonts/Dana/eot/dana-demibolditalic.eot');
+	src: url('../fonts/Dana/eot/dana-demibolditalic.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-demibolditalic.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-demibolditalic.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: italic;
+	font-weight: 750;
+	src: url('../fonts/Dana/eot/dana-ultrabolditalic.eot');
+	src: url('../fonts/Dana/eot/dana-ultrabolditalic.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-ultrabolditalic.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-ultrabolditalic.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: italic;
+	font-weight: 800;
+	src: url('../fonts/Dana/eot/dana-extrabolditalic.eot');
+	src: url('../fonts/Dana/eot/dana-extrabolditalic.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-extrabolditalic.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-extrabolditalic.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: italic;
+	font-weight: 900;
+	src: url('../fonts/Dana/eot/dana-blackitalic.eot');
+	src: url('../fonts/Dana/eot/dana-blackitalic.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-blackitalic.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-blackitalic.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: italic;
+	font-weight: bold;
+	src: url('../fonts/Dana/eot/dana-bolditalic.eot');
+	src: url('../fonts/Dana/eot/dana-bolditalic.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-bolditalic.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-bolditalic.woff') format('woff');
+}
+
+@font-face {
+	font-family: dana;
+	font-style: italic;
+	font-weight: normal;
+	src: url('../fonts/Dana/eot/dana-regularitalic.eot');
+	src: url('../fonts/Dana/eot/dana-regularitalic.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/Dana/woff2/dana-regularitalic.woff2') format('woff2'),
+		 url('../fonts/Dana/woff/dana-regularitalic.woff') format('woff');
+}
+
+body {
+    color: #222;
+}
+
+.font-dana {
+    font-family: dana;
+    font-weight: normal;
+}
+
+.fs-10 {
+    font-size: .625rem;
+}
+
+.fs-12 {
+    font-size: .75rem;
+}
+
+.fs-14 {
+    font-size: .875rem;
+}
+
+.fs-16 {
+    font-size: 1rem;
+}
+
+.fs-20 {
+    font-size: 1.25rem;
+}
+
+@media (min-width: 576px) {
+    .fs-sm-10 {
+        font-size: .625rem;
+    }
+
+    .fs-sm-12 {
+        font-size: .75rem;
+    }
+
+    .fs-sm-14 {
+        font-size: .875rem;
+    }
+
+    .fs-sm-16 {
+        font-size: 1rem;
+    }
+
+    .fs-sm-20 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .fs-md-10 {
+        font-size: .625rem;
+    }
+
+    .fs-md-12 {
+        font-size: .75rem;
+    }
+
+    .fs-md-14 {
+        font-size: .875rem;
+    }
+
+    .fs-md-16 {
+        font-size: 1rem;
+    }
+
+    .fs-md-20 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .fs-lg-10 {
+        font-size: .625rem;
+    }
+
+    .fs-lg-12 {
+        font-size: .75rem;
+    }
+
+    .fs-lg-14 {
+        font-size: .875rem;
+    }
+
+    .fs-lg-16 {
+        font-size: 1rem;
+    }
+
+    .fs-lg-20 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .fs-xl-10 {
+        font-size: .625rem;
+    }
+
+    .fs-xl-12 {
+        font-size: .75rem;
+    }
+
+    .fs-xl-14 {
+        font-size: .875rem;
+    }
+
+    .fs-xl-16 {
+        font-size: 1rem;
+    }
+
+    .fs-xl-20 {
+        font-size: 1.25rem;
+    }
+}
+
+.kt-login.kt-login--v1 .kt-login__wrapper .kt-login__body .kt-login__form .kt-login__options > a:not(:last-child) {
+    margin: 0 0 0 1.5rem;
+}
+
+.table thead th,
+.table thead td {
+    font-weight: bold;
+}
+
+.direction-ltr {
+    direction: ltr;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+}

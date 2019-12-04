@@ -22,11 +22,17 @@ class Post extends Eloquent
 
     ];
     protected $casts = [
-        'meta' => 'array'
+        'meta' => 'array',
+        'published_at' => 'datetime',
     ];
 
     public function attachments()
     {
         return $this->hasMany(File::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class);
     }
 }

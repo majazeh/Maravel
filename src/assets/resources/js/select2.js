@@ -1,14 +1,24 @@
 module.exports = function (event, base, context) {
     $(".select2-select", this).each(function () {
-        var title = $(this).attr('data-title') || 'title';
-        var _self = this;
         var options = {
+            width : '100%',
             amdLanguageBase: '/vendor/js/i18n/',
             language: 'ar',
             minimumInputLength: 0,
-            allowClear: $(this).is('[data-allowClear]'),
+            allowClear: $(this).is('[data-allowClear]') || $(this).is('.has-clear'),
             dir: "rtl",
-            ajax: {
+            tags: $(this).is('.tag-type')
+        };
+        if (options.allowClear){
+            options.placeholder = {};
+            options.placeholder.text = $('option', this).first().text();
+            options.placeholder.id = $('option', this).first().attr('value');
+        }
+        if($(this).is('[data-url]'))
+        {
+            var title = $(this).attr('data-title') || 'title';
+            var _self = this;
+            options.ajax = {
                 delay: 250,
                 url: $(this).attr('data-url'),
                 dataType: 'json',
@@ -40,8 +50,8 @@ module.exports = function (event, base, context) {
                     return result;
                 },
                 cache: false
-            }
-        };
+            };
+        }
         $(this).select2(options);
     });
 }
