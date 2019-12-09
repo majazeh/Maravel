@@ -29,40 +29,58 @@ class File extends Eloquent
         return $attachment;
     }
 
-    public static function move(Post $post, UploadedFile $temp, $mode = 'original', $data = [])
+    public static function move(Post $post, UploadedFile $temp, $disk = null, $data = [])
     {
+        return static::specialMove([
+            'post' => $post,
+            'temp' => $temp,
+            'disk' => $disk,
+            'data' => $data,
+
+        ]);
+    }
+
+    public static function specialMove($options = []){
+        $temp = $options['temp'];
+        $post = $options['post'];
+        $data = isset($options['data']) ? $options['data'] : [];
+        $disk = isset($options['disk']) ? $options['disk'] : null;
+        $disk = config('filesystems.disks.' . $disk, config('filesystems.disks.public'));
+
         $type = explode('/', $temp->getMimeType());
         $type = $type[0];
 
         $file_name = $post->serial . '_original.' . $temp->extension();
-        $file = static::create(
-            array_merge_recursive([
-            'post_id' => $post->id,
-            'mode' => 'original',
-            'slug' => '',
-            'url' => '',
-            'dir' => '',
-            'mime' => $temp->getMimeType(),
-            'exec' => $temp->extension(),
-            'type' => $type,
-            ], $data));
-        $folder_int = (string) (ceil($file->id / 1000) * 1000);
-        $folder = 'storage/Files_' . $folder_int;
-        $file_slug = "$folder/$file_name";
-        if(!file_exists(public_path($folder)))
-        {
+        $folders = glob(join(DIRECTORY_SEPARATOR, [$disk['root'], 'Files_*']));
+        $last_folder = last($folders);
+        $files_count = count(glob(join(DIRECTORY_SEPARATOR, [$last_folder, '*'])));
+        $folder_int = (string) (ceil($files_count / 1000) * 1000);
+
+        $folder_name = 'Files_' . $folder_int;
+        $folder = join(DIRECTORY_SEPARATOR, [$disk['root'], $folder_name]);
+        $file_slug = trim(str_replace(env('APP_URL'), '', join('/', [$disk['url'], $folder_name, $file_name])), '/');
+        if (!file_exists(public_path($folder))) {
             mkdir(public_path($folder), 0777, true);
         }
-
-        $file->slug = $file_slug;
-        $file->url = asset($file_slug);
-        $file->dir = public_path($file_slug);
-        $file->save();
+        $file = static::create(
+            array_merge_recursive([
+                'post_id' => $post->id,
+                'mode' => 'original',
+                'slug' => $file_slug,
+                'url' => join('/', [$disk['url'], $folder_name, $file_name]),
+                'dir' => join(DIRECTORY_SEPARATOR, [$folder, $file_name]),
+                'mime' => $temp->getMimeType(),
+                'exec' => $temp->extension(),
+                'type' => $type,
+            ], $data)
+        );
 
         $temp->move($folder, $file_name);
 
         return $file;
     }
+
+
     public static function imageSize($post, $width, $height = null, $mode = null){
         if(!$mode)
         {

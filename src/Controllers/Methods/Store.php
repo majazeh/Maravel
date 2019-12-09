@@ -21,31 +21,31 @@ trait Store
             $parent = $this->findOrFail($parent, $this->parentModel);
         }
 
-        if(method_exists($this, 'fields'))
-        {
-            $data = $this->fields($request, 'store', $parent, ...$args);
-        }
-        else
-        {
-            $fields = array_keys($this->rules($request, 'store', $parent, ...$args));
-            $except = method_exists($this, 'except') ? $this->except($request, 'store', $parent, ...$args) : [];
-            foreach ($except as $key => $value) {
-                $index = array_search($value, $fields);
-                if ($index !== -1) {
-                    unset($fields[$index]);
-                }
-            }
-            foreach ($fields as $value) {
-                if ($request->has($value)) {
-                    $data[$value] = $request->$value;
-                }
-            }
-        }
         if ($callback) {
             array_unshift($args, $parent);
             array_unshift($args, $request);
             $model = call_user_func_array($callback, $args);
         } else {
+            if(method_exists($this, 'fields'))
+            {
+                $data = $this->fields($request, 'store', $parent, ...$args);
+            }
+            else
+            {
+                $fields = array_keys($this->rules($request, 'store', $parent, ...$args));
+                $except = method_exists($this, 'except') ? $this->except($request, 'store', $parent, ...$args) : [];
+                foreach ($except as $key => $value) {
+                    $index = array_search($value, $fields);
+                    if ($index !== -1) {
+                        unset($fields[$index]);
+                    }
+                }
+                foreach ($fields as $value) {
+                    if ($request->has($value)) {
+                        $data[$value] = $request->$value;
+                    }
+                }
+            }
             $model = $this->model::create($data);
         }
         $model = $this->model::findOrFail($model->id);
