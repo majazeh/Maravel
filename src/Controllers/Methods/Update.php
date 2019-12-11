@@ -22,6 +22,20 @@ trait Update
         }
         if (method_exists($this, 'fields')) {
             $fields = $this->fields($request, 'update', $parent, ...$args);
+            $except = method_exists($this, 'except') ? $this->except($request, 'update', ...$args) : [];
+            foreach ($except as $value) {
+                if (isset($fields[$value])) {
+                    unset($fields[$value]);
+                }
+            }
+            $changed = [];
+            $original = [];
+            foreach ($fields as $key => $value) {
+                if ($request->has($key) && $model->$key != $fields[$key]) {
+                    $changed[$key] = $value;
+                    $original[$key] = $model->$key;
+                }
+            }
         }
         else
         {
@@ -34,14 +48,14 @@ trait Update
                     unset($fields[$index]);
                 }
             }
-        }
-        $changed = [];
-        $original = [];
-        foreach ($fields as $value) {
-            if($request->has($value) && $model->$value != $request->$value)
-            {
-                $changed[$value] = $request->$value;
-                $original[$value] = $model->$value;
+            $changed = [];
+            $original = [];
+            foreach ($fields as $value) {
+                if($request->has($value) && $model->$value != $request->$value)
+                {
+                    $changed[$value] = $request->$value;
+                    $original[$value] = $model->$value;
+                }
             }
         }
         if($callback)
