@@ -18,8 +18,7 @@ class Controller extends BaseController
     public function __construct(Request $request)
     {
         if(!$request->route()) return;
-        $namespace = explode('\\',get_class($this));
-        $class_name = substr(end($namespace), 0, -10);
+        $class_name = $this->class_name(null, null, 1);
         if(!isset($this->model))
         {
             $this->model = '\\App\\'.$class_name;
@@ -62,7 +61,7 @@ class Controller extends BaseController
      */
     public function class_name($class_name = null, $plural = false, $lower = 0)
     {
-        $namespace = explode('\\', $class_name ?: get_class($this));
+        $namespace = explode('\\', $class_name ?: (isset($this->alias) ? $this->alias : get_class($this)));
         $class_name = substr(end($namespace), -10, 10) == 'Controller' ? substr(end($namespace), 0, -10) : end($namespace);
         $class_name = $plural ? Str::plural($class_name) : $class_name;
         switch ($lower) {

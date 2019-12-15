@@ -9,7 +9,8 @@ trait WebMethods
 
     public function _index(Request $request, $arg1 = null, $arg2 = null)
     {
-        self::$result->{$this->class_name(null, true, 2)} = $this->endpoint($request)->index($request, $arg1, $arg2);
+        $response = self::$result->{$this->class_name(null, true, 2)} = $this->endpoint($request)->index($request, $arg1, $arg2);
+        self::$result->{'a'.$this->class_name(null, true, 1)} = $this->RtoA($request, $response);
         if(isset(self::$result->{$this->class_name(null, true, 2)}->additional['meta']['parent']))
         {
             $parent_name = self::$result->{$this->class_name(null, true, 2)}->additional['meta']['parent'];
@@ -21,6 +22,7 @@ trait WebMethods
     public function _show(Request $request, $arg1 = null, $arg2 = null)
     {
         $response = $this->endpoint($request)->show($request, $arg1, $arg2);
+        self::$result->{'a'.$this->class_name(null, false, 1)} = $this->RtoA($request, $response);
         self::$result->{$this->class_name(null, false, 2)} = $response;
         self::$result->id = $response->serial ?: $response->id;
         self::$result->resultName = $this->class_name(null, false, 2);
@@ -39,6 +41,7 @@ trait WebMethods
     public function _edit(Request $request, $arg1, $arg2 = null)
     {
         $response = $this->endpoint($request)->show($request, $arg1, $arg2);
+        self::$result->{'a'.$this->class_name(null, false, 1)} = $this->RtoA($request, $response);
         $model = self::$result->{$this->class_name(null, false, 2)} = $response;
         self::$result->id = $response->serial ?: $response->id;
         self::$result->resultName = $this->class_name(null, false, 2);
@@ -112,5 +115,17 @@ trait WebMethods
                 );
             }
         }
+    }
+
+    public function RtoA($request, $result)
+    {
+        $result = $result->toArray($request);
+        foreach ($result as $key => $value) {
+            if(is_object($value) && method_exists($value, 'toArray'))
+            {
+                $result[$key] = $this->RtoA($request, $value);
+            }
+        }
+        return $result;
     }
 }
