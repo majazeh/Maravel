@@ -74,8 +74,12 @@ class File extends Eloquent
                 'type' => $type,
             ], $data)
         );
-
-        $temp->move($folder, $file_name);
+        try{
+            $temp->move($folder, $file_name);
+        }catch (\Exception $e)
+        {
+            copy($temp->getPathName(), join(DIRECTORY_SEPARATOR, [$folder, $file_name]));
+        }
 
         return $file;
     }

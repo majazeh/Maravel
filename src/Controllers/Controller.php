@@ -17,7 +17,7 @@ class Controller extends BaseController
     public $statusMessage = ':)';
     public function __construct(Request $request)
     {
-        if(!$request->route()) return;
+        // if(!$request->route()) return;
         $class_name = $this->class_name(null, null, 1);
         if(!isset($this->model))
         {

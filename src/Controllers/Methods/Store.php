@@ -50,6 +50,13 @@ trait Store
         }
         $model = $this->model::findOrFail($model->id);
         $result = new $this->resourceClass($model);
+        if ($parent) {
+            $additional[$this->class_name($this->parentModel, null, 2)] = new $this->parentResourceCollectionClass($parent::find($parent->id));
+            $additional['meta'] = [
+                'parent' => $this->class_name($this->parentModel, null, 2)
+            ];
+            $result->additional($additional);
+        }
         if ($this->clientController && $request->webAccess()) {
             $client = new $this->clientController(... func_get_args());
             $client->webStore($request, $result);
