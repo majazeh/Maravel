@@ -123,7 +123,8 @@ class UserController extends APIController
             'status' => config('guardio.status', ['awaiting', 'active', 'disable']),
             'type' => config('guardio.type', ['admin', 'user']),
             'gender' => ['male', 'female'],
-            'username' => '',
+            'username' => null,
+            'id' => null,
             'q' => null
         ];
         $current = [];
@@ -172,9 +173,18 @@ class UserController extends APIController
             $model->where('gender', $request->gender);
             $current['gender'] = $request->gender;
         }
+
         if ($request->q) {
-            $this->searchQ($request, $model, $parent);
-            $current['q'] = $request->q;
+            $isId = User::rangeId($request->q);
+            if ($isId[0] !== false) {
+                $model->whereBetween('users.id', $isId)->get();
+                $current = [
+                    'id' => $isId
+                ];
+            } else {
+                $this->searchQ($request, $model, $parent);
+                $current['q'] = $request->q;
+            }
         }
         return [$filters, $current];
     }
@@ -185,8 +195,7 @@ class UserController extends APIController
         $model->where(function($query) use($q){
             $query->where('users.name', 'LIKE', "%$q%")
             ->orWhere('users.username', 'LIKE', "%$q%")
-            ->orWhere('users.mobile', 'LIKE', "%$q%")
-            ->orWhere('users.nikname', 'LIKE', "%$q%");
+            ->orWhere('users.mobile', 'LIKE', "%$q%");
         });
     }
 

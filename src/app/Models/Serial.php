@@ -17,11 +17,31 @@ trait Serial
 
 	public static function id($serial)
 	{
-		if (substr($serial, 0, strlen(self::$s_prefix)) != self::$s_prefix) {
+        $serial = strtoupper($serial);
+        if (substr($serial, 0, strlen(self::$s_prefix)) != self::$s_prefix) {
 			return false;
 		}
 		return Engine::decode(substr($serial, strlen(self::$s_prefix))) - self::$s_start;
-	}
+    }
+    public static function rangeId($serial)
+    {
+        $ziro = substr(Engine::$ALPHABET, 0, 1);
+        $biggest = substr(Engine::$ALPHABET, -1, 1);
+        $length = strlen(static::serial(1));
+        try {
+            $first = $length == strlen($serial) ? $serial : $serial . str_repeat($ziro, $length - strlen($serial));
+            $last = $length == strlen($serial) ? $serial : substr($first, 0, $length-1) . $biggest;
+            return [
+                static::id($first),
+                static::id($last)
+            ];
+        } catch (\Throwable $th) {
+            return [
+                false,
+                false
+            ];
+        }
+    }
 
 	public static function serialCheck($serial)
 	{

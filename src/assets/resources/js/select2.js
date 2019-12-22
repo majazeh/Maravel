@@ -1,7 +1,7 @@
 module.exports = function (event, base, context) {
     $(".select2-select", this).each(function () {
         var options = {
-            width : '100%',
+            width: '100%',
             amdLanguageBase: '/vendor/js/i18n/',
             language: 'ar',
             minimumInputLength: 0,
@@ -9,13 +9,12 @@ module.exports = function (event, base, context) {
             dir: "rtl",
             tags: $(this).is('.tag-type')
         };
-        if (options.allowClear){
+        if (options.allowClear) {
             options.placeholder = {};
             options.placeholder.text = $('option', this).first().text();
             options.placeholder.id = $('option', this).first().attr('value');
         }
-        if($(this).is('[data-url]'))
-        {
+        if ($(this).is('[data-url]')) {
             var title = $(this).attr('data-title') || 'title';
             var _self = this;
             options.ajax = {
@@ -41,9 +40,20 @@ module.exports = function (event, base, context) {
                         });
                     }
                     for (var i = 0; i < data.length; i++) {
+                        var sub_title_property = title_property;
+                        if (sub_title_property.indexOf(' ') >= 0) {
+                            var sub_title_properties = sub_title_property.split(' ');
+                            for (var is = 0; is < sub_title_properties.length; is++) {
+                                if (data[i][sub_title_properties[is]]) {
+                                    sub_title_property = sub_title_properties[is];
+                                    break;
+                                }
+
+                            }
+                        }
                         result.results.push({
                             id: data[i][id_property],
-                            text: data[i][title_property],
+                            text: data[i][sub_title_property],
                             all: data[i]
                         });
                     }
