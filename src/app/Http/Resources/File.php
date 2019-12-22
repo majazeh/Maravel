@@ -16,8 +16,8 @@ class File extends JsonResource
             'type' => $this->type,
             'mime' => $this->mime,
             'exec' => $this->exec,
-            'created_at' => ($this->created_at instanceof \Carbon\Carbon) ? $this->created_at->unix() : $this->created_at,
-            'updated_at' => ($this->updated_at instanceof \Carbon\Carbon) ? $this->updated_at->unix() : $this->updated_at,
+            'created_at' => ($this->created_at instanceof \Carbon\Carbon) ? $this->created_at->timestamp : $this->created_at,
+            'updated_at' => ($this->updated_at instanceof \Carbon\Carbon) ? $this->updated_at->timestamp : $this->updated_at,
         ];
     }
 }
