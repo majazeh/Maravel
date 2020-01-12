@@ -30,12 +30,10 @@ class AuthServiceProvider extends ServiceProvider
         Passport::personalAccessTokensExpireIn(now()->addMonths(6));
 
         Gate::define('guardio', function ($user, $request, $guardio, ...$args) {
-            if (!Guardio::has($guardio)) {
-                return true;
-            }
             array_unshift($args, $request);
             return Gate::allows($guardio, $args);
         });
         Gate::resource('users', 'App\Policies\UserPolicy');
+        Gate::define('dashboard.view', 'App\Policies\DashboardPolicy@view');
     }
 }

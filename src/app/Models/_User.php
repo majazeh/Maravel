@@ -4,7 +4,7 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use App\Guardio;
 class _User extends Authenticatable
 {
     use Model;
@@ -44,5 +44,9 @@ class _User extends Authenticatable
 
     public function getLocationTextAttribute(){
         return $this->original['location'];
+    }
+
+    public function isAdmin(){
+        return Guardio::has("#admin");
     }
 }
