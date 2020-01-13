@@ -64,32 +64,35 @@ class Maravel extends FormRequest
     public function authorize()
     {
         if(!$this->route() || !$this->route()->controller) return true;
-        $action = $this->route()->getActionMethod();
-        switch ($action) {
+        $action = $this->route()->getAction('as');
+        $aAaction = explode('.', $action);
+        $method = last($aAaction);
+        array_pop($aAaction);
+        switch ($method) {
             case 'index':
-            $action = 'viewAny';
+            $method = 'viewAny';
             break;
             case 'show':
-            $action = 'view';
+            $method = 'view';
             break;
             case 'create':
             case 'store':
-            $action = 'create';
+            $method = 'create';
             break;
             case 'edit':
             case 'update':
-            $action = 'update';
+            $method = 'update';
             break;
             case 'destroy':
-            $action = 'delete';
+            $method = 'delete';
             break;
         }
-        $action = $this->route()->getController()->class_name(null, true, 2) . "." . $action;
-        $gateName = $this->getPrefix() ? $this->getPrefix() . '.' . $action : $action;
-        if(in_array($gateName, array_keys(Gate::abilities())))
+        $aAaction[] = $method;
+        $action = join('.', $aAaction);
+        if(in_array($action, array_keys(Gate::abilities())))
         {
             $args = array_values($this->route()->parameters());
-            array_unshift($args, $gateName);
+            array_unshift($args, $action);
             array_unshift($args, $this);
             return $this->route()->getController()->authorize('guardio', $args);
         }
