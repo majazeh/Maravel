@@ -29,16 +29,19 @@ class UserPolicy extends \App\Guardio
 
     public function update(User $user, Request $request, User $show)
     {
+        if(!$user->isAdmin()) return false;
         return true;
     }
 
     public function create(User $user, Request $request)
     {
+        if (!$user->isAdmin()) return false;
         return true;
     }
 
     public function delete(User $user, Request $request, User $show)
     {
+        if (!$user->isAdmin()) return false;
         return true;
     }
 }
