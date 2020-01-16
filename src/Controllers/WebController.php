@@ -67,7 +67,15 @@ class WebController extends Controller
         if (array_key_exists($as, $views)) {
             $view = self::$result->layouts->mode == 'html' ? $views[$as] : (view()->exists($views[$as] . '-'. self::$result->layouts->mode) ? $views[$as] . '-'. self::$result->layouts->mode : $views[$as]);
         }
-        return response(view()->make($view, (array) self::$result));
+        $response = response(view()->make($view, (array) self::$result));
+        if(self::$result->layouts->mode == 'xhr')
+        {
+            $content = $response->getContent();
+            $data = json_encode(self::$result->global);
+            $content = "$data\n$content";
+            $response->setContent($content);
+        }
+        return $response;
     }
 
     public function rules(Request $request, $action)
