@@ -8,6 +8,7 @@ use App\User;
 use App\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\AuthenticationException;
+use Maravel\Lib\MobileRV;
 
 class UserController extends APIController
 {
@@ -95,6 +96,15 @@ class UserController extends APIController
                 }
                 return $rules;
                 break;
+            case 'register':
+                if($this->username_method == 'mobile')
+                {
+                    return [
+                        'mobile' => 'require|mobile'
+                    ];
+                }
+                return [];
+            break;
             default:
                 return [];
                 break;
@@ -208,7 +218,18 @@ class UserController extends APIController
 		if(!\App\User::where($this->username_method, $request->input($this->username_method))->first() && config('auth.enter.auto_register'))
 		{
 			return $this->register($request);
-		}
+        }
+        if ($this->username_method == 'mobile') {
+            list($mobile, $country, $code) = MobileRV::parse($request->mobile);
+            if ($mobile) {
+                $request->merge(['mobile' => "+{$code}{$mobile}"]);
+            } else {
+                $request->merge(['mobile' => null]);
+            }
+            $request->validate([
+                'mobile' => 'required'
+            ]);
+        }
 		if(\Auth::attempt($this->attempt_rule($request))){
 			$user = $this->show($request, \Auth::user());
 			if($user->status != 'active')
@@ -238,12 +259,28 @@ class UserController extends APIController
 
 	public function register(Request $request)
 	{
-		$this->username_method($request);
-		$user = User::where($this->username_method, $request->input($this->username_method))->first();
-		if($user)
+        $this->username_method($request);
+		if($this->username_method == 'mobile')
 		{
-			return $this->response("user duplicated", null, 401);
+            list($mobile, $country, $code) = MobileRV::parse($request->mobile);
+            if($mobile)
+            {
+                $request->merge(['mobile' => "+{$code}{$mobile}"]);
+            }
+            else
+            {
+                $request->merge(['mobile' => null]);
+
+            }
+            $request->validate([
+                'mobile' => 'required'
+            ]);
 		}
+        $user = User::where($this->username_method, $request->input($this->username_method))->first();
+        if($user)
+        {
+            throw new AuthenticationException('user duplicated');
+        }
 		$register = new User;
 		$register->password = Hash::make($request->input('password'));
 		$register->{$this->username_method} = $request->input($this->username_method);
@@ -282,19 +319,19 @@ class UserController extends APIController
 
 	public function username_method(Request $request)
 	{
-		if($this->username_method) return $this->username_method;
+        if($this->username_method) return $this->username_method;
 		$username = $request->input('username');
 		$type = 'username';
 		if(ctype_digit($username)){
-			$type = 'mobile';
-			$request->request->remove('username');
-			$request->request->add([$type => $username]);
+            $type = 'mobile';
+			$request->offsetUnset('username');
+			$request->merge([$type => $username]);
 		}
 		elseif(strpos($username, '@'))
 		{
 			$type = 'email';
-			$request->request->remove('username');
-			$request->request->add([$type => $username]);
+			$request->offsetUnset('username');
+			$request->merge([$type => $username]);
 
 		}
 		$this->username_method = $type;

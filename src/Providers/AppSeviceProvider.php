@@ -89,13 +89,16 @@ class AppServiceProvider extends ServiceProvider
             return new \App\Validators\Maravel($translator, $data, $rules, $messages);
         });
 
-        \Config::set('breadcrumbs.view', 'layouts.breadcrumbs');
-        $breadcrumbs = [maravel_path('routes/breadcrumbs.php')];
-        if(file_exists(base_path('routes/breadcrumbs.php')))
+        if (config('app.routes.web', true))
         {
-            $breadcrumbs[] = base_path('routes/breadcrumbs.php');
+            \Config::set('breadcrumbs.view', 'layouts.breadcrumbs');
+            $breadcrumbs = [maravel_path('routes/breadcrumbs.php')];
+            if(file_exists(base_path('routes/breadcrumbs.php')))
+            {
+                $breadcrumbs[] = base_path('routes/breadcrumbs.php');
+            }
+            \Config::set('breadcrumbs.files', $breadcrumbs);
         }
-        \Config::set('breadcrumbs.files', $breadcrumbs);
 
     }
     public function register()

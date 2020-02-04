@@ -20,9 +20,9 @@ class RouteServiceProvider extends ServiceProvider
     }
     public function map(Router $router)
     {
-        $this->webRoutes($router);
-        $this->apiRoutes($router);
-        $this->authRoutes($router);
+        if(config('app.routes.web', true)) $this->webRoutes($router);
+        if (config('app.routes.api', true)) $this->apiRoutes($router);
+        if (config('app.routes.auth', true)) $this->authRoutes($router);
 
     }
 
