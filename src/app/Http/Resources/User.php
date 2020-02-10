@@ -9,7 +9,7 @@ class User extends JsonResource
     {
         $data = parent::toArray($request);
         $data['id'] = $this->serial;
-        $data['avatar'] = new Files($this->avatar);
+        $data['avatar'] = $this->avatar ? new Files($this->avatar) : null;
         unset($data['avatar_id']);
         $data['created_at'] = ($this->created_at instanceof \Carbon\Carbon) ? $this->created_at->timestamp : $this->created_at;
         $data['updated_at'] = ($this->updated_at instanceof \Carbon\Carbon) ? $this->updated_at->timestamp : $this->updated_at;

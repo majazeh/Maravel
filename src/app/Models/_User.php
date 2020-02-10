@@ -5,12 +5,14 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Guardio;
+
 class _User extends Authenticatable
 {
     use Model;
     use Notifiable;
     use HasApiTokens;
     use Serial;
+    use _UserScopes;
 
     protected $guarded = [
         'id', 'remember_token'
@@ -48,5 +50,47 @@ class _User extends Authenticatable
 
     public function isAdmin(){
         return Guardio::has("#admin");
+    }
+
+    public static function statusList()
+    {
+        return config('guardio.status', ['awaiting', 'active', 'block']);
+    }
+    public static function typeList()
+    {
+        return config('guardio.type', ['admin', 'user']);
+    }
+
+    public static function defaultType()
+    {
+        return config('guardio.default_user.type', 'user');
+    }
+
+    public static function defaultStatus()
+    {
+        return config('guardio.default_user.status', 'awaiting');
+    }
+
+    public function AuthVerify()
+    {
+        return  new UserAuthVerify($this);
+    }
+
+    public function createVerify()
+    {
+        $authVerify = $this->AuthVerify();
+        if(!$authVerify->whereTypeBridge('mobile', $this->mobile)){
+            return $authVerify->createMobileVerify();
+        }
+        return $authVerify;
+    }
+
+    public function resetPassword()
+    {
+        $authVerify = $this->AuthVerify();
+        if (!$authVerify->whereTypeBridge('reset_password', $this->mobile)) {
+            return $authVerify->mobileResetPassword();
+        }
+        return $authVerify;
     }
 }

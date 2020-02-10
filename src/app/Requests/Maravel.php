@@ -13,13 +13,13 @@ class Maravel extends FormRequest
     {
         $data = parent::validationData();
         if(!$this->route() || !$this->route()->controller) return $data;
-        $this->numberTypes($data);
-        $this->mobileRule($data);
-        $this->serialRule($data);
         if (method_exists($this->route()->getController(), 'requestData')) {
             $this->route()->getController()->requestData($this, $this->route()->getActionMethod(), $data, ...array_values($this->route()->parameters()));
         }
-        $this->merge($data);
+        $this->numberTypes($data);
+        $this->mobileRule($data);
+        $this->serialRule($data);
+        $this->replace($data);
         return $data;
 
     }
@@ -89,29 +89,46 @@ class Maravel extends FormRequest
         }
         $aAaction[] = $method;
         $action = join('.', $aAaction);
+        $auth = true;
         if(in_array($action, array_keys(Gate::abilities())))
         {
             $args = array_values($this->route()->parameters());
             array_unshift($args, $action);
             array_unshift($args, $this);
-            return $this->route()->getController()->authorize('guardio', $args);
+            $auth = $this->route()->getController()->authorize('guardio', $args);
         }
-        return true;
+        if ($auth && $this->route() && $this->route()->controller && method_exists($this->route()->getController(), 'gate')){
+            $auth = $this->route()->getController()->gate($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));
+        };
+        return $auth;
     }
 
     public function rules()
     {
-        if (!$this->route() || !$this->route()->controller) return [];
-        if (method_exists($this->route()->getController(), 'rules')) {
-            return $this->route()->getController()->rules($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));
+        $rules = $this->getRules();
+        if (!$this->route() || !$this->route()->controller) return $rules;
+        if (method_exists($this->route()->getController(), 'manipulateData')) {
+            $data = $this->all();
+            $this->route()->getController()->manipulateData($this, $this->route()->getActionMethod(), $data, ...array_values($this->route()->parameters()));
+            $this->replace($data);
         }
-        return [];
+        return $rules;
+    }
+
+    public function getRules()
+    {
+        $rules = [];
+        if (!$this->route() || !$this->route()->controller) return $rules;
+        if (method_exists($this->route()->getController(), 'rules')) {
+            $rules = $this->route()->getController()->rules($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));
+        }
+        return $rules;
     }
     public function parseRules()
     {
         if(!$this->parseRules)
         {
-            $rules = $this->rules();
+            $rules = $this->getRules() ?: [];
             $parse = [];
             foreach ($rules as $key => $value) {
                 $value = is_array($value) ? $value : explode('|', trim($value));

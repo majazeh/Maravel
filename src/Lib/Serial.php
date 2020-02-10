@@ -101,4 +101,15 @@ class Serial {
             return false;
         }
     }
+
+    public static function random($lenght = 16, $_alphabet = null)
+    {
+        $_alphabet = self::alphabet($_alphabet);
+        $string = '';
+        for ($i=0; $i < $lenght; $i++) {
+            $index = rand(0, strlen($_alphabet) - 1);
+            $string .= $_alphabet[$index];
+        }
+        return $string;
+    }
 }
