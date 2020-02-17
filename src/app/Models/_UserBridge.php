@@ -42,14 +42,14 @@ class _UserBridge extends Eloquent
             return;
         }
         $now = Carbon::now();
-        if($this->type == 'mobile' && !$this->user->mobile)
+        if($this->type == 'mobile' && $this->user->status == 'awaiting')
         {
             $this->user->mobile = $this->bridge;
             $this->user->status = 'active';
             $this->user->update();
         }
 
-        if ($this->type == 'email' && !$this->user->email) {
+        if ($this->type == 'email' && $this->user->status == 'awaiting') {
             $this->user->status = 'active';
             $this->user->email = $this->bridge;
             $this->user->email_verified_at = $now;

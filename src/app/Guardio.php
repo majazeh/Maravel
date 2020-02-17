@@ -17,13 +17,13 @@ class Guardio
         }
         return static::$users[$user->id];
     }
-    public static function has($access)
+    public static function has($access, ...$args)
     {
         if(!auth()->check())
         {
             return false;
         }
-        return static::user(auth()->user())->has($access);
+        return static::user(auth()->user())->has($access, ...$args);
     }
 
     public static function allGroups()

@@ -12,7 +12,9 @@ use Illuminate\Routing\Router;
 use Illuminate\Routing\ResourceRegistrar;
 use Illuminate\Routing\PendingResourceRegistration;
 use Illuminate\Foundation\AliasLoader;
-
+use Illuminate\Support\Facades\Cache;
+use Maravel\Middleware\Authenticate as MaravelAuthenticate;
+use Illuminate\Support\Facades\Config;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -71,7 +73,7 @@ class AppServiceProvider extends ServiceProvider
         $router = $this->app['router'];
         $router->pushMiddlewareToGroup('api', Response::class);
         $router->pushMiddlewareToGroup('web', Response::class);
-
+        $router->aliasMiddleware('auth', MaravelAuthenticate::class);
 
         View::addLocation(maravel_path('views'));
 
@@ -91,14 +93,19 @@ class AppServiceProvider extends ServiceProvider
 
         if (config('app.routes.web', true))
         {
-            \Config::set('breadcrumbs.view', 'layouts.breadcrumbs');
+            Config::set('breadcrumbs.view', 'layouts.breadcrumbs');
             $breadcrumbs = [maravel_path('routes/breadcrumbs.php')];
             if(file_exists(base_path('routes/breadcrumbs.php')))
             {
                 $breadcrumbs[] = base_path('routes/breadcrumbs.php');
             }
-            \Config::set('breadcrumbs.files', $breadcrumbs);
+            Config::set('breadcrumbs.files', $breadcrumbs);
         }
+
+        Cache::macro('getJson', function(){
+            $get = Cache::get(...func_get_args());
+            return $get ? json_decode($get) : $get;
+        });
 
     }
     public function register()

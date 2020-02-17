@@ -15,7 +15,7 @@ class _User extends Authenticatable
     use _UserScopes;
 
     protected $guarded = [
-        'id', 'remember_token'
+        'remember_token'
     ];
 
 
@@ -29,10 +29,6 @@ class _User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    public function sendPasswordResetNotification($token)
-    {
-        dispatch(new \Majazeh\Dashboard\Jobs\SendEmail('emails.recovery', ['email' => $this->email, 'token' => $token, 'title' => _t('change.password.verify.code')]));
-    }
 
     public function getGroupsAttribute()
     {
@@ -52,13 +48,18 @@ class _User extends Authenticatable
         return Guardio::has("#admin");
     }
 
+    public function idIs($id)
+    {
+        return $id instanceof static ? $this->id == $id->id : $this->id == $id ;
+    }
+
     public static function statusList()
     {
         return config('guardio.status', ['awaiting', 'active', 'block']);
     }
     public static function typeList()
     {
-        return config('guardio.type', ['admin', 'user']);
+        return config('guardio.types', ['admin', 'user']);
     }
 
     public static function defaultType()
@@ -92,5 +93,13 @@ class _User extends Authenticatable
             return $authVerify->mobileResetPassword();
         }
         return $authVerify;
+    }
+
+    public static function guest()
+    {
+        return new static([
+            'id' => 0,
+            'type' => 'guest'
+        ]);
     }
 }

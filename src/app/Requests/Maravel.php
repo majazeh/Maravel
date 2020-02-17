@@ -3,8 +3,8 @@
 namespace App\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\Gate;
+use App\User;
 
 class Maravel extends FormRequest
 {
@@ -92,10 +92,18 @@ class Maravel extends FormRequest
         $auth = true;
         if(in_array($action, array_keys(Gate::abilities())))
         {
+            if(!auth()->check() && in_array('auth:apiIf', $this->route()->getAction('middleware')))
+            {
+                auth()->login(User::guest());
+            }
             $args = array_values($this->route()->parameters());
             array_unshift($args, $action);
             array_unshift($args, $this);
             $auth = $this->route()->getController()->authorize('guardio', $args);
+            if(auth()->id() == 0)
+            {
+                auth()->logout();
+            }
         }
         if ($auth && $this->route() && $this->route()->controller && method_exists($this->route()->getController(), 'gate')){
             $auth = $this->route()->getController()->gate($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));

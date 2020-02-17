@@ -29,7 +29,7 @@ class UserPolicy extends \App\Guardio
 
     public function update(User $user, Request $request, User $show)
     {
-        if(!$user->isAdmin()) return false;
+        if(!$user->isAdmin() && !$user->idIs($show)) return false;
         return true;
     }
 
@@ -43,5 +43,10 @@ class UserPolicy extends \App\Guardio
     {
         if (!$user->isAdmin()) return false;
         return true;
+    }
+
+    public function isAdmin(User $user, Request $request)
+    {
+        return $user->isAdmin();
     }
 }

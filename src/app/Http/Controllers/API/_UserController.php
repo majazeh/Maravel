@@ -3,14 +3,15 @@ namespace App\Http\Controllers\API;
 
 use App\Requests\Maravel as Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Gate;
+use App\Guardio;
+use Illuminate\Support\Facades\Cache;
 use App\User;
 
-class UserController extends Controller
+class _UserController extends Controller
 {
     use Users\Auth;
     use Users\Methods;
-    public function gate(Request $request, $action)
+    public function gate(Request $request, $action, $arg = null)
     {
         if($action == 'register' && (!config('auth.registration', true) || auth()->check()))
         {
@@ -20,10 +21,37 @@ class UserController extends Controller
         {
             return false;
         }
+        elseif (in_array($action, ['verification', 'verify']) && (!config('auth.verification', true) || auth()->check())) {
+            return false;
+        }
+        elseif ($action == 'loginKey' && (!config('auth.login', true) || auth()->check()))
+        {
+            return false;
+        }
+
+        if(in_array($action, ['loginKey', 'verify', 'changePassword']))
+        {
+            $parse = Cache::getJson($arg);
+            if(!$parse || !User::find(User::id($parse->user)))
+            {
+                return false;
+            }
+        }
+
+        if($action == 'show')
+        {
+            if($arg->status != 'active')
+            {
+                if(!Guardio::has('guardio', 'view-inactive-user'))
+                {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
-    public function rules(Request $request, $action)
+    public function rules(Request $request, $action, $user = null)
     {
         // rules of register
         $primaryStore = [
@@ -38,7 +66,20 @@ class UserController extends Controller
             case 'register':
                 return array_replace_recursive($primaryStore, [
                     'password' => 'required|string|min:6|max:24'
-                ]);;
+                    ]);
+            case 'meUpdate':
+                $user = auth()->user();
+            case 'update':
+                return [
+                    'gender' => 'nullable|in:male,female',
+                    'mobile' => 'nullable|mobile|unique:users,mobile,'. $user->id,
+                    'username' => 'nullable|string||min:4|max:24|unique:users,username,' . $user->id,
+                    'email' => 'nullable|email|unique:users,email,' . $user->id,
+                    'name' => 'nullable|string',
+                    'password' => 'nullable|string|min:6|max:24',
+                    'status' => 'nullable|in:' . join(',', User::statusList()),
+                    'type' => 'nullable|in:' . join(',', User::typeList()),
+                ];
             case 'store':
                 return array_replace_recursive($primaryStore, [
                     'status' => 'nullable|in:' . join(',', User::statusList()),
@@ -47,7 +88,6 @@ class UserController extends Controller
                 break;
             case 'login':
                 return [
-                    'password' => 'required|string|min:6|max:24',
                     'username' => 'nullable|string||min:4|max:24|oneOf:email,mobile',
                     'mobile' => 'nullable|mobile',
                     'email' => 'nullable|email',
@@ -61,15 +101,32 @@ class UserController extends Controller
                     'name' => 'nullable|string',
                     'password' => 'required|string|min:6|max:24'
                 ];
+            case 'verification':
+            case 'forgetPassword':
+                return [
+                    'username' => 'nullable|string||min:4|max:24',
+                    'mobile' => 'nullable|mobile',
+                    'email' => 'nullable|email',
+                ];
+            case 'changePassword':
+                return [
+                    'pin' => 'required|string',
+                    'password' => 'required|string|min:6|max:24'
+                ];
+            case 'verify':
+                return [
+                    'pin' => 'required|string',
+                ];
+            case '_password': return ['password' => 'required|string|min:6|max:24'];
             default:
                 return [];
                 break;
         }
     }
 
-    public function requestData(Request $request, $action, &$data)
+    public function requestData(Request $request, $action, &$data, $user = null)
     {
-        if($action == 'login')
+        if(in_array($action, ['login', 'verification', 'verify', 'forgetPassword', 'changePassword']))
         {
             $data['method'] = 'username';
             $data['original_method'] = 'username';
@@ -101,12 +158,25 @@ class UserController extends Controller
             }
 
         }
+        if(in_array($action, ['update', 'meUpdate']))
+        {
+            if(!auth()->user()->isAdmin())
+            {
+                foreach ($data as $key => $value) {
+                    $type = auth()->user()->type;
+                    if(!in_array($key, $this->userCanEdit[$type]))
+                    {
+                        unset($data[$key]);
+                    }
+                }
+            }
+        }
     }
 
     public function manipulateData(Request $request, $action, &$data, $user = null)
     {
         // hash password
-        if(in_array($action, ['register', 'store', 'update']) && isset($data['password']))
+        if(in_array($action, ['register', 'store', 'update', 'changePassword']) && isset($data['password']))
         {
             $data['password'] = Hash::make($data['password']);
         }
@@ -114,12 +184,12 @@ class UserController extends Controller
         // check admin customize for status, types, other...
         if ($action == 'update')
         {
-            if(isset($data['status']) && !Gate::has('assign-status'))
+            if(isset($data['status']) && !Guardio::has('assign-status'))
             {
                 $data['status'] = $user->status;
             }
 
-            if (isset($data['type']) && !Gate::has('assign-type')) {
+            if (isset($data['type']) && !Guardio::has('assign-type')) {
                 $data['type'] = $user->type;
             }
 
@@ -139,8 +209,8 @@ class UserController extends Controller
         }
         elseif($action == 'store')
         {
-            $data['status'] = !Gate::has('assign-status') || isset($data['status']) ? User::defaultStatus() : $data['status'];
-            $data['type'] = !Gate::has('assign-type') || isset($data['type']) ? User::defaultType() : $data['type'];
+            $data['status'] = !Guardio::has('assign-status') || isset($data['status']) ? User::defaultStatus() : $data['status'];
+            $data['type'] = !Guardio::has('assign-type') || isset($data['type']) ? User::defaultType() : $data['type'];
         }
     }
 }

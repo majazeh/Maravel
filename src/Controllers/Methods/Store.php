@@ -57,7 +57,7 @@ trait Store
             ];
             $result->additional($additional);
         }
-        if ($this->clientController && $request->webAccess()) {
+        if (isset($this->clientController) && $request->webAccess()) {
             $client = new $this->clientController(... func_get_args());
             $client->webStore($request, $result);
         }

@@ -1,6 +1,8 @@
 <?php
 namespace App;
 
+use Illuminate\Support\Facades\Gate;
+
 class GuardioCheck
 {
     protected $permissions = null;
@@ -45,9 +47,13 @@ class GuardioCheck
         return $this->has($key) ? (isset($this->permissions[$key]) ? $this->permissions[$key] : null) : false;
     }
 
-    public function has($access)
+    public function has($access, ...$args)
     {
         if (in_array($this->user->type, config('guardio.admins', ['admin']))) {
+            return true;
+        }
+        if(Gate::allows($access, $args))
+        {
             return true;
         }
         $access = !is_array($access) ? [$access] : $access;
