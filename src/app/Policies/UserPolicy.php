@@ -35,7 +35,7 @@ class UserPolicy extends \App\Guardio
 
     public function create(User $user, Request $request)
     {
-        if (!$user->isAdmin()) return false;
+        if (!static::has('users.create')) return false;
         return true;
     }
 

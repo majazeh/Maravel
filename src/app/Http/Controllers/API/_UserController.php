@@ -29,7 +29,7 @@ class _UserController extends Controller
             return false;
         }
 
-        if(in_array($action, ['loginKey', 'verify', 'changePassword']))
+        if(in_array($action, ['loginKey', 'verify', 'resetPassword']))
         {
             $parse = Cache::getJson($arg);
             if(!$parse || !User::find(User::id($parse->user)))
@@ -108,10 +108,15 @@ class _UserController extends Controller
                     'mobile' => 'nullable|mobile',
                     'email' => 'nullable|email',
                 ];
-            case 'changePassword':
+            case 'resetPassword':
                 return [
                     'pin' => 'required|string',
                     'password' => 'required|string|min:6|max:24'
+                ];
+            case 'changePassword':
+                return [
+                    'password' => 'required|string|min:6|max:24',
+                    'new_password' => 'required|string|min:6|max:24|different:password'
                 ];
             case 'verify':
                 return [
@@ -126,7 +131,7 @@ class _UserController extends Controller
 
     public function requestData(Request $request, $action, &$data, $user = null)
     {
-        if(in_array($action, ['login', 'verification', 'verify', 'forgetPassword', 'changePassword']))
+        if(in_array($action, ['login', 'verification', 'verify', 'forgetPassword', 'resetPassword']))
         {
             $data['method'] = 'username';
             $data['original_method'] = 'username';
@@ -163,23 +168,37 @@ class _UserController extends Controller
             if(!auth()->user()->isAdmin())
             {
                 foreach ($data as $key => $value) {
-                    $type = auth()->user()->type;
-                    if(!in_array($key, $this->userCanEdit[$type]))
+                    if(!auth()->user()->CanEdit($key))
                     {
                         unset($data[$key]);
                     }
                 }
             }
         }
+        if($action == 'changePassword')
+        {
+            $password = isset($data['password']) ? $data['password'] : null;
+            $new_password = isset($data['new_password']) ? $data['new_password'] : null;
+            $data = [
+                'password' => $password,
+                'new_password' => $new_password
+            ];
+        }
     }
 
     public function manipulateData(Request $request, $action, &$data, $user = null)
     {
+        if ($action == 'changePassword') {
+            $data['password'] = $data['new_password'];
+            unset($data['new_password']);
+        }
+
         // hash password
-        if(in_array($action, ['register', 'store', 'update', 'changePassword']) && isset($data['password']))
+        if(in_array($action, ['register', 'store', 'update', 'resetPassword', 'changePassword']) && isset($data['password']))
         {
             $data['password'] = Hash::make($data['password']);
         }
+
 
         // check admin customize for status, types, other...
         if ($action == 'update')
@@ -209,8 +228,8 @@ class _UserController extends Controller
         }
         elseif($action == 'store')
         {
-            $data['status'] = !Guardio::has('assign-status') || isset($data['status']) ? User::defaultStatus() : $data['status'];
-            $data['type'] = !Guardio::has('assign-type') || isset($data['type']) ? User::defaultType() : $data['type'];
+            $data['status'] = Guardio::has('assign-status') && isset($data['status']) ? $data['status'] : User::defaultStatus();
+            $data['type'] = Guardio::has('assign-type') && isset($data['type']) ? $data['type'] : User::defaultType();
         }
     }
 }

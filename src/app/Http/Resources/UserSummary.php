@@ -11,7 +11,7 @@ class UserSummary extends JsonResource
     public function __construct(User $user, $username = false)
     {
         parent::__construct($user);
-        $this->_username_method = $username;
+        $this->_username_method = $username ?: 'username';
 
     }
     public function toArray($request)
@@ -19,10 +19,7 @@ class UserSummary extends JsonResource
         $data = [];
         $data['id'] = $this->serial;
         $data['name'] = $this->name;
-        if($this->_username_method)
-        {
-            $data[$this->_username_method] = $this->{$this->_username_method};
-        }
+        $data[$this->_username_method] = $this->{$this->_username_method};
         $data['avatar'] = $this->avatar ? new Files($this->avatar) : null;
 
         return $data;

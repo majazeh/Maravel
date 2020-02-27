@@ -83,7 +83,7 @@ trait Auth {
     public function register(Request $request)
     {
         $this->incrementRegisterAttempts($request);
-        $user = $this->_store($request);
+        $user = $this->store($request);
         if($request->status == 'awaiting')
         {
             $user->resource->createVerify();
@@ -96,6 +96,7 @@ trait Auth {
             ]), 60 * 2);
             $user->additional(array_merge_recursive(
                 $user->additional, [
+                    'user' => new UserSummary($user->resource, 'mobile'),
                     'input' => 'pin',
                     'url' => route('api.auth.verify', $cache),
                     'expires_at' => time() + (60 * 2)
@@ -113,7 +114,7 @@ trait Auth {
             $user = User::find(User::id($parse->user));
             if (!$user) {
                 throw ValidationException::withMessages([
-                    "password" => __('auth.failed')
+                    "pin" => __('auth.failed')
                 ]);
             }
 
@@ -176,8 +177,8 @@ trait Auth {
                     'input' => 'pin'
                 ]), 60 * 5);
             }
-
             return [
+                'user' => new UserSummary($user, 'mobile'),
                 'input' => 'pin',
                 'url' => route('api.auth.verify', $cache),
                 'expires_at' => $verification->bridge()->expires_at->timestamp
@@ -209,14 +210,15 @@ trait Auth {
                 ]), 60 * 5);
             }
             return [
+                'user' => new UserSummary($user, 'mobile'),
                 'input' => ['pin', 'password'],
-                'url' => route('api.auth.changePassword', $cache),
+                'url' => route('api.auth.resetPassword', $cache),
                 'expires_at' => $verification->bridge()->expires_at->timestamp
             ];
         }
     }
 
-    public function changePassword(Request $request, $key)
+    public function resetPassword(Request $request, $key)
     {
         $decrypted = Cache::getJson($key);
         $this->incrementLoginAttempts($request);
@@ -232,6 +234,7 @@ trait Auth {
             $trust->verify();
             $user->password = $request->password;
             $user->update();
+            // $this->revokeAllToken($request);
             $this->statusMessage = 'success';
             return $this->show($request, $user);
         }
@@ -355,7 +358,7 @@ trait Auth {
             $this->throttlVerificationKey($request),
             60
         );
-        if ($this->limiter()->tooManyAttempts($this->throttlVerificationKey($request), 2)) {
+        if ($this->limiter()->tooManyAttempts($this->throttlVerificationKey($request), 20000)) {
             throw new TooManyRequestsHttpException();
         }
     }

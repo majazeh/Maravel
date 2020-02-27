@@ -20,8 +20,9 @@ class LoginController extends AuthController
         login as auth_login;
     }
     public $views = [
-        'login' => 'auth.login'
-    ];
+        'login' => 'auth.login',
+        'register' => 'auth.login'
+,    ];
 
 
     public $loginTo = "login";
@@ -113,6 +114,11 @@ class LoginController extends AuthController
      * @return resources blade view for form login
      */
     public function showLoginForm()
+    {
+        return $this->view(request());
+    }
+
+    public function showRegistrationForm(Request $request)
     {
         return $this->view(request());
     }

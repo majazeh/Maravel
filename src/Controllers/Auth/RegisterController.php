@@ -68,7 +68,7 @@ class RegisterController extends AuthController
     public function validator(Request $request, $update = false)
     {
         $validation = [
-            'email'  => 'required|string|email|max:255|unique:users',
+            $this->username_method  => 'required|string|email|max:255|unique:users',
             'mobile' => 'required',
         ];
         $username = $this->username_method($request) == 'username' ? 'email' : $this->username_method($request);
