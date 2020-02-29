@@ -358,7 +358,7 @@ trait Auth {
             $this->throttlVerificationKey($request),
             60
         );
-        if ($this->limiter()->tooManyAttempts($this->throttlVerificationKey($request), 20000)) {
+        if ($this->limiter()->tooManyAttempts($this->throttlVerificationKey($request), 2)) {
             throw new TooManyRequestsHttpException();
         }
     }
