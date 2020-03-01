@@ -18,7 +18,7 @@ Breadcrumbs::for('dashboard.users.create', function ($trail, $data) {
 
 Breadcrumbs::for('dashboard.users.show', function ($trail, $data) {
     $trail->parent('dashboard.users.index', $data);
-    $trail->push($data['user']->name, route('dashboard.users.show', $data['user']->serial ?: $data['user']->id));
+    $trail->push($data['user']->name ?: _t('Anonymous'), route('dashboard.users.create'));
 });
 
 Breadcrumbs::for('dashboard.users.edit', function ($trail, $data) {

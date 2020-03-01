@@ -27,8 +27,8 @@ module.exports = function (event, base, context){
         $('.invalid-feedback', this).remove();
         if (d.errors) {
             for (var id in d.errors) {
-                $('#' + id).addClass('is-invalid');
-                $('<div class="invalid-feedback">' + d.errors[id][0] + '</div>').insertAfter($('#' + id));
+                $('#' + id + ', [data-alias~=' + id + ']').addClass('is-invalid');
+                $('<div class="invalid-feedback">' + d.errors[id][0] + '</div>').insertAfter($('#' + id + ', [data-alias~=' + id + ']'));
             }
         }
     });
