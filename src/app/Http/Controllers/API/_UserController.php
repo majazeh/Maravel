@@ -115,8 +115,8 @@ class _UserController extends Controller
                 ];
             case 'changePassword':
                 return [
-                    'password' => 'required|string|min:6|max:24',
-                    'new_password' => 'required|string|min:6|max:24|different:password'
+                    'current_password' => 'required|string|min:6|max:24',
+                    'password' => 'required|string|min:6|max:24|different:current_password'
                 ];
             case 'verify':
                 return [
@@ -175,24 +175,10 @@ class _UserController extends Controller
                 }
             }
         }
-        if($action == 'changePassword')
-        {
-            $password = isset($data['password']) ? $data['password'] : null;
-            $new_password = isset($data['new_password']) ? $data['new_password'] : null;
-            $data = [
-                'password' => $password,
-                'new_password' => $new_password
-            ];
-        }
     }
 
     public function manipulateData(Request $request, $action, &$data, $user = null)
     {
-        if ($action == 'changePassword') {
-            $data['password'] = $data['new_password'];
-            unset($data['new_password']);
-        }
-
         // hash password
         if(in_array($action, ['register', 'store', 'update', 'resetPassword', 'changePassword']) && isset($data['password']))
         {

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API\Users;
 
 use App\Requests\Maravel as Request;
 use App\Guardio;
-use App\Token;
 use App\User;
 
 trait Methods {
@@ -48,19 +47,5 @@ trait Methods {
     public function meUpdate(Request $request)
     {
         return $this->update($request, auth()->user());
-    }
-
-    public function changePassword(Request $request)
-    {
-        $this->update($request, auth()->user());
-        $this->revokeAllToken($request);
-        $this->statusMessage = 'Password changed';
-        return [];
-
-    }
-
-    public function revokeAllToken($request)
-    {
-        Token::where('user_id', auth()->id())->update(['revoked' => 1]);
     }
 }

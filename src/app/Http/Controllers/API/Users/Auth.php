@@ -7,9 +7,11 @@ use Illuminate\Cache\RateLimiter;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Illuminate\Validation\ValidationException;
-use App\User;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Resources\UserSummary;
+use Illuminate\Support\Facades\Hash;
+use App\User;
+use App\Token;
 
 trait Auth {
 
@@ -234,7 +236,7 @@ trait Auth {
             $trust->verify();
             $user->password = $request->password;
             $user->update();
-            // $this->revokeAllToken($request);
+            $this->revokeAllToken($request);
             $this->statusMessage = 'success';
             return $this->show($request, $user);
         }
@@ -244,6 +246,25 @@ trait Auth {
                 'pin' => __('auth.failed')
             ]);
         }
+    }
+
+    public function changePassword(Request $request)
+    {
+        if(!Hash::check($request->current_password, auth()->user()->password))
+        {
+            throw ValidationException::withMessages([
+                "password" => __('auth.failed')
+            ]);
+        }
+        $this->update($request, auth()->user());
+        $this->revokeAllToken($request);
+        $this->statusMessage = 'Password changed';
+        return [];
+    }
+
+    public function revokeAllToken($request)
+    {
+        Token::where('user_id', auth()->id())->update(['revoked' => 1]);
     }
 
     public function enter(Request $request)
