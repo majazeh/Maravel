@@ -55,7 +55,7 @@ class _User extends Authenticatable
 
     public static function statusList()
     {
-        return config('guardio.status', ['awaiting', 'active', 'block']);
+        return config('guardio.status', ['awaiting', 'active', 'blocked']);
     }
     public static function typeList()
     {

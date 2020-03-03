@@ -220,11 +220,37 @@ class _UserController extends Controller
         }
     }
 
-    public function filters()
+    public function filters($request, $model)
     {
-        return [[
+        $current = [
             'status' => User::statusList(),
             'type' => User::typeList(),
-        ], []];
+            'gender' => ['male', 'female', 'undefined']
+        ];
+        $filter = [];
+
+        if($request->status && in_array($request->status, $current['status']))
+        {
+            $model->where('status', $request->status);
+            $filter['status'] = $request->status;
+        }
+
+        if ($request->type && in_array($request->type, $current['type'])) {
+            $model->where('type', $request->type);
+            $filter['type'] = $request->type;
+        }
+
+        if ($request->gender && in_array($request->gender, $current['gender'])) {
+            if($request->gender == 'undefined')
+            {
+                $model->whereNull('gender');
+            }
+            else
+            {
+                $model->where('gender', $request->gender);
+            }
+            $filter['gender'] = $request->gender;
+        }
+        return [$current, $filter];
     }
 }
