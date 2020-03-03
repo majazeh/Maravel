@@ -11,6 +11,7 @@ class _UserController extends Controller
 {
     use Users\Auth;
     use Users\Methods;
+    public $order_list = ['id', 'status', 'gender', 'type'];
     public function gate(Request $request, $action, $arg = null)
     {
         if($action == 'register' && (!config('auth.registration', true) || auth()->check()))
@@ -217,5 +218,13 @@ class _UserController extends Controller
             $data['status'] = Guardio::has('assign-status') && isset($data['status']) ? $data['status'] : User::defaultStatus();
             $data['type'] = Guardio::has('assign-type') && isset($data['type']) ? $data['type'] : User::defaultType();
         }
+    }
+
+    public function filters()
+    {
+        return [[
+            'status' => User::statusList(),
+            'type' => User::typeList(),
+        ], []];
     }
 }
