@@ -5,6 +5,7 @@ namespace App\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use App\User;
+use Illuminate\Support\Str;
 
 class Maravel extends FormRequest
 {
@@ -55,6 +56,11 @@ class Maravel extends FormRequest
             foreach ($value as $k => $v) {
                 if ($k == 'serial' && isset($data[$key]) && $data[$key]) {
                     $model = '\App\\' . ucfirst($v);
+                    $data[$key] = $model::id($data[$key]);
+                }
+                elseif ($k == 'exists_serial' && isset($data[$key]) && $data[$key]) {
+                    list($table) = explode(',', $v);
+                    $model = '\App\\' . ucfirst(Str::singular($table));
                     $data[$key] = $model::id($data[$key]);
                 }
             }
@@ -113,7 +119,7 @@ class Maravel extends FormRequest
 
     public function rules()
     {
-        $rules = $this->getRules();
+        $rules = $this->getRules() ?: [];
         if (!$this->route() || !$this->route()->controller) return $rules;
         if (method_exists($this->route()->getController(), 'manipulateData')) {
             $data = $this->all();

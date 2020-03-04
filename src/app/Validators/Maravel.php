@@ -41,4 +41,9 @@ class Maravel extends Validator
         $parameters = ['/^\d*(\.\d{1,2})?$/'];
         return $this->validateRegex($attribute, $value, $parameters);
     }
+
+    public function validateExistsSerial($attribute, $value, $parameters)
+    {
+        return $this->validateExists($attribute, $value, $parameters);
+    }
 }
