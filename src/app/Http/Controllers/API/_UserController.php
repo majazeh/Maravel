@@ -11,7 +11,7 @@ class _UserController extends Controller
 {
     use Users\Auth;
     use Users\Methods;
-    public $order_list = ['id', 'status', 'gender', 'type'];
+    public $order_list = ['id'];
     public function gate(Request $request, $action, $arg = null)
     {
         if($action == 'register' && (!config('auth.registration', true) || auth()->check()))
