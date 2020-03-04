@@ -65,7 +65,7 @@ trait Update
             $func_changed = call_user_func_array($callback, $args);
             if(is_array($func_changed))
             {
-                $changed = $func_changed;
+                $original = array_merge_recursive($original, $func_changed);
             }
         }
         else
@@ -81,8 +81,7 @@ trait Update
             $client = new $this->clientController(...func_get_args());
             $client->webUpdate($request, $result);
         }
-
-        if(!empty($changed))
+        if(!empty($original))
         {
             $this->statusMessage = $this->class_name() . " changed";
         }
