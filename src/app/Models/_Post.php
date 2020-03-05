@@ -28,6 +28,10 @@ class _Post extends Eloquent
     {
         return $this->hasMany(\App\File::class);
     }
+    public function terms()
+    {
+        return $this->hasManyThrough(\App\Term::class, \App\TermUsage::class, 'table_id', 'id', null, 'term_id')->where('term_usages.table_name', 'posts');
+    }
 
     public function creator()
     {

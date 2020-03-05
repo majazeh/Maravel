@@ -24,13 +24,13 @@ trait Index
             $additional['meta'] = [];
         }
         $additional['meta']['orders'] = [
-            'allowed' => $order_list,
-            'current' => $current_order,
+            'allowed' => $order_list ?: [],
+            'current' => $current_order ?: [],
             'default' => $default_order,
         ];
         $additional['meta']['filters'] = [
-            'allowed' => $filters,
-            'current' => $current_filter,
+            'allowed' => $filters ?: [],
+            'current' => $current_filter ?: [],
         ];
 
         $result->additional($additional);
