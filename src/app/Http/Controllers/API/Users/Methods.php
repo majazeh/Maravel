@@ -41,7 +41,16 @@ trait Methods {
 
     public function me(Request $request)
     {
-        return $this->show($request, auth()->user());
+        $show = $this->show($request, auth()->user());
+        $token = auth()->user()->token();
+        if (isset($token->meta['admin_id'])) {
+            $admin = $this->model::findOrFail($token->meta['admin_id']);
+            $user = $this->show($request, $admin);
+            $show->additional(array_merge_recursive($user->additional, [
+                'current' => $user
+            ]));
+        }
+        return $show;
     }
 
     public function meUpdate(Request $request)
