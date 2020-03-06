@@ -67,48 +67,60 @@ trait Index
     public function paginate($request, $model, $parent = null, $order_list = [], $default = [])
     {
         $order_list = $order_list ?: (isset($this->order_list) ? $this->order_list : ['id']);
-        $default = $default ?: (isset($this->order_default) ? $this->order_default : ['id', 'desc']);
-
-        $default_column = explode(',', $default[0]);
-        foreach ($default_column as $key => $value) {
-            $value = trim($value);
-            if(!in_array($value, $order_list))
+        foreach ($order_list as $key => $value) {
+            if(gettype($key) == 'integer')
             {
-                $order_list[] = $value;
-            }
-        }
-
-        $keys = array_keys($order_list);
-        $order_string = $request->order && in_array($request->order, $keys) ? strtolower($request->order) : $default[0];
-        $orders = explode(',', $order_string);
-
-        $sort_string = $request->sort ?: $default[1];
-        $sorts = explode(',', $sort_string);
-        $current = [];
-        $daily = false;
-        if(!$model instanceof \Illuminate\Database\Eloquent\Builder)
-        {
-            return [$model, $order_list, $current, $default];
-        }
-        if(in_array('daily', $orders))
-        {
-            if(count($orders) !== 1)
-            {
-                $orders = [$default[0]];
-                $sorts = [$default[1]];
+                $allowed[$value] = $value;
             }
             else
             {
-                $daily = true;
+                $allowed[$key] = $value;
             }
         }
-        foreach ($orders as $key => $order) {
-            if (isset($order_list[$order]) || in_array($order, $order_list)) {
-                $order = isset($order_list[$order]) ? $order_list[$order] : $order;
-                $sort = isset($sorts[$key]) && in_array(strtolower($sorts[$key]), ['asc', 'desc']) ? strtolower($sorts[$key]) : 'desc';
-                $model->orderBy($order, $sort);
-                $current[$order] = $sort;
+        $default = $default ?: (isset($this->order_default) ? $this->order_default : [[$model->getModel()->getKeyName() => $model->getModel()->getTable() .'.' . $model->getModel()->getKeyName(), 'desc']]);
+        $default_order = [];
+        foreach ($default as $key => $value) {
+            if (gettype(key($value)) == 'integer') {
+                $default_order[current($value)] = next($value);
+            } else {
+                $default_order[key($value)] = $value[0];
             }
+        }
+        foreach ($default_order as $key => $value) {
+            $value = trim($value);
+            $key = trim($key);
+            if(!isset($allowed[$key]))
+            {
+                $allowed[$key] = $value;
+            }
+        }
+        $order_theory = [];
+        if($request->order)
+        {
+            $custom_order = is_array($request->order) ? $request->order : [$request->order];
+            $custom_sort = is_array($request->sort) ? $request->sort : [$request->sort];
+            foreach ($custom_order as $key => $value) {
+                if(!isset($allowed[$value])) continue;
+                if(isset($custom_sort[$key]) && in_array(strtolower($custom_sort[$key]), ['asc', 'desc']))
+                {
+                    $order_theory[$value] = $custom_sort[$key];
+                }
+                else
+                {
+                    $order_theory[$value] = 'desc';
+                }
+            }
+        }
+        if(empty($order_theory))
+        {
+            $order_theory = $default_order;
+        }
+        if(!$model instanceof \Illuminate\Database\Eloquent\Builder)
+        {
+            return [$model, $allowed, $order_theory, $default_order];
+        }
+        foreach ($order_theory as $key => $value) {
+            $model->orderBy($allowed[$key], $value);
         }
         if(isset($this->disablePagination))
         {
@@ -117,10 +129,11 @@ trait Index
         else
         {
             $paginate = $model->paginate();
-            if ($order_string != $default[0] || $sort_string != $default[1]) {
+            if(join(',', array_keys($order_theory)) != join(',', array_keys($default_order)) || join(',', array_values($order_theory)) != join(',', array_values($default_order)))
+            {
                 $paginate->appends($request->all('order', 'sort'));
             }
         }
-        return [$paginate, $order_list, $current, $default];
+        return [$paginate, array_keys($allowed), $order_theory, $default_order];
     }
 }
