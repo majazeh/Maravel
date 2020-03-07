@@ -3,15 +3,12 @@
 namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Term extends JsonResource
+class Term extends TermWoP
 {
     public function toArray($request)
     {
-        return [
-            'id' => $this->serial,
-            'title' => $this->title,
-            'cat' => $this->cat,
-            'type' => $this->type,
-        ];
+        $data = parent::toArray($request);
+        $data['parents'] = $this->parents->count() ? new TermsWoP($this->parents) : null;
+        return $data;
     }
 }

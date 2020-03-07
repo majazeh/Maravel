@@ -14,7 +14,6 @@ class CreateTermUsagesTable extends Migration
     public function up()
     {
         Schema::create('term_usages', function (Blueprint $table) {
-            $table->engine = 'MyISAM';
             $table->bigIncrements('id');
             $table->unsignedBigInteger('term_id');
             $table->string('table_name', 50);
@@ -22,7 +21,7 @@ class CreateTermUsagesTable extends Migration
             $table->timestamps();
 
             $table->foreign('term_id')->references('id')->on('terms');
-            $table->unique(['term_id', 'table_name'], 'term_id_table_area');
+            $table->unique(['term_id', 'table_name', 'table_id']);
         });
     }
 

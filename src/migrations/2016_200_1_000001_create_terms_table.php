@@ -14,15 +14,15 @@ class CreateTermsTable extends Migration
     public function up()
     {
         Schema::create('terms', function (Blueprint $table) {
-            $table->engine = 'MyISAM';
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('creator_id')->nullable()->index();
-            $table->unsignedBigInteger('subset_id')->nullable()->index();
-            $table->string('title', 100)->index();
-            $table->string('cat', 100)->index()->nullable();
-            $table->string('type', 20)->index();
-            $table->unique(['type', 'cat', 'title'], '');
+            $table->unsignedBigInteger('creator_id')->index();
+            $table->string('title', 100);
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->unique(['parent_id', 'title']);
+            $table->string('parent_map')->nullable()->index();
             $table->timestamps();
+            $table->foreign('parent_id')->references('id')->on('terms');
+            $table->foreign('creator_id')->references('id')->on('users');
         });
     }
 

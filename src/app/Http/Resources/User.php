@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\File;
 use App\Guardio;
 class User extends JsonResource
 {
