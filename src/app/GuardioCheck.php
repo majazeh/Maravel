@@ -49,7 +49,9 @@ class GuardioCheck
 
     public function has($access, ...$args)
     {
-        if (in_array($this->user->type, config('guardio.admins', ['admin']))) {
+        $admins = config('guardio.admins', ['admin']);
+        $admins[] = 'system';
+        if (in_array($this->user->type, $admins)) {
             return true;
         }
         if(Gate::allows($access, $args))

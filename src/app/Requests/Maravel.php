@@ -168,4 +168,36 @@ class Maravel extends FormRequest
     {
         return trim($this->route()->getAction('prefix'), '/');
     }
+
+    public static function virtual($routeName, User $user = null, $parameters = [], $method = null, $cookies = [], $files = [], $server = [], $content = null)
+    {
+        list($routeName, $routeParameters) = is_array($routeName) ? $routeName : [$routeName, null];
+        $route = app('routes')->getByName($routeName);
+        $uri = route($routeName, $routeParameters);
+        $headers = [];
+        if(in_array('api', $route->gatherMiddleware()))
+        {
+            $headers['Accept'] = 'application/json';
+        }
+        if (in_array('auth:api', $route->gatherMiddleware())) {
+            $token = $user->createToken('api');
+            $headers['Authorization'] = 'Bearer '.$token->accessToken;
+        }
+        $request = static::create(
+            $uri,
+            $method ?: current($route->methods()),
+            $parameters,
+            $cookies,
+            $files,
+            $server,
+            $content,
+        );
+        $request->headers->add($headers);
+        $app = app()['Illuminate\Contracts\Http\Kernel']->handle($request);
+        if(isset($token))
+        {
+            $token->token->delete();
+        }
+        return $app;
+    }
 }

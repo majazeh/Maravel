@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Requests\Maravel as Request;
 use App\Term;
 use Illuminate\Validation\Rule;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class _TermController extends _Controller
 {
@@ -23,6 +24,26 @@ class _TermController extends _Controller
     public function show(Request $request, Term $term)
     {
         return $this->_show($request, $term);
+    }
+
+    public function find(Request $request)
+    {
+        $parent_id = $request->parent_id ?: null;
+        $term = $this->model::where('title', $request->title);
+        if($parent_id)
+        {
+            $term->where('parent_id', $parent_id);
+        }
+        else
+        {
+            $term->whereNull('parent_id');
+        }
+        if($term = $term->first())
+        {
+            return $this->show($request, $term);
+        }
+        throw (new ModelNotFoundException)->setModel('App\User', $request->title);
+
     }
 
     public function update(Request $request, Term $term)
