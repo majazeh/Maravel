@@ -190,7 +190,7 @@ class Maravel extends FormRequest
             $cookies,
             $files,
             $server,
-            $content,
+            $content
         );
         $request->headers->add($headers);
         $app = app()['Illuminate\Contracts\Http\Kernel']->handle($request);
