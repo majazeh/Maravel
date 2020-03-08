@@ -77,6 +77,7 @@ trait Index
                 $allowed[$key] = $value;
             }
         }
+
         $default = $default ?: (isset($this->order_default) ? $this->order_default : [[$model->getModel()->getKeyName() => $model->getModel()->getTable() .'.' . $model->getModel()->getKeyName(), 'desc']]);
         $default_order = [];
         foreach ($default as $key => $value) {
@@ -91,7 +92,7 @@ trait Index
             $key = trim($key);
             if(!isset($allowed[$key]))
             {
-                $allowed[$key] = $value;
+                $allowed[$key] = $key;
             }
         }
         $order_theory = [];
@@ -128,6 +129,10 @@ trait Index
         }
         else
         {
+            if(isset($model->emptyModel) && $model->emptyModel === true)
+            {
+                $model->limit(0);
+            }
             $paginate = $model->paginate();
             if(join(',', array_keys($order_theory)) != join(',', array_keys($default_order)) || join(',', array_values($order_theory)) != join(',', array_values($default_order)))
             {

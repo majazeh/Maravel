@@ -9,6 +9,11 @@ class Term extends TermWoP
     {
         $data = parent::toArray($request);
         $data['parents'] = $this->parents->count() ? new TermsWoP($this->parents) : null;
+        if(auth()->user() && auth()->user()->isAdmin())
+        {
+            $data['cretor'] = new User($this->creator);
+
+        }
         return $data;
     }
 }

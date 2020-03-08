@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\User;
 
 class _Term extends Model
 {
@@ -37,5 +38,10 @@ class _Term extends Model
             return $this->_parents;
         }
         return null;
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'creator_id', 'id');
     }
 }

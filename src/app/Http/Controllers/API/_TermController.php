@@ -82,6 +82,14 @@ class _TermController extends _Controller
                     'creator_id' => 'nullable|exists:users,id',
                 ];
                 break;
+            case 'find' :
+                return [
+                    'parent_id' => [
+                        'nullable',
+                        'exists_serial:terms,id'
+                    ],
+                ];
+            break;
         }
         return [];
     }
