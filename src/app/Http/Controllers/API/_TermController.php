@@ -71,7 +71,7 @@ class _TermController extends _Controller
                         'nullable',
                         'exists_serial:terms,id,creator_id,'. auth()->id(),
                         function($key, $value, $fail){
-                            $parents = count(explode(':', Term::find($value)->parent_map));
+                            $parents = count(Term::find($value)->parent_map);
                             if($parents > Term::MAX_LEVEL)
                             {
                                 $fail('Max parents level is '. Term::MAX_LEVEL);

@@ -16,7 +16,7 @@ class Term extends JsonResource
         }
         if($this->resource->relationLoaded('parents'))
         {
-            $data['craetor'] = new User($this->creator);
+            $data['creator'] = new User($this->creator);
         }
         return $data;
     }
