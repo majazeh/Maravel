@@ -16,9 +16,7 @@ class _TermController extends _Controller
 
     public function store(Request $request)
     {
-        return $this->_store($request, function($request){
-            return $this->model::create($request->all('title', 'creator_id', 'parent_id'));
-        });
+        return $this->_store($request);
     }
 
     public function show(Request $request, Term $term)
@@ -48,6 +46,7 @@ class _TermController extends _Controller
 
     public function update(Request $request, Term $term)
     {
+        $this->_update($request, $term);
     }
 
     public function destroy(Request $request, Term $term)
@@ -70,17 +69,30 @@ class _TermController extends _Controller
                     ],
                     'parent_id' => [
                         'nullable',
-                        'exists_serial:terms,id'. ($request->parent_id ? ',creator_id,'. (auth()->user()->isAdmin() ? 1 : auth()->id()) : ''),
+                        'exists_serial:terms,id,creator_id,'. auth()->id(),
                         function($key, $value, $fail){
                             $parents = count(explode(':', Term::find($value)->parent_map));
-                            if($parents > 6)
+                            if($parents > Term::MAX_LEVEL)
                             {
-                                $fail('parents is full!');
+                                $fail('Max parents level is '. Term::MAX_LEVEL);
                             }
                         }
                     ],
                     'creator_id' => 'nullable|exists:users,id',
                 ];
+                break;
+            case 'update' :
+                return [
+                    'title' => [
+                        'required',
+                        'string',
+                        'min:3',
+                        'max:60',
+                        $request->parent_id
+                            ? Rule::unique('terms', 'title')->where('parent_id', $request->parent_id)->ignore($term->id)
+                            : Rule::unique('terms', 'title')->whereNull('parent_id')->ignore($term->id)
+                        ]
+                    ];
                 break;
             case 'find' :
                 return [

@@ -3,17 +3,15 @@
 namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Term extends TermWoP
+class Term extends JsonResource
 {
     public function toArray($request)
     {
-        $data = parent::toArray($request);
-        $data['parents'] = $this->parents->count() ? new TermsWoP($this->parents) : null;
-        if(auth()->user() && auth()->user()->isAdmin())
-        {
-            $data['cretor'] = new User($this->creator);
-
-        }
-        return $data;
+        return [
+            'id' => $this->serial,
+            'title' => $this->title,
+            'parents' => $this->relationLoaded('parents') ? new Terms($this->parents) : null,
+            'creator' => $this->relationLoaded('creator') ? new User($this->creator) : null
+        ];
     }
 }

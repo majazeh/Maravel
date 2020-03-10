@@ -35,9 +35,9 @@ class _User extends Authenticatable
         return isset($this->original['groups']) ? explode('|', $this->original['groups']) : null;
     }
 
-    public function getAvatarAttribute()
+    public function avatar()
     {
-        return \App\File::where('post_id', $this->original['avatar_id'])->get()->keyBy('mode');
+        return $this->hasManyThrough(\App\File::class, \App\Post::class, 'id', 'post_id', 'avatar_id')->where('posts.status', 'publish')->where('posts.type', 'LIKE', "attachment%");
     }
 
     public function getLocationTextAttribute(){

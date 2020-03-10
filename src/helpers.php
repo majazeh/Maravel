@@ -21,7 +21,10 @@ function order_link($order, $sort)
 
 function result_message(&$array, $text)
 {
-    $text = strtoupper(preg_replace("/[\.!]/", '', str_replace(' ', '_', $text)));
+    if(!config('app.debug'))
+    {
+        $text = strtoupper(preg_replace("/[\.!]/", '', str_replace(' ', '_', $text)));
+    }
     $array['message'] = $text;
     $array['message_text'] = _t($text);
 }
