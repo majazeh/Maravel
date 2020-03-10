@@ -9,7 +9,7 @@ trait Index
     public function _index(Request $request)
     {
         list($parent, $model, $order_list, $current_order, $default_order, $filters, $current_filter) = $this->_queryIndex(...func_get_args());
-        $result = new $this->resourceCollectionClass($model);
+        $result = $this->resourceCollectionClass ? new $this->resourceCollectionClass($model) : $this->resourceClass::collection($model);
         $additional = [];
         if($parent)
         {

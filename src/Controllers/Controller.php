@@ -34,7 +34,7 @@ class Controller extends BaseController
         if (!isset($this->resourceCollectionClass)) {
             $this->resourceCollectionClass = '\\App\\Http\\Resources\\' . $this->class_name(null, true, 1);
             if (!class_exists($this->resourceCollectionClass)) {
-                $this->resourceCollectionClass = \Illuminate\Http\Resources\Json\ResourceCollection::class;
+                $this->resourceCollectionClass = null;
             }
         }
 

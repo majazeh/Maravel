@@ -7,11 +7,17 @@ class Term extends JsonResource
 {
     public function toArray($request)
     {
-        return [
+        $data = [
             'id' => $this->serial,
-            'title' => $this->title,
-            'parents' => $this->relationLoaded('parents') ? new Terms($this->parents) : null,
-            'creator' => $this->relationLoaded('creator') ? new User($this->creator) : null
+            'title' => $this->title
         ];
+        if ($this->resource->relationLoaded('parents')) {
+            $data['parents'] = Term::collection($this->parents);
+        }
+        if($this->resource->relationLoaded('parents'))
+        {
+            $data['craetor'] = new User($this->creator);
+        }
+        return $data;
     }
 }

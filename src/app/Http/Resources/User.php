@@ -10,8 +10,9 @@ class User extends JsonResource
         $user = auth()->check() ? auth()->user()->id : null;
         $data = parent::toArray($request);
         $data['id'] = $this->serial;
-        $data['avatar'] = $this->avatar ? new Files($this->avatar) : null;
+        $data['avatar'] = $this->avatar ? File::collection($this->avatar) : null;
         unset($data['avatar_id']);
+        unset($data['email_verified_at']);
         $data['created_at'] = ($this->created_at instanceof \Carbon\Carbon) ? $this->created_at->timestamp : $this->created_at;
         $data['updated_at'] = ($this->updated_at instanceof \Carbon\Carbon) ? $this->updated_at->timestamp : $this->updated_at;
         if (!Guardio::has('view-user-admin-variables') && $user != $this->id) {
