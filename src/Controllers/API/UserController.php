@@ -139,7 +139,7 @@ class UserController extends APIController
         ];
         $current = [];
         if ($request->username && $request->has('unique')) {
-            $id = User::id($request->user);
+            $id = User::encode_id($request->user);
             if ($id) {
                 $model->where('id', '<>', $id);
             }
@@ -147,7 +147,7 @@ class UserController extends APIController
             return [$filters, ['username' => $request->username]];
         }
         if ($request->email && $request->has('unique')) {
-            $id = User::id($request->user);
+            $id = User::encode_id($request->user);
             if ($id) {
                 $model->where('id', '<>', $id);
             }
@@ -158,7 +158,7 @@ class UserController extends APIController
             list($mobile, $country, $code) = \Maravel\Lib\MobileRV::parse($request->mobile);
             if($mobile)
             {
-                $id = User::id($request->user);
+                $id = User::encode_id($request->user);
                 if ($id) {
                     $model->where('id', '<>', $id);
                 }

@@ -37,19 +37,16 @@ class _Term extends Model
             $this->newRelatedInstance(Term::class)->newQuery(),
             $this,
             'terms.id',
-            'parent_id');
-            $hasMany->without(...$this->with);
-            return $hasMany;
+            'parent_id'
+        );
+        $hasMany->without(...$this->with);
+        return $hasMany;
     }
 
     public function getParentMapAttribute()
     {
         if(isset($this->attributes['parent_map'])){
-            $parents = explode(':', $this->attributes['parent_map']);
-            if(!$parents[0])
-            {
-                array_shift($parents);
-            }
+            $parents = explode(',', $this->attributes['parent_map']);
             return array_map(function($id){
                 return (int) $id;
             }, $parents);
@@ -59,7 +56,7 @@ class _Term extends Model
 
     public function setParentMapAttribute($value)
     {
-        $this->attributes['parent_map']  = is_array($value) ? ':' . join(':', $value) : $value;
+        $this->attributes['parent_map']  = is_array($value) ? join(',', $value) : $value;
     }
 
     public function creator()

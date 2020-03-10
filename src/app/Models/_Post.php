@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use App\Term;
 use App\TermUsage;
+use App\Models\HasManyTermUsage;
+
 class _Post extends Eloquent
 {
     use Serial;
@@ -24,7 +26,7 @@ class _Post extends Eloquent
         'meta' => 'array',
         'published_at' => 'datetime',
     ];
-
+    public $with = ['creator', 'terms', 'primaryTerm'];
     public function attachments()
     {
         return $this->hasMany(\App\File::class);
@@ -32,6 +34,16 @@ class _Post extends Eloquent
     public function terms()
     {
         return $this->hasManyThrough(\App\Term::class, \App\TermUsage::class, 'table_id', 'id', null, 'term_id')->where('term_usages.table_name', 'posts');
+    }
+    public function termUsages()
+    {
+        $hasMany = new HasManyTermUsage(
+            $this->newRelatedInstance(TermUsage::class)->newQuery(),
+            $this,
+            'table_id',
+            $this->getKeyName()
+        );
+        return $hasMany->witout('term')->where('term_usages.table_name', 'posts');
     }
 
     public function creator()
@@ -55,7 +67,7 @@ class _Post extends Eloquent
                         TermUsage::replace_map($model, $model->original['primary_term_id'], $model->attributes['primary_term_id']);
                     }
                 } else {
-                    $parents = explode(':', $model->primaryTerm->parent_map);
+                    $parents = $model->primaryTerm->parent_map;
                     $parents[] = $model->attributes['primary_term_id'];
                     foreach ($parents as $key => $value) {
                         if(!$value) continue;
@@ -75,10 +87,6 @@ class _Post extends Eloquent
 
     public function primaryTerm()
     {
-        return $this->belongsTo(Term::class);
-    }
-
-    public function addTerm(...$args){
-        return TermUsage::add($this, ...$args);
+        return $this->hasOne(Term::class, 'id', 'primary_term_id');
     }
 }

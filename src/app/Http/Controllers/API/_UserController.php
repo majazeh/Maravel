@@ -33,7 +33,7 @@ class _UserController extends Controller
         if(in_array($action, ['loginKey', 'verify', 'resetPassword']))
         {
             $parse = Cache::getJson($arg);
-            if(!$parse || !User::find(User::id($parse->user)))
+            if(!$parse || !User::find(User::encode_id($parse->user)))
             {
                 return false;
             }

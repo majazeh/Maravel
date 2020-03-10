@@ -47,7 +47,7 @@ trait Auth {
         if($parse->input == 'password')
         {
             $request->validate($this->rules($request, '_password'));
-            $user_id = User::id($parse->user);
+            $user_id = User::encode_id($parse->user);
             $user = auth()->attempt(['id' => $user_id, 'password' => $request->password]);
             if(!$user)
             {
@@ -113,7 +113,7 @@ trait Auth {
     {
         $parse = Cache::getJson($key);
         if ($parse->input == 'pin') {
-            $user = User::find(User::id($parse->user));
+            $user = User::find(User::encode_id($parse->user));
             if (!$user) {
                 throw ValidationException::withMessages([
                     "pin" => __('auth.failed')
@@ -224,7 +224,7 @@ trait Auth {
     {
         $decrypted = Cache::getJson($key);
         $this->incrementLoginAttempts($request);
-        $user = User::find(User::id($decrypted->user));
+        $user = User::find(User::encode_id($decrypted->user));
         if ($user->status != 'active') {
             throw ValidationException::withMessages([
                 $request->original_method => 'auth.inactive'

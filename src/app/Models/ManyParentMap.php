@@ -12,7 +12,7 @@ class ManyParentMap extends HasMany
         $whereIn = $this->whereInMethod($this->parent, $this->localKey);
         $this->query->{$whereIn}(
             $this->foreignKey,
-            $this->getKeys($models)
+            $this->getKeys($models) ?: [null]
         );
     }
 

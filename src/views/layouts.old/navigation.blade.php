@@ -29,7 +29,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-body">
-                                <a href="{{ route('dashboard.users.edit', \Auth::id()) }}">
+                                <a href="{{ route('dashboard.users.edit', \Auth::encode_id()) }}">
                                     {{ \Auth::user() ? \Auth::user()->name : '' }}
                                 </a>
                             </div>
@@ -46,7 +46,7 @@
                 </div>
 
                 @if (false)
-                    <a class="d-none d-sm-block navigation-account-title" href="{{ route('dashboard.users.edit', \Auth::id()) }}">
+                    <a class="d-none d-sm-block navigation-account-title" href="{{ route('dashboard.users.edit', \Auth::encode_id()) }}">
                         {{ \Auth::user() ? \Auth::user()->name : '' }}
                     </a>
                     <a href="{{ route('dashboard') }}" class="ml-1 border rounded-circle border-muted">
