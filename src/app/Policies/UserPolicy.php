@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\User;
-use App\Requests\Maravel as Request;
+use Illuminate\Http\Request;
 
 class UserPolicy extends \App\Guardio
 {
