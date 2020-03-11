@@ -16,7 +16,7 @@ class _TermUsage extends Model
 
         static::created(function ($model) {
             $term = $model->term()->without('creator', 'parents')->first();
-            if($term)
+            if($term->parent_id)
             {
                 $parents = static::whereIn('term_id', $term->parent_map)
                 ->where('table_name', $model->table_name)

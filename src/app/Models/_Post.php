@@ -26,10 +26,14 @@ class _Post extends Eloquent
         'meta' => 'array',
         'published_at' => 'datetime',
     ];
-    public $with = ['creator', 'terms', 'primaryTerm'];
+    public $with = ['creator', 'terms', 'primaryTerm', 'parent'];
     public function attachments()
     {
         return $this->hasMany(\App\File::class);
+    }
+    public function parent()
+    {
+        return $this->hasOne(static::class, 'id', 'parent_id')->without('parent');
     }
     public function terms()
     {
@@ -43,7 +47,7 @@ class _Post extends Eloquent
             'table_id',
             $this->getKeyName()
         );
-        return $hasMany->witout('term')->where('term_usages.table_name', 'posts');
+        return $hasMany->without('term')->where('term_usages.table_name', 'posts');
     }
 
     public function creator()
