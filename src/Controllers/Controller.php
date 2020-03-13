@@ -91,6 +91,14 @@ class Controller extends BaseController
         }
     }
 
+    public function fail($model = null, $id = null)
+    {
+        if (!$model) {
+            $model = $this->model;
+        }
+        throw (new ModelNotFoundException)->setModel(trim($model, '\\'), $id);
+    }
+
     public function findArgs($request, $arg1 = null, $arg2 = null)
     {
         if ($arg2) {

@@ -61,28 +61,27 @@ class _UserController extends Controller
             'username' => 'nullable|string|unique:users||min:4|max:24',
             'email' => 'nullable|email|unique:users',
             'name' => 'nullable|string',
-            'password' => 'nullable|string|min:6|max:24'
+            'password' => 'nullable|string|min:6|max:24',
+            'birthday' => 'nullable|date_format:Y-m-d',
+            'degree' => 'nullable',
         ];
         switch ($action) {
             case 'register':
-                return array_replace_recursive($primaryStore, [
+                return array_replace($primaryStore, [
                     'password' => 'required|string|min:6|max:24'
                     ]);
             case 'meUpdate':
                 $user = auth()->user();
             case 'update':
-                return [
-                    'gender' => 'nullable|in:male,female',
-                    'mobile' => 'nullable|mobile|unique:users,mobile,'. $user->id,
+                return array_replace($primaryStore, [
+                    'mobile' => (auth()->user()->isAdmin() ? 'nullable' : 'required').'|mobile|unique:users,mobile,'. $user->id,
                     'username' => 'nullable|string||min:4|max:24|unique:users,username,' . $user->id,
                     'email' => 'nullable|email|unique:users,email,' . $user->id,
-                    'name' => 'nullable|string',
-                    'password' => 'nullable|string|min:6|max:24',
                     'status' => 'nullable|in:' . join(',', User::statusList()),
                     'type' => 'nullable|in:' . join(',', User::typeList()),
-                ];
+                ]);
             case 'store':
-                return array_replace_recursive($primaryStore, [
+                return array_replace($primaryStore, [
                     'status' => 'nullable|in:' . join(',', User::statusList()),
                     'type' => 'nullable|in:' . join(',', User::typeList()),
                 ]);
