@@ -40,6 +40,6 @@ class AuthServiceProvider extends ServiceProvider
         Gate::resource('api.users', 'App\Policies\UserPolicy');
         Gate::define('dashboard.view', 'App\Policies\DashboardPolicy@view');
 
-        Gate::define('api.login.user', 'App\Policies\UserPolicy@isAdmin');
+        Gate::define('api.login.as', 'App\Policies\UserPolicy@isAdmin');
     }
 }

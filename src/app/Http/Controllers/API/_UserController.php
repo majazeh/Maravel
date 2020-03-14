@@ -4,12 +4,13 @@ namespace App\Http\Controllers\API;
 use App\Requests\Maravel as Request;
 use Illuminate\Support\Facades\Hash;
 use App\Guardio;
-use Illuminate\Support\Facades\Cache;
 use App\User;
+use Illuminate\Validation\Rule;
+use Maravel\Lib\MobileRV;
 
 class _UserController extends Controller
 {
-    use Users\Auth;
+    use Users\AuthTheory;
     use Users\Methods;
     public $order_list = ['id'];
     public function gate(Request $request, $action, $arg = null)
@@ -18,25 +19,16 @@ class _UserController extends Controller
         {
             return false;
         }
-        elseif ($action == 'login' && (!config('auth.login', true) || auth()->check()))
+        elseif ($action == 'login' && !config('auth.login', true))
         {
             return false;
         }
         elseif (in_array($action, ['verification', 'verify']) && (!config('auth.verification', true) || auth()->check())) {
             return false;
         }
-        elseif ($action == 'loginKey' && (!config('auth.login', true) || auth()->check()))
+        elseif ($action == 'loginKey' && !config('auth.login', true))
         {
             return false;
-        }
-
-        if(in_array($action, ['loginKey', 'verify', 'resetPassword']))
-        {
-            $parse = Cache::getJson($arg);
-            if(!$parse || !User::find(User::encode_id($parse->user)))
-            {
-                return false;
-            }
         }
 
         if($action == 'show')
@@ -58,22 +50,31 @@ class _UserController extends Controller
         $primaryStore = [
             'gender' => 'nullable|in:male,female',
             'mobile' => 'required|mobile|unique:users',
-            'username' => 'nullable|string|unique:users||min:4|max:24',
-            'email' => 'nullable|email|unique:users',
             'name' => 'nullable|string',
             'password' => 'nullable|string|min:6|max:24',
-            'birthday' => 'nullable|date_format:Y-m-d',
-            'degree' => 'nullable',
+            'birthday' => 'nullable|date_format:Y-m-d'
         ];
         switch ($action) {
+            case 'login':
+                return [
+                    'authorized_key' => 'required|min:4|max:24'
+                ];
+            case 'theory' :
+                return $user->theory->rules($request);
             case 'register':
                 return array_replace($primaryStore, [
+                    'mobile' => [
+                        'required',
+                        'mobile',
+                        Rule::unique('users', 'mobile')->whereNot('status', 'awaiting')
+                    ],
                     'password' => 'required|string|min:6|max:24'
                     ]);
             case 'meUpdate':
                 $user = auth()->user();
             case 'update':
                 return array_replace($primaryStore, [
+                    'email' => 'nullable|email|unique:users',
                     'mobile' => (auth()->user()->isAdmin() ? 'nullable' : 'required').'|mobile|unique:users,mobile,'. $user->id,
                     'username' => 'nullable|string||min:4|max:24|unique:users,username,' . $user->id,
                     'email' => 'nullable|email|unique:users,email,' . $user->id,
@@ -82,6 +83,8 @@ class _UserController extends Controller
                 ]);
             case 'store':
                 return array_replace($primaryStore, [
+                    'username' => 'nullable|string|unique:users||min:4|max:24',
+                    'email' => 'nullable|email|unique:users',
                     'status' => 'nullable|in:' . join(',', User::statusList()),
                     'type' => 'nullable|in:' . join(',', User::typeList()),
                 ]);
@@ -102,11 +105,12 @@ class _UserController extends Controller
                     'password' => 'required|string|min:6|max:24'
                 ];
             case 'verification':
-            case 'forgetPassword':
                 return [
-                    'username' => 'nullable|string||min:4|max:24',
-                    'mobile' => 'nullable|mobile',
-                    'email' => 'nullable|email',
+                    'mobile' => 'required|mobile|exists:users,mobile,status,awaiting',
+                ];
+                case 'forgetPassword':
+                return [
+                    'mobile' => 'required|mobile|exists:users,mobile,status,active',
                 ];
             case 'resetPassword':
                 return [
@@ -179,6 +183,12 @@ class _UserController extends Controller
 
     public function manipulateData(Request $request, $action, &$data, $user = null)
     {
+        if($action == 'login' && isset($data['authorized_key']))
+        {
+            if ($mobile = MobileRV::parse($data['authorized_key'])) {
+                $data['authorized_key'] = $mobile[2] . $mobile[0];
+            }
+        }
         // hash password
         if(in_array($action, ['register', 'store', 'update', 'resetPassword', 'changePassword']) && isset($data['password']))
         {
@@ -198,19 +208,6 @@ class _UserController extends Controller
                 $data['type'] = $user->type;
             }
 
-        }
-        elseif ($action == 'register')
-        {
-            if (User::count() == 0)
-            {
-                $data['status'] = 'active';
-                $data['type'] = 'admin';
-            }
-            else
-            {
-                $data['status'] = User::defaultStatus();
-                $data['type'] = User::defaultType();
-            }
         }
         elseif($action == 'store')
         {

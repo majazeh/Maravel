@@ -10,6 +10,5 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::apiResource('attachments', 'AttachmentController', ['as' => 'api']);
 
 });
-Route::post('login', 'UserController@login');
 Route::post('logout', 'UserController@logout');
 Route::post('register', 'UserController@register');
