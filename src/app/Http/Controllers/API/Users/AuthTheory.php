@@ -6,6 +6,7 @@ use App\Requests\Maravel as Request;
 use Illuminate\Validation\ValidationException;
 use App\EnterTheory;
 use App\EnterTheory\Fake;
+use App\Http\Resources\User as ResourcesUser;
 use App\User;
 
 trait AuthTheory {
@@ -58,20 +59,22 @@ trait AuthTheory {
 
     public function logout(Request $request)
     {
-        dd($request->route());
         auth()->user()->token()->revoke();
         return [];
     }
     public function logoutBack(Request $request)
     {
+        auth()->user()->token()->revoke();
         if(isset(auth()->user()->token()->meta['admin_id']))
         {
-            $theory = new Fake;
-            return $theory->create($request, 'auth', [
-                'user_id' => auth()->user()->token()->meta['admin_id']
-            ])->response();
+            $user = User::find(auth()->user()->token()->meta['admin_id']);
+            $token = $user->createToken('api');
+            $token->token->save();
+            return [
+                'user' => new ResourcesUser($user),
+                'token' => $token->accessToken
+            ];
         }
-        auth()->user()->token()->revoke();
 
         return [];
     }
@@ -85,12 +88,13 @@ trait AuthTheory {
             ]);
         }
         auth()->user()->token()->revoke();
-        $theory = new Fake;
-        return $theory->create($request, 'auth', [
-            'user_id' => $user->id,
-            'meta' => [
-                'token' => ['admin_id' => auth()->id()]
-            ]
-        ])->response();
+        $token = $user->createToken('api');
+        $token->token->meta = ['admin_id' => auth()->id()];
+        $token->token->save();
+        return [
+            'user' => new ResourcesUser($user),
+            'token' => $token->accessToken
+        ];
+
     }
 }
