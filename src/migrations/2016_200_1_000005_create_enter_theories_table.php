@@ -19,12 +19,15 @@ class CreateEnterTheoriesTable extends Migration
             $table->string('theory', 50)->index();
             $table->string('value', 110)->nullable();
             $table->string('trigger', 50)->nullable();
+            $table->string('type', 20)->default('action');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->text('meta')->nullable();
             $table->timestamp('expired_at')->nullable();
             $table->timestamps();
             $table->unique(['key', 'value']);
             $table->foreign('parent_id')->references('id')->on('enter_theories');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

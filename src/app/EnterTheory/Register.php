@@ -8,6 +8,10 @@ use App\User;
 
 class Register extends Theory
 {
+    public function boot(Request $request)
+    {
+        return $this->trigger($request);
+    }
     public function passed(Request $request)
     {
         $params = $this->model->meta;
@@ -22,12 +26,12 @@ class Register extends Theory
         }
         $this->model->delete();
         $auth = EnterTheory::create([
-            'key' => $user->mobile,
-            'value' => $user->id,
-            'theory' => 'auth',
-            'trigger' => config('auth.trigger', 'password'),
+        'key' => $user->mobile,
+        'user_id' => $user->id,
+        'theory' => 'auth',
+        'trigger' => config('auth.trigger', 'password'),
         ]);
-        return $auth->run($request);
+        return $auth->theory->run($request);
     }
     public function register(Request $request, EnterTheory $model, array $parameters = [])
     {
@@ -49,13 +53,10 @@ class Register extends Theory
                 'meta' => $parameters,
                 'key' => $parameters['mobile'],
                 'theory' => 'register',
+                'type' => 'chain',
                 'trigger' => config('auth.autoActive', false) ? null : config('auth.activeMethod', 'mobileCode'),
                 'expired_at' => Carbon::now()->addMinutes(5)
             ]);
-        }
-        if($theory->getAttribute('trigger'))
-        {
-            return $theory->trigger->register($request, $theory);
         }
         return $theory;
     }

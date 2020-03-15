@@ -12,11 +12,11 @@ class ForgetPassword extends Theory
 {
     public function boot(Request $request)
     {
-
+        return $this->pass($request);
     }
     public function passed(Request $request)
     {
-        $user = User::find($this->model->value);
+        $user = User::find($this->model->user_id);
         $user->update(['password'=> Hash::make($request->password)]);
         Token::where('user_id', $user->id)->update(['revoked' => 1]);
         $this->model->delete();
@@ -32,7 +32,7 @@ class ForgetPassword extends Theory
         {
             $theory = EnterTheory::create([
                 'parent_id' => $model->id,
-                'value' => $model->value,
+                'user_id' => $model->user_id,
                 'key' => EnterTheory::tokenGenerator(),
                 'theory' => 'forgetPassword',
                 'trigger' => 'mobileCode',

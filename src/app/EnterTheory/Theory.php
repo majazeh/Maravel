@@ -8,44 +8,78 @@ use Closure;
 use Exception;
 abstract class Theory
 {
-    protected $model, $trigger;
+    protected $model, $caller, $result;
     public function __construct($model)
     {
         $this->model = $model;
+        $this->key = $model->key;
+        $this->value = $model->value;
+        $this->user_id = $model->user_id;
+        $this->result = $model;
     }
 
     abstract public function register(Request $request, EnterTheory $model, array $parameters = []);
     abstract public function rules(Request $request);
-    public function run(Request $request)
+    public function run(Request $request, Theory $caller = null)
     {
-        if(method_exists($this, 'boot'))
+        $this->caller = $caller;
+        $result = $this->boot($request);
+        if($result instanceof Theory && !($result instanceof static))
         {
-            $this->boot($request) === false ? false : true;
+            return $result;
         }
-        $trigger = $this->model->trigger;
-        if ($trigger) {
-            $register = $trigger->register($request, $this->model, $this->trigger ? call_user_func($this->trigger) : []);
-            if(!$register instanceof EnterTheory)
+        elseif($result instanceof EnterTheory)
+        {
+            return $result->theory;
+        }
+        elseif($result != $this){
+            $this->result = $result;
+        }
+        return $this;
+    }
+
+    public function tryPass(Theory $theory, Request $request)
+    {
+        $this->caller = $theory;
+        $result = $this->pass($request);
+        if($result instanceof Theory && $result != $this)
+        {
+            return $result;
+        }
+        elseif($this != $result)
+        {
+            $this->result = $this;
+        }
+        return $this;
+    }
+
+    public function pass(Request $request)
+    {
+        $result = $this->passed($request) ?: $this->result;
+        if($this->model->parent && $this->model->parent->expired_at)
+        {
+            $this->model->parent->update(['trigger' => null]);
+            if($this->model->parent->type == 'chain')
             {
-                throw new Exception("Register return must be EnterTheory", 1);
+                return $this->model->parent->theory->tryPass($this, $request);
             }
-            $trigger->commit(function() use ($register){
-                return $register;
-            });
-            return $trigger;
-        } else {
-            return $this->pass($request);
+            return $this->model->parent->theory;
         }
+        elseif($this->model->parent)
+        {
+            return $this->model->parent->theory->tryPass($this, $request);
+        }
+        if($result instanceof Theory && $result != $this)
+        {
+            return $result;
+        }
+        $this->result = $result;
+        return $this;
     }
 
     public function create(Request $request, $theory, array $parameters = [])
     {
-        $theory = $this->load($theory);
-        $register = $theory->register($request, $this->model, $parameters);
-        $theory->commit(function () use ($register) {
-            return $register;
-        });
-        return $theory;
+        return $this->load($theory)->tryRegister($this, $request, $parameters);
     }
 
     public function load($theory)
@@ -56,58 +90,36 @@ abstract class Theory
         return new $plan($this->model);
     }
 
-    public function pass($request)
-    {
-        $model = $this;
-        if($this->model->parent)
-        {
-            $model = $this->model->parent->theory;
-            $this->passed($request);
-            $passed = $model->passed($request);
-
-            $model->commit(function() use ($passed){
-                return $passed;
-            });
-        }
-        else
-        {
-            $passed = $this->passed($request);
-            $this->commit(function () use ($passed) {
-                return $passed;
-            });
-        }
-        if ($passed instanceof Theory) {
-            $model = $passed;
-        }
-        return $model;
-    }
-
     public function response()
     {
-        $commit = $this->commit ? call_user_func($this->commit) : [];
-        return $this->toArray($commit);
-    }
-
-    protected function toArray($commit)
-    {
-        if (is_array($commit)) {
-            return $commit;
-        } elseif (gettype($commit) == 'object' && method_exists($commit, 'toArray')) {
-            if($commit instanceof EnterTheory)
-            {
-                return $commit->toArray();
+        if (is_array($this->result)) {
+            return $this->result;
+        } elseif (gettype($this->result) == 'object' && method_exists($this->result, 'toArray')) {
+            if ($this->result instanceof EnterTheory) {
+                return $this->result->toArray();
             }
-            return ['data' => $commit->toArray()];
+            return ['data' => $this->result->toArray()];
         }
-        return $commit;
+        return $this->result;
     }
 
-    protected function trigger(Closure $trigger)
+    public function tryRegister(Theory $theory, Request $request, array $parameters = [])
     {
-        $this->trigger = $trigger;
+        $this->caller = $theory;
+        $result = $this->result = $this->register($request, $theory->model, $parameters);
+        if(isset($result->trigger))
+        {
+            return $result->trigger->tryRegister($result->theory, $request, $parameters);
+        }
+        return $this;
     }
-    public function commit(Closure $commit)
+
+    public function trigger(Request $request, array $parameters = [])
     {
-        $this->commit = $commit;
+        if($this->model->trigger)
+        {
+            return $this->model->trigger->tryRegister($this, $request, $parameters);
+        }
+        return $this->pass($request);
     }
 }

@@ -9,40 +9,33 @@ use Carbon\Carbon;
 
 class Auth extends Theory
 {
+    public function boot(Request $request)
+    {
+        if (auth()->check())
+        {
+            if($this->model->parent)
+            {
+                $result = $this->model->parent->theory->run($request);
+                // $this->model->delete();
+                return $result;
+            }
+            return $this->pass($request);
+        }
+        if(!$this->user_id && !$this->model->trigger)
+        {
+            return $this->model;
+        }
+
+        return $this->trigger($request);
+    }
     public function passed(Request $request)
     {
-        $user = User::find($this->model->value);
-        $data = new ResourcesUser($user);
-        $token = $user->createToken('api');
-        if(isset($this->model->meta['token']))
+        $this->callback = $request->callback;
+        if(auth()->check())
         {
-            $token->token->meta = $this->model->meta['token'];
-            $token->token->save();
+            return auth()->user();
         }
-        if($this->model->expired_at)
-        {
-            $this->model->delete();
-        }
-
-        $data = [
-            'data' => $data,
-            'token' => $token->accessToken
-        ];
-        if($request->callback)
-        {
-            $callback = EnterTheory::where('key', $request->callback)
-            ->where('theory', 'auth')
-            ->where('expired_at', '>', Carbon::now())
-            ->first();
-            if($callback)
-            {
-                dd($callback->parent->theory->run($request));
-            }
-        }
-
-
-        return $data;
-
+        return auth()->loginUsingId($this->model->user_id);
     }
     public function register(Request $request, EnterTheory $model, array $parameters = [])
     {
@@ -56,7 +49,7 @@ class Auth extends Theory
         }
         return EnterTheory::create([
             'key' => EnterTheory::tokenGenerator(),
-            'value' => isset($parameters['user_id']) ? $parameters['user_id'] : null,
+            'user_id' => isset($parameters['user_id']) ? $parameters['user_id'] : null,
             'theory' => 'auth',
             'parent_id' => isset($parameters['user_id']) ? null : $model->id,
             'expired_at' => isset($parameters['user_id']) ? Carbon::now()->addMinutes(1) : Carbon::now()->addMinutes(10),
@@ -64,20 +57,38 @@ class Auth extends Theory
             ]);
     }
 
-    public function toArray($commit)
+    public function response()
     {
-        if(isset($commit->theory) && $commit->theory instanceof Auth && !$commit->value)
+        if($this->result instanceof User)
+        {
+            $auth = app('request')->header('authorization');
+            $token = strtolower(substr($auth, 0, 7)) == 'bearer ' ? substr($auth, 7) : $this->result->createToken('api')->accessToken;
+            $data = [
+                'data' => new ResourcesUser($this->result),
+                'token' => $token
+            ];
+            if($this->callback)
+            {
+                $data['key'] = $this->callback;
+            }
+            return $data;
+        }
+        elseif($this->result instanceof EnterTheory && $this->result->getOriginal('theory') == 'auth')
         {
             return [
                 'theory' => 'auth',
-                'callback' => $commit->key
+                ($this->user_id ? 'key' : 'callback') => $this->result->key
             ];
         }
-        return parent::toArray($commit);
+        return $this->response();
     }
 
     public function rules(Request $request)
     {
+        if(!$this->user_id && !$this->model->getOriginal('trigger') && $this->model->parent)
+        {
+            return $this->model->parent->theory->rules($request);
+        }
         return [];
     }
 }

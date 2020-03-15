@@ -29,6 +29,10 @@ class EnterTheory extends Model
     {
         return $this->hasOne(static::class, 'id', 'parent_id');
     }
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
     public function getTheoryAttribute()
     {
         if(!isset($this->attributes['theory']))

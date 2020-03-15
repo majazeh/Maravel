@@ -15,12 +15,15 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Cache;
 use Maravel\Middleware\Authenticate as MaravelAuthenticate;
 use Illuminate\Support\Facades\Config;
+use Route;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-
+        Route::macro('authIf', function(){
+            return app('request')->header('authorization') ? 'auth:api' : 'api';
+        });
         if ($this->app->request->is('api/*') || $this->app->request->ajax()) {
             if($this->app->request->is('api/*'))
             {

@@ -58,6 +58,7 @@ trait AuthTheory {
 
     public function logout(Request $request)
     {
+        dd($request->route());
         auth()->user()->token()->revoke();
         return [];
     }
