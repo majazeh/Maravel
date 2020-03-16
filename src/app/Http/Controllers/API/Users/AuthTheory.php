@@ -15,7 +15,7 @@ trait AuthTheory {
         return $enterTheory->theory->run($request)->response();
     }
 
-    public function login(Request $request)
+    public function auth(Request $request)
     {
         $enterTheory = EnterTheory::where('key', $request->authorized_key)->first();
         if (!$enterTheory) {
@@ -45,14 +45,14 @@ trait AuthTheory {
         abort(404);
     }
 
-    public function forgetPassword(Request $request)
+    public function recovery(Request $request)
     {
         $enterTheory = EnterTheory::where([
             'key' => $request->mobile,
             'theory' => 'auth',
         ])->first();
         if ($enterTheory) {
-            return $enterTheory->theory->create($request, 'forgetPassword')->response();
+            return $enterTheory->theory->create($request, 'recovery')->response();
         }
         abort(404);
     }
@@ -62,7 +62,7 @@ trait AuthTheory {
         auth()->user()->token()->revoke();
         return [];
     }
-    public function logoutBack(Request $request)
+    public function authBack(Request $request)
     {
         auth()->user()->token()->revoke();
         if(isset(auth()->user()->token()->meta['admin_id']))
@@ -79,7 +79,7 @@ trait AuthTheory {
         return [];
     }
 
-    public function loginAs(Request $request, User $user)
+    public function authAs(Request $request, User $user)
     {
         if($user->type == 'admin')
         {

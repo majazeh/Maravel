@@ -19,14 +19,14 @@ class _UserController extends Controller
         {
             return false;
         }
-        elseif ($action == 'login' && !config('auth.login', true))
+        elseif ($action == 'auth' && !config('auth.login', true))
         {
             return false;
         }
         elseif (in_array($action, ['verification', 'verify']) && (!config('auth.verification', true) || auth()->check())) {
             return false;
         }
-        elseif ($action == 'loginKey' && !config('auth.login', true))
+        elseif ($action == 'theory' && !config('auth.login', true))
         {
             return false;
         }
@@ -55,7 +55,7 @@ class _UserController extends Controller
             'birthday' => 'nullable|date_format:Y-m-d'
         ];
         switch ($action) {
-            case 'login':
+            case 'auth':
                 return [
                     'authorized_key' => 'required|min:4|max:24'
                 ];
@@ -89,12 +89,6 @@ class _UserController extends Controller
                     'type' => 'nullable|in:' . join(',', User::typeList()),
                 ]);
                 break;
-            case 'login':
-                return [
-                    'username' => 'nullable|string||min:4|max:24|oneOf:email,mobile',
-                    'mobile' => 'nullable|mobile',
-                    'email' => 'nullable|email',
-                ];
             case 'enter':
                 return [
                     'gender' => 'nullable|in:male,female',
@@ -108,23 +102,9 @@ class _UserController extends Controller
                 return [
                     'mobile' => 'required|mobile|exists:users,mobile,status,awaiting',
                 ];
-                case 'forgetPassword':
+            case 'recovery':
                 return [
                     'mobile' => 'required|mobile|exists:users,mobile,status,active',
-                ];
-            case 'resetPassword':
-                return [
-                    'pin' => 'required|string',
-                    'password' => 'required|string|min:6|max:24'
-                ];
-            case 'changePassword':
-                return [
-                    'current_password' => 'required|string|min:6|max:24',
-                    'password' => 'required|string|min:6|max:24|different:current_password'
-                ];
-            case 'verify':
-                return [
-                    'pin' => 'required|string',
                 ];
             case '_password': return ['password' => 'required|string|min:6|max:24'];
             default:
@@ -135,7 +115,7 @@ class _UserController extends Controller
 
     public function requestData(Request $request, $action, &$data, $user = null)
     {
-        if(in_array($action, ['login', 'verification', 'verify', 'forgetPassword', 'resetPassword']))
+        if(in_array($action, ['auth', 'verification', 'recovery']))
         {
             $data['method'] = 'username';
             $data['original_method'] = 'username';
@@ -183,14 +163,14 @@ class _UserController extends Controller
 
     public function manipulateData(Request $request, $action, &$data, $user = null)
     {
-        if($action == 'login' && isset($data['authorized_key']))
+        if($action == 'auth' && isset($data['authorized_key']))
         {
             if ($mobile = MobileRV::parse($data['authorized_key'])) {
                 $data['authorized_key'] = $mobile[2] . $mobile[0];
             }
         }
         // hash password
-        if(in_array($action, ['register', 'store', 'update', 'resetPassword', 'changePassword']) && isset($data['password']))
+        if(in_array($action, ['register', 'store', 'update', 'changePassword']) && isset($data['password']))
         {
             $data['password'] = Hash::make($data['password']);
         }

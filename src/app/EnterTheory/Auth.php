@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\User;
 use App\EnterTheory;
 use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class Auth extends Theory
 {
@@ -16,7 +17,6 @@ class Auth extends Theory
             if($this->model->parent)
             {
                 $result = $this->model->parent->theory->run($request);
-                // $this->model->delete();
                 return $result;
             }
             return $this->pass($request);
@@ -25,12 +25,16 @@ class Auth extends Theory
         {
             return $this->model;
         }
-
+        if($this->model->user_id && $this->model->user->status != 'active')
+        {
+            throw ValidationException::withMessages([
+                $request->original_method => __('auth.inactive')
+            ]);
+        }
         return $this->trigger($request);
     }
     public function passed(Request $request)
     {
-        $this->callback = $request->callback;
         if(auth()->check())
         {
             return auth()->user();
@@ -47,6 +51,7 @@ class Auth extends Theory
         {
             return $find;
         }
+
         return EnterTheory::create([
             'key' => EnterTheory::tokenGenerator(),
             'user_id' => isset($parameters['user_id']) ? $parameters['user_id'] : null,
@@ -67,9 +72,10 @@ class Auth extends Theory
                 'data' => new ResourcesUser($this->result),
                 'token' => $token
             ];
-            if($this->callback)
+            if(request()->callback && $callback = EnterTheory::where('key', request()->callback)->where('expired_at', '>', Carbon::now())->first())
             {
-                $data['key'] = $this->callback;
+                $data['key'] = request()->callback;
+                $data['theory'] = $callback->getOriginal('theory');
             }
             return $data;
         }

@@ -93,14 +93,24 @@ abstract class Theory
     public function response()
     {
         if (is_array($this->result)) {
-            return $this->result;
+            $result = $this->result;
         } elseif (gettype($this->result) == 'object' && method_exists($this->result, 'toArray')) {
             if ($this->result instanceof EnterTheory) {
-                return $this->result->toArray();
+                $result = $this->result->toArray();
             }
-            return ['data' => $this->result->toArray()];
+            else
+            {
+                $result = ['data' => $this->result->toArray()];
+            }
         }
-        return $this->result;
+        else
+        {
+            $result = $this->result;
+        }
+        if (request()->callback && !isset($result['callback']) && EnterTheory::where('key', request()->callback)->where('expired_at', '>', Carbon::now())->count() && request()->callback != $result['key']) {
+            $result['callback'] = request()->callback;
+        }
+        return $result;
     }
 
     public function tryRegister(Theory $theory, Request $request, array $parameters = [])

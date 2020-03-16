@@ -8,7 +8,7 @@ use App\User;
 use App\Token;
 use Illuminate\Support\Facades\Hash;
 
-class ForgetPassword extends Theory
+class Recovery extends Theory
 {
     public function boot(Request $request)
     {
@@ -25,7 +25,7 @@ class ForgetPassword extends Theory
     public function register(Request $request, EnterTheory $model, array $parameters = [])
     {
         $theory = EnterTheory::where('parent_id', $model->id)
-        ->where('theory', 'forgetPassword')
+        ->where('theory', 'recovery')
         ->where('expired_at', '>', Carbon::now())
         ->first();
         if(!$theory)
@@ -34,7 +34,7 @@ class ForgetPassword extends Theory
                 'parent_id' => $model->id,
                 'user_id' => $model->user_id,
                 'key' => EnterTheory::tokenGenerator(),
-                'theory' => 'forgetPassword',
+                'theory' => 'recovery',
                 'trigger' => 'mobileCode',
                 'expired_at' => Carbon::now()->addMinutes(5)
             ]);
