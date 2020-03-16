@@ -22,31 +22,11 @@ trait Store
         }
 
         if ($callback) {
-            array_unshift($args, $parent);
-            array_unshift($args, $request);
+            $args = [$request, $parent, $this->store_data($request, $parent, ...$args)];
             $model = call_user_func_array($callback, $args);
         } else {
-            if(method_exists($this, 'fields'))
-            {
-                $data = $this->fields($request, 'store', $parent, ...$args);
-            }
-            else
-            {
-                $fields = array_keys($this->rules($request, 'store', $parent, ...$args));
-                $except = method_exists($this, 'except') ? $this->except($request, 'store', $parent, ...$args) : [];
-                foreach ($except as $key => $value) {
-                    $index = array_search($value, $fields);
-                    if ($index !== -1) {
-                        unset($fields[$index]);
-                    }
-                }
-                foreach ($fields as $value) {
-                    if ($request->has($value)) {
-                        $data[$value] = $request->$value;
-                    }
-                }
-            }
-            $model = $this->model::create($data);
+
+            $model = $this->model::create($this->store_data($request, $parent, ...$args));
         }
         $model = $this->model::findOrFail($model->id);
         $result = new $this->resourceClass($model);
@@ -63,5 +43,27 @@ trait Store
         }
         $this->statusMessage = $this->class_name() . " created";
         return $result;
+    }
+
+    public function store_data(Request $request, $parent = null, ...$args)
+    {
+        if (method_exists($this, 'fields')) {
+            $data = $this->fields($request, 'store', $parent, ...$args);
+        } else {
+            $fields = array_keys($this->rules($request, 'store', $parent, ...$args));
+            $except = method_exists($this, 'except') ? $this->except($request, 'store', $parent, ...$args) : [];
+            foreach ($except as $key => $value) {
+                $index = array_search($value, $fields);
+                if ($index !== -1) {
+                    unset($fields[$index]);
+                }
+            }
+            foreach ($fields as $value) {
+                if ($request->has($value)) {
+                    $data[$value] = $request->$value;
+                }
+            }
+        }
+        return $data;
     }
 }

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\API\Users;
 
+use App\EnterTheory;
 use App\Requests\Maravel as Request;
 use App\Guardio;
 use App\User;
-
+use DB;
 trait Methods {
     public function index(Request $request)
     {
@@ -29,14 +30,37 @@ trait Methods {
 
     public function store(Request $request)
     {
-        // \DB::beginTransaction();
-        $user = $this->_store(...func_get_args());
+        $user = $this->_store($request, function($request, $parent, $data){
+            DB::beginTransaction();
+            $user = $this->model::create($data);
+            foreach (['username', 'email', 'mobile'] as $value) {
+                if($user->$value){
+                    EnterTheory::create([
+                        'key' => $user->$value,
+                        'theory' => 'auth',
+                        'trigger' => $user->status == 'active' ? 'password' : 'mobileCode',
+                        'user_id' => $user->id
+                    ]);
+                }
+            }
+            return $user;
+            DB::commit();
+        });
         return $user;
     }
 
     public function update(Request $request, User $user)
     {
-        return $this->_update(...func_get_args());
+        return $this->_update($request, $user, function($request, $user, $data){
+            DB::beginTransaction();
+            $user->update($data);
+            foreach (['username', 'email', 'mobile'] as $value) {
+                if ($user->$value != $user->getOriginal($value)) {
+                    EnterTheory::where('key', $user->getOriginal($value))->where('theory', 'auth')->update(['key' => $user->$value]);
+                }
+            }
+            DB::commit();
+        });
     }
 
     public function me(Request $request)
