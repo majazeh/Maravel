@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\API\Users;
 
 use App\EnterTheory;
+use App\File;
 use App\Requests\Maravel as Request;
 use App\Guardio;
+use App\Http\Resources\User as ResourcesUser;
 use App\User;
 use DB;
 trait Methods {
@@ -56,10 +58,42 @@ trait Methods {
             $user->update($data);
             foreach (['username', 'email', 'mobile'] as $value) {
                 if ($user->$value != $user->getOriginal($value)) {
-                    EnterTheory::where('key', $user->getOriginal($value))->where('theory', 'auth')->update(['key' => $user->$value]);
+                    if($find = EnterTheory::where('key', $user->getOriginal($value))->where('theory', 'auth')->first())
+                    {
+                        $find->update(['key' => $user->$value]);
+                    }
+                    else
+                    {
+                        EnterTheory::create([
+                            'key' => $user->$value,
+                            'theory' => 'auth',
+                            'trigger' => $user->status == 'active' ? 'password' : 'mobileCode',
+                            'user_id' => $user->id
+                        ]);
+                    }
                 }
             }
             DB::commit();
+        });
+    }
+
+    public function avatar(Request $request, User $user)
+    {
+        return File::attachment($request->avatar, function($attachment) use($user) {
+            \DB::beginTransaction();
+            $avatar = $attachment->createPost([
+                'type' => 'attachment:avatar',
+                'status' => 'publish'
+            ]);
+            $user->avatar_id = $avatar->id;
+            $user->save();
+            $file = $attachment->createFile();
+            $file->changeSize(500, null, 'large');
+            $file->changeSize(250, null, 'medium');
+            $file->changeSize(150, null, 'small');
+            $user->avatar;
+            \DB::commit();
+            return new ResourcesUser($user);
         });
     }
 

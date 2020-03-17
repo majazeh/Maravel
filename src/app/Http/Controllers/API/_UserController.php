@@ -89,14 +89,9 @@ class _UserController extends Controller
                     'type' => 'nullable|in:' . join(',', User::typeList()),
                 ]);
                 break;
-            case 'enter':
+            case 'avatar':
                 return [
-                    'gender' => 'nullable|in:male,female',
-                    'mobile' => 'nullable|mobile',
-                    'username' => 'nullable|string||min:4|max:24',
-                    'email' => 'nullable|email',
-                    'name' => 'nullable|string',
-                    'password' => 'required|string|min:6|max:24'
+                    'avatar' => 'required|mimes:jpeg,jpg,png|dimensions:ratio=1|max:2048'
                 ];
             case 'verification':
                 return [
@@ -106,7 +101,6 @@ class _UserController extends Controller
                 return [
                     'mobile' => 'required|mobile|exists:users,mobile,status,active',
                 ];
-            case '_password': return ['password' => 'required|string|min:6|max:24'];
             default:
                 return [];
                 break;

@@ -1,11 +1,14 @@
 <?php
 
 namespace App;
+
+use App\Models\FileAttachment;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use Illuminate\Http\UploadedFile;
 use Maravel\Controllers\API\AttachmentController;
 use Image;
 use DB;
+use Closure;
 class File extends Eloquent
 {
     use Models\Model;
@@ -19,6 +22,25 @@ class File extends Eloquent
     public static $s_prefix = 'F';
     public static $s_start = 24300000;
     public static $s_end = 728999999;
+
+    public static function attachment($file, Closure $callaback = null)
+    {
+        $attachment = new FileAttachment($file);
+        if($callaback)
+        {
+            $result = call_user_func_array($callaback, [$attachment]);
+            if($result)
+            {
+                return $result;
+            }
+        }
+        else
+        {
+            $attachment->createPost();
+            $attachment->createFile();
+        }
+        return $attachment->post();
+    }
 
     public static function upload($request, $file)
     {
@@ -84,7 +106,6 @@ class File extends Eloquent
         return $file;
     }
 
-
     public static function imageSize($post, $width, $height = null, $mode = null){
         if(!$mode)
         {
@@ -96,7 +117,6 @@ class File extends Eloquent
         }
         $height = $height ?: $width;
         $original = static::where('post_id', $post->id)->where('mode', 'original')->first();
-        DB::beginTransaction();
         $file_name = $post->serial . "_$mode." . $original->exec;
         $file = static::create([
             'post_id' => $post->id,
@@ -123,6 +143,55 @@ class File extends Eloquent
         $image = Image::make($original->dir)
         ->resize($width, $height)
         ->save($file->dir);
-        DB::commit();
+    }
+
+    public function changeSize($width, $height = null, $mode = null, $disk = null)
+    {
+        if (!$mode) {
+            $mode = "{$width}x";
+            if ($height) {
+                $mode .= $height;
+            }
+        }
+        $height = $height ?: $width;
+        $original = null;
+        if($this->mode != 'original')
+        {
+            $original = static::where('post_id', $this->post_id)->where('mode', 'original')->first();
+        }
+        if(!$original)
+        {
+            $original = $this;
+        }
+
+
+        $disk = config('filesystems.disks.' . $disk, config('filesystems.disks.public'));
+
+        $file_name = Post::decode_id($this->post_id) . "_$mode." . $original->exec;
+        $folders = glob(join(DIRECTORY_SEPARATOR, [$disk['root'], 'Files_*']));
+        $last_folder = last($folders);
+        $files_count = count(glob(join(DIRECTORY_SEPARATOR, [$last_folder, '*'])));
+        $folder_int = (string) (ceil($files_count / 1000) * 1000);
+
+        $folder_name = 'Files_' . $folder_int;
+        $folder = join(DIRECTORY_SEPARATOR, [$disk['root'], $folder_name]);
+        $file_slug = trim(str_replace(env('APP_URL'), '', join('/', [$disk['url'], $folder_name, $file_name])), '/');
+        if (!file_exists(public_path($folder))) {
+            mkdir(public_path($folder), 0777, true);
+        }
+        $file = static::create([
+            'post_id' => $this->post_id,
+            'mode' => $mode,
+            'slug' => $file_slug,
+            'url' => join('/', [$disk['url'], $folder_name, $file_name]),
+            'dir' => join(DIRECTORY_SEPARATOR, [$folder, $file_name]),
+            'mime' => $original->mime,
+            'exec' => $original->exec,
+            'type' => $original->type,
+        ]);
+
+        return Image::make($original->dir)
+            ->resize($width, $height)
+            ->save($file->dir);
     }
 }

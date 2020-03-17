@@ -10,7 +10,7 @@ class User extends JsonResource
         $user = auth()->check() ? auth()->user()->id : null;
         $data = parent::toArray($request);
         $data['id'] = $this->serial;
-        $data['avatar'] = $this->avatar ? File::collection($this->avatar) : null;
+        $data['avatar'] = $this->avatar ? new Files($this->avatar) : null;
         $data['birthday'] = date('Y-m-d', $data['birthday']);
         unset($data['avatar_id']);
         unset($data['email_verified_at']);
