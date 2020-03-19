@@ -22,7 +22,12 @@ trait Store
         }
 
         if ($callback) {
-            $args = [$request, $parent, $this->store_data($request, $parent, ...$args)];
+            $args = [$request];
+            if($parent)
+            {
+                $args[] = $parent;
+            }
+            $args[] = $this->store_data($request, $parent, ...$args);
             $model = call_user_func_array($callback, $args);
         } else {
 

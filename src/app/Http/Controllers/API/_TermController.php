@@ -71,7 +71,8 @@ class _TermController extends _Controller
                         'nullable',
                         'exists_serial:terms,id,creator_id,'. auth()->id(),
                         function($key, $value, $fail){
-                            $parents = count(Term::find($value)->parent_map);
+                            $parent = Term::find($value)->parent_map;
+                            $parents = $parent ? count(Term::find($value)->parent_map) : 1;
                             if($parents > Term::MAX_LEVEL)
                             {
                                 $fail('Max parents level is '. Term::MAX_LEVEL);
@@ -105,5 +106,11 @@ class _TermController extends _Controller
         }
         return [];
     }
-
+    public function requestData($request, $action, &$data)
+    {
+        if($action == 'store')
+        {
+            $data['creator_id'] = auth()->id();
+        }
+    }
 }

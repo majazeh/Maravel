@@ -63,7 +63,7 @@ class EnterTheory extends Model
         }
         return new $plan($this);
     }
-    public function resolveRouteBinding($value)
+    public function resolveRouteBinding($value, $filed = null)
     {
         return $this->where('key', $value)->where('expired_at', '>', Carbon::now())->first();
     }

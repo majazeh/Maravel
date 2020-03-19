@@ -32,7 +32,7 @@ trait Methods {
 
     public function store(Request $request)
     {
-        $user = $this->_store($request, function($request, $parent, $data){
+        $user = $this->_store($request, function($request, $data){
             DB::beginTransaction();
             $user = $this->model::create($data);
             foreach (['username', 'email', 'mobile'] as $value) {
@@ -45,8 +45,8 @@ trait Methods {
                     ]);
                 }
             }
-            return $user;
             DB::commit();
+            return $user;
         });
         return $user;
     }

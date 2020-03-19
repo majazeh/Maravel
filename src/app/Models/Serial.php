@@ -55,7 +55,7 @@ trait Serial
 		return self::$s_prefix . '-'. Engine::encode($this->id + self::$s_start);
     }
 
-    public function resolveRouteBinding($value)
+    public function resolveRouteBinding($value, $filed = null)
     {
         $value = self::encode_id($value);
         return parent::resolveRouteBinding($value);

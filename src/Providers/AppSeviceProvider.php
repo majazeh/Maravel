@@ -31,8 +31,9 @@ class AppServiceProvider extends ServiceProvider
             }
             $this->app->bind(
                 \Illuminate\Contracts\Debug\ExceptionHandler::class,
-                \Maravel\Exceptions\ExceptionHandler::class
+                substr($this->app::VERSION, 0, 1) == '7' ? \Maravel\Exceptions\ExceptionHandler7::class : \Maravel\Exceptions\ExceptionHandler::class
             );
+
         }
         if($this->app->runningInConsole())
         {
