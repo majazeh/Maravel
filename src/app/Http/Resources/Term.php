@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Gate;
 
 class Term extends JsonResource
 {
@@ -17,6 +18,12 @@ class Term extends JsonResource
         if($this->resource->relationLoaded('parents'))
         {
             $data['creator'] = new User($this->creator);
+        }
+        if (Gate::allows('api.terms.update', [$request, $this->resource])) {
+            $data['can'][] = 'edit';
+        }
+        if (Gate::allows('api.terms.delete', [$request, $this->resource])) {
+            $data['can'][] = 'delete';
         }
         return $data;
     }
