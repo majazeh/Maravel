@@ -37,6 +37,7 @@ class AuthServiceProvider extends ServiceProvider
             return Gate::allows($guardio, $args);
         });
         Gate::resource('dashboard.users', 'App\Policies\UserPolicy');
+        Gate::resource('api.terms', 'App\Policies\TermPolicy');
         Gate::resource('api.users', 'App\Policies\UserPolicy');
         Gate::define('dashboard.view', 'App\Policies\DashboardPolicy@view');
 
