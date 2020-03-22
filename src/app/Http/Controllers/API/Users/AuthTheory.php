@@ -71,7 +71,7 @@ trait AuthTheory {
             $token = $user->createToken('api');
             $token->token->save();
             return [
-                'user' => new ResourcesUser($user),
+                'data' => new ResourcesUser($user),
                 'token' => $token->accessToken
             ];
         }
@@ -87,13 +87,15 @@ trait AuthTheory {
                 "user" => __('admin type is invalid')
             ]);
         }
+        $current = auth()->user();
         auth()->user()->token()->revoke();
         $token = $user->createToken('api');
         $token->token->meta = ['admin_id' => auth()->id()];
         $token->token->save();
         return [
-            'user' => new ResourcesUser($user),
-            'token' => $token->accessToken
+            'data' => new ResourcesUser($user),
+            'token' => $token->accessToken,
+            'current' => $current
         ];
 
     }

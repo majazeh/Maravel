@@ -2,6 +2,7 @@
 
 namespace Maravel\Middleware;
 
+use App\ApiLog;
 use Closure;
 use Illuminate\Http\JsonResponse;
 
@@ -9,7 +10,6 @@ class Response
 {
     public function handle($request, Closure $next)
     {
-
         $response = $next($request);
         if($request->ajax() && $response instanceof \Illuminate\Http\RedirectResponse)
         {
@@ -65,5 +65,18 @@ class Response
             }
         }
         return $response;
+    }
+    public function terminate($request, $response)
+    {
+        ApiLog::create([
+            'user_id' => auth()->id(),
+            'endpoint' => $request->url(),
+            'method' => $request->method(),
+            'request' => $request->toArray(),
+            'header_request' => $request->headers->all(),
+            'response' => $response->getContent(),
+            'header_response' => $response->headers->all(),
+            'execute_time' => microtime(true) - LARAVEL_START
+        ]);
     }
 }
