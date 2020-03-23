@@ -125,7 +125,7 @@ class _TermController extends _Controller
         if ($request->parent) {
             if ($term = Term::findBySerial($request->parent)) {
                 if ($request->nested === '1') {
-                    $parents = $term->parents->add($term);
+                    $parents = $term->parents->add(Term::without(['parents'])->find($term->id));
                     $ids = $parents->pluck('id')->toArray();
                     $model->where('parent_map', 'like', join(',', $ids) . '%');
                 } else {
