@@ -21,7 +21,7 @@ function order_link($order, $sort)
 
 function result_message(&$array, $text)
 {
-    if(!config('app.debug'))
+    if(config('app.debug'))
     {
         $array['message_debug'] = $text;
     }

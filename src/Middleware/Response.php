@@ -31,7 +31,7 @@ class Response
             else
             {
                 $result = json_decode($response->content(), true);
-                $result = array_merge_recursive([
+                $result = array_merge([
                     'is_ok' => true
                 ],$result);
                 if(isset($result['links']))

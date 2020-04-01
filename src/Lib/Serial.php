@@ -11,8 +11,16 @@ class Serial {
 	// length 6 : 24,300,000      - 728,999,999     => 704,699,999
 	// length 7 : 729,000,000     - 21,869,999,999  => 21,140,999,999
 	// length 8 : 21,870,000,000  - 656,099,999,999 => 634,229,999,999
-	// length 9 : 656,100,000,000 - 656,099,999,999 => 634,229,999,999
     public static $ALPHABET        = '69D3T4AWFQMHV5BKEPCZ2U8NGSX7YR';
+    // length 1 : 0               - 33                 => 33
+	// length 2 : 34              - 1155               => 1,122
+	// length 3 : 1,156           - 39,303             => 38,148
+	// length 4 : 39,304          - 1,336,335          => 1,297,032
+	// length 5 : 1,336,336       - 45,435,423         => 44,099,088
+	// length 6 : 45,435,424      - 1,544,804,415      => 1,499,368,992
+	// length 7 : 1,544,804,416   - 52,523,350,143     => 50,978,545,728
+	// length 8 : 52,523,350,144  - 1,785,793,904,895  => 1,733,270,554,752
+    public static $ALPHABET2       = 'WX37UGQNZ2Y5H6S8BFJ9TCE1DM4IAPVRKL';
     public static $ALPHABET_ALL    = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     public static $GSM7 = '@£$¥èéùìòÇØøÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ!"#¤%&\'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà';
@@ -22,6 +30,9 @@ class Serial {
         switch ($_alphabet) {
             case 'gsm7':
                 $alphabet = self::$GSM7;
+                break;
+            case 'alphabet2':
+                $alphabet = self::$ALPHABET2;
                 break;
             case 'number':
                 $alphabet = self::$ALPHABET_NUMBER;

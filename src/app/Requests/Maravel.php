@@ -56,12 +56,33 @@ class Maravel extends FormRequest
             foreach ($value as $k => $v) {
                 if ($k == 'serial' && isset($data[$key]) && $data[$key]) {
                     $model = '\App\\' . ucfirst($v);
-                    $data[$key] = $model::encode_id($data[$key]);
+                    if(!class_exists($model))
+                    {
+                        list($table) = explode(',', $v);
+                        $model = '\App\\' . ucfirst(Str::singular($table));
+
+                    }
+                    if (is_array($data[$key])) {
+                        foreach ($data[$key] as $dk => $dv) {
+                            $data[$key][$dk] = $model::encode_id($dv);
+                        }
+                    } else {
+                        $data[$key] = $model::encode_id($data[$key]);
+                    }
                 }
                 elseif ($k == 'exists_serial' && isset($data[$key]) && $data[$key]) {
                     list($table) = explode(',', $v);
                     $model = '\App\\' . ucfirst(Str::singular($table));
-                    $data[$key] = $model::encode_id($data[$key]);
+                    if (is_array($data[$key]))
+                    {
+                        foreach ($data[$key] as $dk => $dv) {
+                            $data[$key][$dk] = $model::encode_id($dv);
+                        }
+                    }
+                    else
+                    {
+                        $data[$key] = $model::encode_id($data[$key]);
+                    }
                 }
             }
         }

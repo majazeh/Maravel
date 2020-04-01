@@ -68,6 +68,7 @@ trait AuthTheory {
         if(isset(auth()->user()->token()->meta['admin_id']))
         {
             $user = User::find(auth()->user()->token()->meta['admin_id']);
+            \Auth::setUser($user);
             $token = $user->createToken('api');
             $token->token->save();
             return [

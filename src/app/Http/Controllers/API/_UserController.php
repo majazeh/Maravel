@@ -76,14 +76,15 @@ class _UserController extends Controller
                 return array_replace($primaryStore, [
                     'email' => 'nullable|email|unique:users',
                     'mobile' => (auth()->user()->isAdmin() ? 'nullable' : 'required').'|mobile|unique:users,mobile,'. $user->id,
-                    'username' => 'nullable|string||min:4|max:24|unique:users,username,' . $user->id,
+                    'username' => 'nullable|'. (auth()->user()->isAdmin() ? 'string' : 'alpha_num') .'||min:4|max:24|unique:users,username,' . $user->id,
                     'email' => 'nullable|email|unique:users,email,' . $user->id,
                     'status' => 'nullable|in:' . join(',', User::statusList()),
                     'type' => 'nullable|in:' . join(',', User::typeList()),
                 ]);
             case 'store':
                 return array_replace($primaryStore, [
-                    'username' => 'nullable|string|unique:users||min:4|max:24',
+                    'mobile' => (auth()->user() && auth()->user()->isAdmin() ? 'nullable' : 'required') . '|mobile|unique:users,mobile',
+                    'username' => 'nullable|'. (auth()->user() && auth()->user()->isAdmin() ? 'string' : 'alpha_num') .'|unique:users||min:4|max:24',
                     'email' => 'nullable|email|unique:users',
                     'status' => 'nullable|in:' . join(',', User::statusList()),
                     'type' => 'nullable|in:' . join(',', User::typeList()),
@@ -138,6 +139,19 @@ class _UserController extends Controller
             {
                 $data['method'] = 'email';
                 $data['original_method'] = 'email';
+            }
+            if($action == 'index')
+            {
+                if(isset($data['type']) && is_array($data['type']))
+                {
+                    $types = [];
+                    foreach ($data['type'] as $key => $value) {
+                        if (Guardio::has('users.viewAny.' . $value)) {
+                            $types[] = $value;
+                        }
+                    }
+                    $data['type'] = $types;
+                }
             }
 
         }
@@ -205,8 +219,15 @@ class _UserController extends Controller
             $filter['status'] = $request->status;
         }
 
-        if ($request->type && in_array($request->type, $current['type'])) {
-            $model->where('type', $request->type);
+        if ($request->type) {
+            if(is_array($request->type))
+            {
+                $model->whereIn('type', $request->type);
+            }
+            else
+            {
+                $model->where('type', $request->type);
+            }
             $filter['type'] = $request->type;
         }
 

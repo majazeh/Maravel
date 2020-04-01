@@ -13,6 +13,18 @@ class UserPolicy extends \App\Guardio
         if(!$type && !static::has('users.viewAny.all')) {
             return false;
         } else {
+            if(is_array($request->type))
+            {
+                $allowd_count = 0;
+                foreach ($request->type as $key => $value) {
+                    if(static::has('users.viewAny.' . $value))
+                    {
+                        $allowd_count++;
+                    }
+                }
+                if($allowd_count == 0) return false;
+                return true;
+            }
             return static::has('users.viewAny.'.$type);
         }
     }

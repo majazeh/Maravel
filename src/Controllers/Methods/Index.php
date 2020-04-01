@@ -13,9 +13,10 @@ trait Index
         $additional = [];
         if($parent)
         {
-            $additional[$this->class_name($this->parentModel, null, 2)] = new $this->parentResourceCollectionClass($parent);
+            $parentModel = isset($this->parentModel) ? $this->parentModel : get_class($parent);
+            $additional[$this->class_name($parentModel, null, 2)] = new $this->parentResourceCollectionClass($parent);
             $additional['meta'] = [
-                'parent' => $this->class_name($this->parentModel, null, 2)
+                'parent' => $this->class_name($parentModel, null, 2)
             ];
         }
 

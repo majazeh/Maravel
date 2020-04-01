@@ -8,8 +8,12 @@ class Maravel extends Validator
 {
     public function validateSerial($attribute, $value, $parameters, $validator)
     {
-        if(!is_null($value))
-            return is_integer($value);
+        if(!is_null($value)){
+            $value = is_array($value) ? $value : [$value];
+            foreach ($value as $value) {
+                if(!is_integer($value)) return false;
+            }
+        }
         return true;
     }
     public function validateMobile($attribute, $value, $parameters, $validator)
