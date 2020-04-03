@@ -19,10 +19,10 @@ class Term extends JsonResource
         {
             $data['creator'] = new User($this->creator);
         }
-        if (Gate::allows('api.terms.update', [$request, $this->resource])) {
+        if (Gate::allows('api.terms.update', [$this->resource])) {
             $data['can'][] = 'edit';
         }
-        if (Gate::allows('api.terms.delete', [$request, $this->resource])) {
+        if (Gate::allows('api.terms.delete', [$this->resource])) {
             $data['can'][] = 'delete';
         }
         return $data;

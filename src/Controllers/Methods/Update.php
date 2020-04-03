@@ -6,13 +6,16 @@ use Illuminate\Http\Request;
 
 trait Update
 {
-    public function _update(Request $request, $arg1, $arg2 = null)
+    public function _update(Request $request, $arg1, $arg2 = null, $arg3 = null)
     {
         $callback = null;
         if($arg2 instanceof \Closure)
         {
             $callback = $arg2;
             $arg2 = null;
+        }
+        if ($arg3 instanceof \Closure) {
+            $callback = $arg3;
         }
         list($parent, $model) = $this->findArgs($request, $arg1, $arg2);
         $args = [$model];
@@ -65,7 +68,7 @@ trait Update
             $func_changed = call_user_func_array($callback, $args);
             if(is_array($func_changed))
             {
-                $original = array_merge_recursive($original, $func_changed);
+                $original = $func_changed;
             }
         }
         else
@@ -76,6 +79,14 @@ trait Update
         $result->additional([
             'changed' => $original,
         ]);
+        if ($parent) {
+            $parentModel = isset($this->parentModel) ? $this->parentModel : get_class($parent);
+            $additional[$this->class_name($parentModel, null, 2)] = new $this->parentResourceCollectionClass($parent::find($parent->id));
+            $additional['meta'] = [
+                'parent' => $this->class_name($parentModel, null, 2)
+            ];
+            $result->additional($additional);
+        }
 
         if ($this->clientController && $request->webAccess()) {
             $client = new $this->clientController(...func_get_args());

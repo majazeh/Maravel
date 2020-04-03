@@ -8,26 +8,26 @@ use App\Term;
 
 class TermPolicy extends \App\Guardio
 {
-    public function view(User $user, Request $request, Term $term)
+    public function view(User $user, Term $term)
     {
         return true;
     }
-    public function viewAny(User $user, Request $request)
+    public function viewAny(User $user)
     {
         return true;
     }
-    public function create(User $user, Request $request)
+    public function create(User $user)
     {
         return true;
     }
-    public function update(User $user, Request $request, Term $term)
+    public function update(User $user, Term $term)
     {
         if (!$user->isAdmin() && $term->creator_id != $user->id) {
             return false;
         }
         return true;
     }
-    public function delete(User $user, Request $request, Term $term)
+    public function delete(User $user, Term $term)
     {
         if (!$user->isAdmin() && $term->creator_id != $user->id) {
             return false;

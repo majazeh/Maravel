@@ -13,9 +13,9 @@ class Maravel extends FormRequest
     public function validationData()
     {
         $data = parent::validationData();
-        if(!$this->route() || !$this->route()->controller) return $data;
-        if (method_exists($this->route()->getController(), 'requestData')) {
-            $this->route()->getController()->requestData($this, $this->route()->getActionMethod(), $data, ...array_values($this->route()->parameters()));
+        if(!$this->controller()) return $data;
+        if (method_exists($this->controller(), 'requestData')) {
+            $this->controller()->requestData($this, $this->route()->getActionMethod(), $data, ...array_values($this->route()->parameters()));
         }
         $this->numberTypes($data);
         $this->mobileRule($data);
@@ -88,9 +88,35 @@ class Maravel extends FormRequest
         }
     }
 
+    public function controller()
+    {
+        if($this->route() && $this->route()->controller)
+        {
+            return $this->route()->getController();
+        }
+        return false;
+    }
+
+    public function messages()
+    {
+        if ($this->controller() && method_exists($this->controller(), 'validationMessages'))
+        {
+            return $this->controller()->validationMessages($this, $this->route()->getAction('as'), ...array_values($this->route()->parameters()));
+        }
+        return [];
+
+    }
+
+    public function attributes()
+    {
+        if ($this->controller() && method_exists($this->controller(), 'validationAttributes')) {
+            return $this->controller()->validationAttributes($this, $this->route()->getAction('as'), ...array_values($this->route()->parameters()));
+        }
+        return [];
+    }
     public function authorize()
     {
-        if(!$this->route() || !$this->route()->controller) return true;
+        if(!$this->controller()) return true;
         $action = $this->route()->getAction('as');
         $aAaction = explode('.', $action);
         $method = last($aAaction);
@@ -126,14 +152,14 @@ class Maravel extends FormRequest
             $args = array_values($this->route()->parameters());
             array_unshift($args, $action);
             array_unshift($args, $this);
-            $auth = $this->route()->getController()->authorize('guardio', $args);
+            $auth = $this->controller()->authorize('guardio', $args);
             if(auth()->id() == 0)
             {
                 auth()->logout();
             }
         }
-        if ($auth && $this->route() && $this->route()->controller && method_exists($this->route()->getController(), 'gate')){
-            $auth = $this->route()->getController()->gate($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));
+        if ($auth && $this->controller() && method_exists($this->controller(), 'gate')){
+            $auth = $this->controller()->gate($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));
         };
         return $auth;
     }
@@ -141,10 +167,10 @@ class Maravel extends FormRequest
     public function rules()
     {
         $rules = $this->getRules() ?: [];
-        if (!$this->route() || !$this->route()->controller) return $rules;
-        if (method_exists($this->route()->getController(), 'manipulateData')) {
+        if (!$this->controller()) return $rules;
+        if (method_exists($this->controller(), 'manipulateData')) {
             $data = $this->all();
-            $this->route()->getController()->manipulateData($this, $this->route()->getActionMethod(), $data, ...array_values($this->route()->parameters()));
+            $this->controller()->manipulateData($this, $this->route()->getActionMethod(), $data, ...array_values($this->route()->parameters()));
             $this->replace($data);
         }
         return $rules;
@@ -153,9 +179,9 @@ class Maravel extends FormRequest
     public function getRules()
     {
         $rules = [];
-        if (!$this->route() || !$this->route()->controller) return $rules;
-        if (method_exists($this->route()->getController(), 'rules')) {
-            $rules = $this->route()->getController()->rules($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));
+        if (!$this->controller()) return $rules;
+        if (method_exists($this->controller(), 'rules')) {
+            $rules = $this->controller()->rules($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));
         }
         return $rules;
     }

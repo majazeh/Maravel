@@ -32,7 +32,7 @@ trait Methods {
 
     public function store(Request $request)
     {
-        $user = $this->_store($request, function($request, $data){
+        return $this->_store($request, function($request, $data){
             DB::beginTransaction();
             $user = $this->model::create($data);
             foreach (['username', 'email', 'mobile'] as $value) {
@@ -48,13 +48,16 @@ trait Methods {
             DB::commit();
             return $user;
         });
-        return $user;
     }
 
     public function update(Request $request, User $user)
     {
         return $this->_update($request, $user, function($request, $user, $data){
             DB::beginTransaction();
+            if(key_exists('password', $data) && !$data['password'])
+            {
+                unset($data['password']);
+            }
             $user->update($data);
             foreach (['username', 'email', 'mobile'] as $value) {
                 if ($user->$value != $user->getOriginal($value)) {

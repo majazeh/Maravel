@@ -26,10 +26,10 @@ class User extends JsonResource
             }
         }
         $data['can'] = [];
-        if (Gate::allows('api.users.update', [$request, $this->resource])) {
+        if (Gate::allows('api.users.update', [$this->resource])) {
             $data['can'][] = 'edit';
         }
-        if (Gate::allows('api.users.delete', [$request, $this->resource])) {
+        if (Gate::allows('api.users.delete', [$this->resource])) {
             $data['can'][] = 'delete';
         }
         return $data;
