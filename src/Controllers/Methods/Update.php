@@ -42,7 +42,7 @@ trait Update
         }
         else
         {
-            $fields = array_keys($this->rules($request, 'update', ...$args));
+            $fields = $this->fillable('update') ?: array_keys($this->rules($request, 'update', ...$args));
             $except = method_exists($this, 'except') ? $this->except($request, 'update', ...$args) : [];
             foreach ($except as $key => $value) {
                 $index = array_search($value, $fields);

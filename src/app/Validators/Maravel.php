@@ -3,15 +3,21 @@
 namespace App\Validators;
 
 use Illuminate\Validation\Validator;
-
+use Str;
 class Maravel extends Validator
 {
+    public $validate = [];
     public function validateSerial($attribute, $value, $parameters, $validator)
     {
         if(!is_null($value)){
             $value = is_array($value) ? $value : [$value];
-            foreach ($value as $value) {
-                if(!is_integer($value)) return false;
+            foreach ($value as $v) {
+                $model = '\App\\' . ucfirst($parameters[0]);
+                if (!class_exists($model)) {
+                    $table = $parameters[0];
+                    $model = '\App\\' . ucfirst(Str::singular($table));
+                }
+                if(!$model::idCheck($v)) return false;
             }
         }
         return true;
@@ -48,6 +54,10 @@ class Maravel extends Validator
 
     public function validateExistsSerial($attribute, $value, $parameters)
     {
+        if(!$this->validateSerial(...func_get_args()))
+        {
+            return false;
+        }
         return $this->validateExists($attribute, $value, $parameters);
     }
 }

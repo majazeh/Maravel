@@ -10,9 +10,17 @@ use App\Http\Resources\User as ResourcesUser;
 use App\User;
 
 trait AuthTheory {
+
+    public function theoryResult(Request $request, $response)
+    {
+        if (is_array($response) && isset($response[0]) && $response[0] instanceof User) {
+            return $this->userAuthResult($request, ...$response);
+        }
+        return $response;
+    }
     public function theory(Request $request, EnterTheory $enterTheory)
     {
-        return $enterTheory->theory->run($request)->response();
+        return $this->theoryResult($request, $enterTheory->theory->run($request)->response());
     }
 
     public function auth(Request $request)
@@ -23,13 +31,13 @@ trait AuthTheory {
                 "authorized_key" => __('auth.key')
             ]);
         }
-        return $enterTheory->theory->run($request)->response();
+        return $this->theoryResult($request, $enterTheory->theory->run($request)->response());
     }
 
     public function register(Request $request)
     {
         $theory = new Fake;
-        return $theory->create($request, 'register', $request->all(array_keys($this->rules($request, 'register'))))->response();
+        return $this->theoryResult($request, $theory->create($request, 'register', $request->all(array_keys($this->rules($request, 'register'))))->response());
     }
 
     public function verification(Request $request)
@@ -40,7 +48,7 @@ trait AuthTheory {
         ])->first();
         if($enterTheory)
         {
-            return $enterTheory->theory->run($request)->response();
+            return $this->theoryResult($request, $enterTheory->theory->run($request)->response());
         }
         abort(404);
     }
@@ -52,7 +60,7 @@ trait AuthTheory {
             'theory' => 'auth',
         ])->first();
         if ($enterTheory) {
-            return $enterTheory->theory->create($request, 'recovery')->response();
+            return $this->theoryResult($request, $enterTheory->theory->run($request)->response());
         }
         abort(404);
     }
@@ -62,6 +70,7 @@ trait AuthTheory {
         auth()->user()->token()->revoke();
         return [];
     }
+
     public function authBack(Request $request)
     {
         auth()->user()->token()->revoke();
@@ -71,10 +80,9 @@ trait AuthTheory {
             \Auth::setUser($user);
             $token = $user->createToken('api');
             $token->token->save();
-            return [
-                'data' => new ResourcesUser($user),
+            return $this->userAuthResult($request, $user, [
                 'token' => $token->accessToken
-            ];
+            ]);
         }
 
         return [];
@@ -82,7 +90,7 @@ trait AuthTheory {
 
     public function authAs(Request $request, User $user)
     {
-        if($user->type == 'admin')
+        if ($user->type == 'admin')
         {
             throw ValidationException::withMessages([
                 "user" => __('admin type is invalid')
@@ -90,14 +98,20 @@ trait AuthTheory {
         }
         $current = auth()->user();
         auth()->user()->token()->revoke();
+        \Auth::setUser($user);
         $token = $user->createToken('api');
-        $token->token->meta = ['admin_id' => auth()->id()];
+        $token->token->meta = ['admin_id' => $current->id];
         $token->token->save();
-        return [
-            'data' => new ResourcesUser($user),
+        return $this->userAuthResult($request, $user, [
             'token' => $token->accessToken,
-            'current' => $current
-        ];
+            'current' => new ResourcesUser($current)
+        ]);
+    }
 
+    public function userAuthResult($request, $user, array $aditional = [])
+    {
+        $result = $this->me($request);
+        $result->additional(array_merge_recursive($result->additional, $aditional));
+        return $result;
     }
 }

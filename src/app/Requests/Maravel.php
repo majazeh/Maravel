@@ -29,7 +29,7 @@ class Maravel extends FormRequest
         foreach ($data as $key => $value) {
             if(in_array($key, $fields) && $this->has($key))
             {
-                $data[$key] = $this->numberial($this->$key);
+                $data[$key] = $this->numberial($this->$key) ?: null;
             }
         }
     }
@@ -63,6 +63,7 @@ class Maravel extends FormRequest
 
                     }
                     if (is_array($data[$key])) {
+                        $data[$key] = array_unique($data[$key]);
                         foreach ($data[$key] as $dk => $dv) {
                             $data[$key][$dk] = $model::encode_id($dv);
                         }
@@ -75,6 +76,7 @@ class Maravel extends FormRequest
                     $model = '\App\\' . ucfirst(Str::singular($table));
                     if (is_array($data[$key]))
                     {
+                        $data[$key] = array_unique($data[$key]);
                         foreach ($data[$key] as $dk => $dv) {
                             $data[$key][$dk] = $model::encode_id($dv);
                         }
@@ -99,11 +101,15 @@ class Maravel extends FormRequest
 
     public function messages()
     {
+        $messages = [
+            'exists_serial' => __('validation.exists'),
+            'serial' => __('validation.exists'),
+        ];
         if ($this->controller() && method_exists($this->controller(), 'validationMessages'))
         {
-            return $this->controller()->validationMessages($this, $this->route()->getAction('as'), ...array_values($this->route()->parameters()));
+            return array_merge($messages, $this->controller()->validationMessages($this, $this->route()->getAction('as'), ...array_values($this->route()->parameters())));
         }
-        return [];
+        return $messages;
 
     }
 
@@ -182,6 +188,7 @@ class Maravel extends FormRequest
         if (!$this->controller()) return $rules;
         if (method_exists($this->controller(), 'rules')) {
             $rules = $this->controller()->rules($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));
+            $this->controller()->setFillable($this->route()->getActionMethod(), array_keys($rules));
         }
         return $rules;
     }

@@ -50,6 +50,12 @@ trait Serial
 		return true;
     }
 
+    public static function idCheck($id)
+    {
+        if (!$id || ($id + self::$s_start) < self::$s_start || self::$s_end < ($id + self::$s_start)) return false;
+        return true;
+    }
+
     public function getSerialTextAttribute()
     {
 		return self::$s_prefix . '-'. Engine::encode($this->id + self::$s_start);

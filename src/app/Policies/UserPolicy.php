@@ -10,27 +10,34 @@ class UserPolicy extends \App\Guardio
     {
         $type = request()->type ?: null;
         if(!$type && !static::has('users.viewAny.all')) {
-            return false;
-        } else {
-            if(is_array(request()->type))
-            {
-                $allowd_count = 0;
-                foreach (request()->type as $key => $value) {
-                    if(static::has('users.viewAny.' . $value))
-                    {
-                        $allowd_count++;
-                    }
+            $allows = false;
+            foreach (static::permissions() as $key => $value) {
+                if(substr($key, 0, 14) == 'users.viewAny.')
+                {
+                    $allows = true;
+                    break;
                 }
-                if($allowd_count == 0) return false;
-                return true;
             }
-            return static::has('users.viewAny.'.$type);
+            return $allows;
         }
+        if(is_array($type))
+        {
+            $allowd_count = 0;
+            foreach ($type as $key => $value) {
+                if(static::has('users.viewAny.' . $value))
+                {
+                    $allowd_count++;
+                }
+            }
+            if($allowd_count == 0) return false;
+            return true;
+        }
+        return static::has('users.viewAny.'.$type);
     }
 
     public function view(User $user, User $show)
     {
-        if($user->id == $show->id || static::has('users.viewAny.all'))
+        if($user->id == $show->id || static::has('users.viewAny.all') || static::has('users.viewAny.'. $show->type))
         {
             return true;
         } else {

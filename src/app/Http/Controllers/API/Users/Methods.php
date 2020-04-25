@@ -15,12 +15,21 @@ trait Methods {
         return $this->_index(...func_get_args());
     }
 
-    public function index_query($request)
+    public function queryIndex($request)
     {
         $model = $this->model::select('*');
         if(!Guardio::has('view-inactive-user'))
         {
             $model->where('status', 'active');
+        }
+        if (!$request->type && !Guardio::has('users.viewAny.all')) {
+            $types = [];
+            foreach (Guardio::permissions() as $key => $value) {
+                if (substr($key, 0, 14) == 'users.viewAny.') {
+                    $types[] = substr($key, 14);
+                }
+            }
+            $model->whereIn('type', $types);
         }
         return [null, $model];
     }
@@ -121,4 +130,5 @@ trait Methods {
     {
         return $this->update($request, auth()->user());
     }
+
 }

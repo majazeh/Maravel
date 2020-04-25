@@ -9,10 +9,12 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model as Eloquent;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    protected $fillable = [];
     public static $result;
     public $statusMessage = ':)';
     public function __construct(Request $request)
@@ -91,6 +93,16 @@ class Controller extends BaseController
         }
     }
 
+    public function setFillable($action, $parameters)
+    {
+        $this->fillable[$action] = $parameters;
+    }
+
+    public function fillable($action)
+    {
+        return isset($this->fillable[$action]) ? $this->fillable[$action] : null;
+    }
+
     public function fail($model = null, $id = null)
     {
         if (!$model) {
@@ -103,7 +115,7 @@ class Controller extends BaseController
     {
         if ($arg2) {
             $model = $this->findOrFail($arg2, $this->model);
-            $parent = $this->findOrFail($arg1, $this->parentModel);
+            $parent = $this->findOrFail($arg1, $arg1 instanceof Eloquent ? get_class($arg1) : $this->parentModel);
         } else {
             $model = $this->findOrFail($arg1, $this->model);
             $parent = null;

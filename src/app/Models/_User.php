@@ -22,6 +22,7 @@ class _User extends Authenticatable
     public static $s_prefix = 'IQ';
     public static $s_start = 24300000;
     public static $s_end = 728999999;
+    protected static $systemUser = null;
 
     protected $hidden = [
         'password', 'remember_token',
@@ -29,6 +30,15 @@ class _User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public static function systemUser()
+    {
+        if(!static::$systemUser)
+        {
+            static::$systemUser = static::find(1);
+        }
+        return static::$systemUser;
+    }
 
     public function getGroupsAttribute()
     {

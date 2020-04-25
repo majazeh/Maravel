@@ -6,7 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 use Blade;
-use App\Guardio;
+use Illuminate\Auth\RequestGuard;
 use Maravel\Middleware\Response;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\ResourceRegistrar;
@@ -21,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+        RequestGuard::macro('isAdmin', function(){
+            return $this->user->isAdmin();
+        });
         Route::macro('authIf', function(){
             return app('request')->header('authorization') ? 'auth:api' : 'api';
         });

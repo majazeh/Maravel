@@ -8,7 +8,7 @@ use App\Term;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class _TermController extends _Controller
+class _TermController extends Controller
 {
     public function index(Request $request)
     {

@@ -5,6 +5,8 @@ use App\Http\Resources\User as ResourcesUser;
 use Illuminate\Http\Request;
 use App\User;
 use App\EnterTheory;
+use App\Guardio;
+use App\Http\Controllers\API\UserController;
 use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 
@@ -69,15 +71,14 @@ class Auth extends Theory
             $auth = app('request')->header('authorization');
             $token = strtolower(substr($auth, 0, 7)) == 'bearer ' ? substr($auth, 7) : $this->result->createToken('api')->accessToken;
             $data = [
-                'data' => new ResourcesUser($this->result),
-                'token' => $token
+                'token' => $token,
             ];
             if(request()->callback && $callback = EnterTheory::where('key', request()->callback)->where('expired_at', '>', Carbon::now())->first())
             {
                 $data['key'] = request()->callback;
                 $data['theory'] = $callback->getOriginal('theory');
             }
-            return $data;
+            return [$this->result, $data];
         }
         elseif($this->result instanceof EnterTheory && $this->result->getOriginal('theory') == 'auth')
         {

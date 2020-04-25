@@ -39,7 +39,7 @@ trait Store
 
     public function resultStore($request, $model, $parent)
     {
-        $model = $this->model::findOrFail($model->id);
+        $model = get_class($model)::findOrFail($model->id);
         return new $this->resourceClass($model);
     }
 
@@ -63,10 +63,11 @@ trait Store
 
     public function store_data(Request $request, $parent = null, ...$args)
     {
+        $data = [];
         if (method_exists($this, 'fields')) {
             $data = $this->fields($request, 'store', $parent, ...$args);
         } else {
-            $fields = array_keys($this->rules($request, 'store', $parent, ...$args));
+            $fields = $this->fillable('store') ?: array_keys($this->rules($request, 'store', $parent, ...$args));
             $except = method_exists($this, 'except') ? $this->except($request, 'store', $parent, ...$args) : [];
             foreach ($except as $key => $value) {
                 $index = array_search($value, $fields);
