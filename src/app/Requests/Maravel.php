@@ -59,6 +59,7 @@ class Maravel extends FormRequest
                     if(!class_exists($model))
                     {
                         list($table) = explode(',', $v);
+                        $table = Str::camel($table);
                         $model = '\App\\' . ucfirst(Str::singular($table));
 
                     }
@@ -73,6 +74,7 @@ class Maravel extends FormRequest
                 }
                 elseif ($k == 'exists_serial' && isset($data[$key]) && $data[$key]) {
                     list($table) = explode(',', $v);
+                    $table = Str::camel($table);
                     $model = '\App\\' . ucfirst(Str::singular($table));
                     if (is_array($data[$key]))
                     {

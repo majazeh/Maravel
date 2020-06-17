@@ -15,6 +15,7 @@ class Maravel extends Validator
                 $model = '\App\\' . ucfirst($parameters[0]);
                 if (!class_exists($model)) {
                     $table = $parameters[0];
+                    $table = Str::camel($table);
                     $model = '\App\\' . ucfirst(Str::singular($table));
                 }
                 if(!$model::idCheck($v)) return false;

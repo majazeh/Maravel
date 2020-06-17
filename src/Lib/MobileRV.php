@@ -4,6 +4,10 @@ namespace Maravel\Lib;
 class MobileRV {
     public static function parse($value, $parameters = null)
     {
+        if(!preg_match("#^\+?\d+#", $value))
+        {
+            return false;
+        }
         $country_codes = [
             'ir' => '98',
             'iq' => '964'
