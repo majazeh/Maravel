@@ -75,7 +75,7 @@ class _UserController extends Controller
             case 'update':
                 return array_replace($primaryStore, [
                     'email' => 'nullable|email|unique:users',
-                    'mobile' => (auth()->user()->isAdmin() ? 'nullable' : 'required').'|mobile|unique:users,mobile,'. $user->id,
+                    'mobile' => (auth()->user()->isAdmin() || !$request->has('mobile') ? 'nullable' : 'required').'|mobile|unique:users,mobile,'. $user->id,
                     'username' => 'nullable|'. (auth()->user()->isAdmin() ? 'string' : 'alpha_num') .'||min:4|max:24|unique:users,username,' . $user->id,
                     'email' => 'nullable|email|unique:users,email,' . $user->id,
                     'status' => 'nullable|in:' . join(',', User::statusList()),
