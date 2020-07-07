@@ -52,7 +52,8 @@ class _UserController extends Controller
             'mobile' => 'required|mobile|unique:users',
             'name' => 'nullable|string',
             'password' => 'nullable|string|min:6|max:24',
-            'birthday' => 'nullable|date_format:Y-m-d'
+            'birthday' => 'nullable|date_format:Y-m-d',
+            'gender' => 'nullable|in:male,female'
         ];
         switch ($action) {
             case 'auth':

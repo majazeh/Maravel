@@ -60,7 +60,7 @@ trait AuthTheory {
             'theory' => 'auth',
         ])->first();
         if ($enterTheory) {
-            return $this->theoryResult($request, $enterTheory->theory->run($request)->response());
+            return $this->theoryResult($request, $enterTheory->theory->create($request, 'recovery', $request->all(array_keys($this->rules($request, 'recovery'))))->response());
         }
         abort(404);
     }

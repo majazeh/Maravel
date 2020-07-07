@@ -46,7 +46,7 @@ trait Update
             $except = method_exists($this, 'except') ? $this->except($request, 'update', ...$args) : [];
             foreach ($except as $key => $value) {
                 $index = array_search($value, $fields);
-                if($index !== -1)
+                if($index !== false)
                 {
                     unset($fields[$index]);
                 }
