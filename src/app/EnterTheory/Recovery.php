@@ -7,6 +7,7 @@ use App\EnterTheory;
 use App\User;
 use App\Token;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class Recovery extends Theory
 {
@@ -28,8 +29,12 @@ class Recovery extends Theory
         ->where('theory', 'recovery')
         ->where('expired_at', '>', Carbon::now())
         ->first();
-        if(!$theory)
+        if($theory)
         {
+            throw ValidationException::withMessages([
+                $request->original_method => __('Try after :seconds seconds', ['seconds' => Carbon::now()->diffInSeconds($theory->expired_at)])
+            ]);
+        }
             $theory = EnterTheory::create([
                 'parent_id' => $model->id,
                 'user_id' => $model->user_id,
@@ -38,7 +43,6 @@ class Recovery extends Theory
                 'trigger' => 'mobileCode',
                 'expired_at' => Carbon::now()->addMinutes(5)
             ]);
-        }
         if ($theory->getAttribute('trigger')) {
             return $theory->trigger->register($request, $theory);
         }
