@@ -29,7 +29,7 @@ class _Post extends Eloquent
     public $with = ['creator', 'terms', 'primaryTerm', 'parent'];
     public function attachments()
     {
-        return $this->hasMany(\App\File::class);
+        return $this->hasMany(\App\File::class, 'post_id');
     }
     public function parent()
     {
