@@ -41,7 +41,7 @@ class Recovery extends Theory
                 'key' => EnterTheory::tokenGenerator(),
                 'theory' => 'recovery',
                 'trigger' => 'mobileCode',
-                'expired_at' => Carbon::now()->addMinutes(5)
+                'expired_at' => Carbon::now()->addMinutes(3)
             ]);
         if ($theory->getAttribute('trigger')) {
             return $theory->trigger->register($request, $theory);
