@@ -1,12 +1,9 @@
 <?php
 namespace App\EnterTheory;
 
-use App\Http\Resources\User as ResourcesUser;
 use Illuminate\Http\Request;
 use App\User;
 use App\EnterTheory;
-use App\Guardio;
-use App\Http\Controllers\API\UserController;
 use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 
@@ -16,17 +13,21 @@ class Auth extends Theory
     {
         if (auth()->check())
         {
+
             if($this->model->parent)
             {
                 $result = $this->model->parent->theory->run($request);
+                $this->model->delete();
                 return $result;
             }
             return $this->pass($request);
         }
+
         if(!$this->user_id && !$this->model->trigger)
         {
             return $this->model;
         }
+
         if($this->model->user_id && $this->model->user->status != 'active')
         {
             throw ValidationException::withMessages([
@@ -49,7 +50,7 @@ class Auth extends Theory
         {
             return $model->theory->passed($request);
         }
-        if($model->id && $find = EnterTheory::where('parent_id', $model->id)->where('theory', 'auth')->first())
+        if($model->id && $find = EnterTheory::where('parent_id', $model->id)->where('theory', 'auth')->where('expired_at', '>', Carbon::now())->first())
         {
             return $find;
         }
@@ -58,6 +59,7 @@ class Auth extends Theory
             'key' => EnterTheory::tokenGenerator(),
             'user_id' => isset($parameters['user_id']) ? $parameters['user_id'] : null,
             'theory' => 'auth',
+            'type' => 'temp',
             'parent_id' => isset($parameters['user_id']) ? null : $model->id,
             'expired_at' => isset($parameters['user_id']) ? Carbon::now()->addMinutes(1) : Carbon::now()->addMinutes(10),
             'meta' => isset($parameters['meta']) ? $parameters['meta'] : null
