@@ -75,7 +75,6 @@ class _UserController extends Controller
                 $user = auth()->user();
             case 'update':
                 return array_replace($primaryStore, [
-                    'email' => 'nullable|email|unique:users',
                     'mobile' => (auth()->user()->isAdmin() || !$request->has('mobile') ? 'nullable' : 'required').'|mobile|unique:users,mobile,'. $user->id,
                     'username' => 'nullable|'. (auth()->user()->isAdmin() ? 'string' : 'alpha_num') .'||min:4|max:24|unique:users,username,' . $user->id,
                     'email' => 'nullable|email|unique:users,email,' . $user->id,
@@ -91,6 +90,11 @@ class _UserController extends Controller
                     'type' => 'nullable|in:' . join(',', User::typeList()),
                 ]);
                 break;
+            case 'changePassword' :
+                return [
+                    'password' => (auth()->isAdmin() ? 'nullable' : 'required').'|string|min:6|max:24',
+                    'new_password' => 'required|string|min:6|max:24',
+                ] ;
             case 'avatar':
                 return [
                     'avatar' => 'required|mimes:jpeg,jpg,png|dimensions:ratio=1|max:2048'
@@ -179,7 +183,7 @@ class _UserController extends Controller
             }
         }
         // hash password
-        if(in_array($action, ['register', 'store', 'update', 'changePassword']) && isset($data['password']))
+        if(in_array($action, ['register', 'store']) && isset($data['password']))
         {
             $data['password'] = Hash::make($data['password']);
         }

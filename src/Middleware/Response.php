@@ -10,6 +10,9 @@ class Response
 {
     public function handle($request, Closure $next)
     {
+        if(array_key_exists($request->headers->get('accept-language'), config('app.locales', ['en' => 'en', 'en_US' => 'en']))){
+            \App::setLocale($request->headers->get('accept-language'));
+        }
         $response = $next($request);
         if($request->ajax() && $response instanceof \Illuminate\Http\RedirectResponse)
         {

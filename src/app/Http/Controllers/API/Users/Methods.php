@@ -9,6 +9,9 @@ use App\Guardio;
 use App\Http\Resources\User as ResourcesUser;
 use App\User;
 use DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+
 trait Methods {
     public function index(Request $request)
     {
@@ -63,10 +66,6 @@ trait Methods {
     {
         return $this->_update($request, $user, function($request, $user, $data){
             DB::beginTransaction();
-            if(key_exists('password', $data) && !$data['password'])
-            {
-                unset($data['password']);
-            }
             $user->update($data);
             foreach (['username', 'email', 'mobile'] as $value) {
                 if ($user->$value != $user->getOriginal($value)) {
@@ -87,6 +86,22 @@ trait Methods {
             }
             DB::commit();
         });
+    }
+
+    public function changePassword(Request $request, User $user){
+        if(!auth()->isAdmin() && !Hash::check($request->password, $user->password)){
+            throw ValidationException::withMessages([
+                "password" => __('validation.password-match')
+            ]);
+        }
+        if (Hash::check($request->new_password, $user->password)) {
+            throw ValidationException::withMessages([
+                "password" => __('validation.password-old')
+            ]);
+        }
+        $user->update(['password' => Hash::make($request->new_password)]);
+        $this->statusMessage = __('Password changed');
+        return [];
     }
 
     public function avatar(Request $request, User $user)
