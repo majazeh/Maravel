@@ -189,7 +189,7 @@ class Maravel extends FormRequest
         $rules = [];
         if (!$this->controller()) return $rules;
         if (method_exists($this->controller(), 'rules')) {
-            $rules = $this->controller()->rules($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters()));
+            $rules = $this->controller()->rules($this, $this->route()->getActionMethod(), ...array_values($this->route()->parameters())) ?: [];
             $this->controller()->setFillable($this->route()->getActionMethod(), array_keys($rules));
         }
         return $rules;

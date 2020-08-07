@@ -30,9 +30,7 @@ class Auth extends Theory
 
         if($this->model->user_id && $this->model->user->status != 'active')
         {
-            throw ValidationException::withMessages([
-                $request->original_method => __('auth.inactive')
-            ]);
+            return $this->create($request, 'mobileCode', ['verify_id' => $this->model->user_id]);
         }
         return $this->trigger($request);
     }

@@ -20,7 +20,7 @@ trait Methods {
 
     public function queryIndex($request)
     {
-        $model = $this->model::select('*');
+        $model = $this->model::select('users.*');
         if(!Guardio::has('view-inactive-user'))
         {
             $model->where('status', 'active');
@@ -52,7 +52,7 @@ trait Methods {
                     EnterTheory::create([
                         'key' => $user->$value,
                         'theory' => 'auth',
-                        'trigger' => $user->status == 'active' ? 'password' : 'mobileCode',
+                        'trigger' => 'password',
                         'user_id' => $user->id
                     ]);
                 }

@@ -112,4 +112,9 @@ class _User extends Authenticatable
             'type' => 'guest'
         ]);
     }
+
+    public function scopeByMobile($query, $mobile)
+    {
+        return $query->where('mobile', $mobile)->first() ?: false;
+    }
 }

@@ -194,4 +194,9 @@ class File extends Eloquent
             ->resize($width, $height)
             ->save($file->dir);
     }
+
+    public function remove(){
+        unlink($this->dir);
+        $this->delete();
+    }
 }
