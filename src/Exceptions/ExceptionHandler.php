@@ -66,6 +66,11 @@ class ExceptionHandler extends Handler
             unset($data['line']);
             unset($data['trace']);
         }
+        if ($exception instanceof ModelNotFoundException) {
+            $error = 'No query results for :model :ids';
+            $model = lcfirst(str_replace('App\\', '', $exception->getModel()));
+            result_message($data,  'NO_QUERY_RESULTS', __($error, ['model' => __('models.'.$model), 'ids' => join(',', $exception->getIds())]));
+        }
         $render->setData($data);
         return $render;
     }

@@ -3,6 +3,7 @@
 namespace Maravel\Controllers\Methods;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 trait Store
 {
@@ -57,7 +58,14 @@ trait Store
             $client = new $this->clientController(...func_get_args());
             $client->webStore($request, $result);
         }
-        $this->statusMessage = $this->class_name() . " created";
+        if($result instanceof ResourceCollection && $result->count() > 1)
+        {
+            $this->statusMessage = $this->class_name() . ' (' . $result->count() . ") created";
+        }
+        else
+        {
+            $this->statusMessage = $this->class_name() . " created";
+        }
         return $result;
     }
 

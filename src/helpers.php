@@ -19,8 +19,8 @@ function order_link($order, $sort)
     return Request::create(url()->current(), 'GET', $query)->getUri();
 }
 
-function result_message(&$array, $text)
+function result_message(&$array, $text, $trans = false)
 {
     $array['message'] = strtoupper(preg_replace("/[\.!]/", '', str_replace(' ', '_', $text)));
-    $array['message_text'] = __($text);
+    $array['message_text'] = $trans ?: __($text);
 }
