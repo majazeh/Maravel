@@ -214,7 +214,8 @@ class _UserController extends Controller
         $current = [
             'status' => User::statusList(),
             'type' => User::typeList(),
-            'gender' => ['male', 'female', 'undefined']
+            'gender' => ['male', 'female', 'undefined'],
+            'q' => null
         ];
         $filter = [];
 
@@ -246,6 +247,14 @@ class _UserController extends Controller
                 $model->where('gender', $request->gender);
             }
             $filter['gender'] = $request->gender;
+        }
+
+        if($request->q)
+        {
+            $model->where(function($q) use ($request){
+                $q->where('name', 'LIKE', "%{$request->q}%");
+            });
+            $current['q'] = $request->q;
         }
         return [$current, $filter];
     }
