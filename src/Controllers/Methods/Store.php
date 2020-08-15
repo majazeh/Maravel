@@ -48,9 +48,10 @@ trait Store
     {
         if ($parent) {
             $parentModel = isset($this->parentModel) ? $this->parentModel : get_class($parent);
-            $additional[$this->class_name($parentModel, null, 2)] = new $this->parentResourceCollectionClass($parent::find($parent->id));
+            $parentName = isset($this->parentName) ? $this->parentName : $this->class_name($parentModel, null, 2);
+            $additional[$parentName] = new $this->parentResourceCollectionClass($parent::find($parent->id));
             $additional['meta'] = [
-                'parent' => $this->class_name($parentModel, null, 2)
+                'parent' => $parentName
             ];
             $result->additional($additional);
         }
