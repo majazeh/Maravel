@@ -13,6 +13,6 @@ class Files extends ResourceCollection
             $file = new File($value);;
             $data[$file->mode] = $file;
         }
-        return $data;
+        return count($data) ? $data : null;
     }
 }
