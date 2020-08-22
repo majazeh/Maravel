@@ -18,11 +18,23 @@ class Maravel extends FormRequest
             $this->controller()->requestData($this, $this->route()->getActionMethod(), $data, ...array_values($this->route()->parameters()));
         }
         $this->numberTypes($data);
+        $this->numbricType($data);
         $this->mobileRule($data);
         $this->serialRule($data);
         $this->replace($data);
         return $data;
 
+    }
+    public function numbricType(&$data)
+    {
+        foreach ($this->parseRules() as $key => $value) {
+            foreach ($value as $k => $v) {
+                if ($k == 'numbric' && isset($data[$key])) {
+                    $numbric = $this->numberial($data[$key]);
+                    $data[$key] = ctype_digit($numbric) ? (int) $numbric : $numbric;
+                }
+            }
+        }
     }
     public function numberTypes(&$data){
         $fields = ['mobile', 'phone'];

@@ -33,7 +33,7 @@ class AuthServiceProvider extends ServiceProvider
         Passport::useTokenModel(Token::class);
 
         Gate::define('guardio', function ($user, $request, $guardio, ...$args) {
-            return Gate::allows($guardio, $args);
+            return Gate::inspect($guardio, $args);
         });
         Gate::resource('dashboard.users', 'App\Policies\UserPolicy');
         Gate::resource('api.terms', 'App\Policies\TermPolicy');
