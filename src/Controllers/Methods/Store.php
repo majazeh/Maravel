@@ -35,7 +35,8 @@ trait Store
             $model = $this->model::create($this->store_data($request, $parent, ...$args));
         }
 
-        return $this->additionalStore($request,$this->resultStore($request, $model, $parent), $parent);
+        $result = $this->additionalStore($request,$this->resultStore($request, $model, $parent), $parent);
+        return $result->response()->setStatusCode(201);
     }
 
     public function resultStore($request, $model, $parent)
