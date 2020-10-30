@@ -33,7 +33,7 @@ trait Update
             }
             $changed = [];
             $original = [];
-            foreach ($fields as $key => $value) {
+            foreach ($fields ?: [] as $key => $value) {
                 if ($request->has($key) && $model->$key != $fields[$key]) {
                     $changed[$key] = $value;
                     $original[$key] = $model->$key;
