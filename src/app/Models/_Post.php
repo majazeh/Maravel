@@ -58,6 +58,10 @@ class _Post extends Eloquent
     {
         parent::boot();
 
+        self::creating(function($model){
+            $model->creator_id = auth()->check() ? auth()->id() : null;
+        });
+
         static::saving(function ($model) {
             if ($model->status == 'publish' && !$model->published_at) {
                 $model->published_at = Carbon::now();
