@@ -5,6 +5,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Guardio;
+use App\Services\Kavenegar;
 
 class _User extends Authenticatable
 {
