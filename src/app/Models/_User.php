@@ -81,6 +81,31 @@ class _User extends Authenticatable
     {
         return config('guardio.default_user.status', 'awaiting');
     }
+    public function mobileCodeTheory($request, $parameters, $model, $theory, $value){
+            if($model->attributes['theory'] == 'register'){
+                $this->mobile =  '+'.$parameters['mobile'];
+                return $this->notification('sms', self::find(1), 'register', [$value]);
+            }
+            if($model->attributes['theory'] == 'recovery'){
+                return $this->notification('sms', self::find(1), 'recovery', [$value]);
+            }
+    }
+    public function notification($method, self $from, $template, array $parameters = []){
+        $method = strtolower($method);
+        $call = null;
+        switch ($method){
+            case 'sms' : $call = 'SMS';
+        }
+        if($call){
+            return $this->{"notification$call"}($template, $parameters);
+        }
+        return null;
+    }
+
+    private function notificationSMS($template, array $parameters = []){
+        $class = config('services.sms.model', Kavenegar::class);
+        return $class::send($template, $this->mobile, $parameters);
+    }
 
     public function AuthVerify()
     {

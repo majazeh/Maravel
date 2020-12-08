@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Str;
 use Carbon\Carbon;
 use App\EnterTheory;
+use App\User;
 use Illuminate\Validation\ValidationException;
 
 class MobileCode extends Theory
@@ -31,15 +32,31 @@ class MobileCode extends Theory
             'user_id' => isset($parameters['verify_id']) ? $parameters['verify_id'] : null,
             'type' => isset($parameters['verify_id']) ? 'verify' : null
         ])->first();
-        return $find ?: EnterTheory::create([
+        if($find){
+            return $find;
+        }
+        $muted = config('app.debug') || config('app.env') == 'local';
+        $muted = false;
+        if($muted){
+            $value =  130171;
+        }else{
+            $value =  rand(130171, 999999);
+        }
+        $theory = EnterTheory::create([
             'key' => EnterTheory::tokenGenerator(),
             'parent_id' => $model->id,
-            'value' =>  config('app.debug') ? 130171 : rand(130171, 999999),
+            'value' =>  $value,
             'theory' => 'mobileCode',
             'expired_at' => Carbon::now()->addMinutes(5),
             'user_id' => isset($parameters['verify_id']) ? $parameters['verify_id'] : null,
             'type' => isset($parameters['verify_id']) ? 'verify' : 'temp'
         ]);
+        if(!$muted){
+            $user = $this->model->user ?: new User;
+            $user->mobileCodeTheory($request, $parameters, $model, $theory, $value);
+        }
+
+        return $theory;
     }
 
     public function rules(Request $request)
