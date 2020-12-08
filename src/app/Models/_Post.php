@@ -59,7 +59,7 @@ class _Post extends Eloquent
         parent::boot();
 
         self::creating(function($model){
-            $model->creator_id = auth()->check() ? auth()->id() : null;
+            $model->creator_id = $model->creator_id ?: (auth()->check() ? auth()->id() : null);
         });
 
         static::saving(function ($model) {
