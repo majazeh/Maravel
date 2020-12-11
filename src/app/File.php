@@ -71,8 +71,8 @@ class File extends Eloquent
 
         $type = explode('/', $temp->getMimeType());
         $type = $type[0];
-
-        $file_name = $post->serial . '_original.' . $temp->extension();
+        $mode = isset($data['mode'])  ? $data['mode'] : 'original';
+        $file_name = $post->serial . "_$mode." . $temp->extension();
         $folders = glob(join(DIRECTORY_SEPARATOR, [$disk['root'], 'Files_*']));
         $last_folder = last($folders);
         $files_count = count(glob(join(DIRECTORY_SEPARATOR, [$last_folder, '*'])));
@@ -85,7 +85,7 @@ class File extends Eloquent
             mkdir(public_path($folder), 0777, true);
         }
         $file = static::create(
-            array_merge_recursive([
+            array_merge([
                 'post_id' => $post->id,
                 'mode' => 'original',
                 'slug' => $file_slug,
