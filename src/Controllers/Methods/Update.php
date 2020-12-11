@@ -76,17 +76,16 @@ trait Update
             $model->update($changed);
         }
         $result = new $this->resourceClass($model);
-        $result->additional([
-            'changed' => $original,
-        ]);
+        $additional = [];
+        $additional['changed'] = $original;
         if ($parent) {
             $parentModel = isset($this->parentModel) ? $this->parentModel : get_class($parent);
             $additional[$this->class_name($parentModel, null, 2)] = new $this->parentResourceCollectionClass($parent::find($parent->id));
             $additional['meta'] = [
                 'parent' => $this->class_name($parentModel, null, 2)
             ];
-            $result->additional($additional);
         }
+        $result->additional($additional);
 
         if ($this->clientController && $request->webAccess()) {
             $client = new $this->clientController(...func_get_args());
