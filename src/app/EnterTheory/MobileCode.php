@@ -36,7 +36,6 @@ class MobileCode extends Theory
             return $find;
         }
         $muted = config('app.debug') || config('app.env') == 'local';
-        $muted = false;
         if($muted){
             $value =  130171;
         }else{
