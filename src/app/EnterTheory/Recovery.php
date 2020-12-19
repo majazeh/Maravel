@@ -29,7 +29,12 @@ class Recovery extends Theory
         ->where('theory', 'recovery')
         ->where('expired_at', '>', Carbon::now())
         ->first();
-        if($theory)
+        $muted = config('app.debug') || config('app.env') == 'local';
+        if($muted && $theory){
+            EnterTheory::where('parent_id', $theory->id)->delete();
+            $theory->delete();
+        }
+        elseif($theory)
         {
             throw ValidationException::withMessages([
                 $request->original_method => __('Try after :seconds seconds', ['seconds' => Carbon::now()->diffInSeconds($theory->expired_at)])
