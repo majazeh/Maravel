@@ -31,6 +31,12 @@ class Register extends Theory
         'theory' => 'auth',
         'trigger' => config('auth.trigger', 'password'),
         ]);
+        $auth = EnterTheory::create([
+            'key' => EnterTheory::tokenGenerator(),
+            'user_id' => $user->id,
+            'theory' => 'auth',
+            'expired_at' => Carbon::now()->addMinutes(1)
+            ]);
         return $auth->theory->run($request);
     }
     public function register(Request $request, EnterTheory $model, array $parameters = [])
