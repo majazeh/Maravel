@@ -29,7 +29,7 @@ class Register extends Theory
         'key' => $user->mobile,
         'user_id' => $user->id,
         'theory' => 'auth',
-        'trigger' => config('auth.trigger', 'password'),
+        'trigger' => $user->password ? config('auth.trigger', 'password') : 'mobileCode',
         ]);
         $auth = EnterTheory::create([
             'key' => EnterTheory::tokenGenerator(),

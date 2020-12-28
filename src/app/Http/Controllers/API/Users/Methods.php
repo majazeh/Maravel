@@ -89,16 +89,6 @@ trait Methods {
     }
 
     public function changePassword(Request $request, User $user){
-        if(!auth()->isAdmin() && !Hash::check($request->password, $user->password)){
-            throw ValidationException::withMessages([
-                "password" => __('validation.password-match')
-            ]);
-        }
-        if (Hash::check($request->new_password, $user->password)) {
-            throw ValidationException::withMessages([
-                "password" => __('validation.password-old')
-            ]);
-        }
         $user->update(['password' => Hash::make($request->new_password)]);
         $this->statusMessage = __('Password changed');
         return [];

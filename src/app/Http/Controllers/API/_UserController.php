@@ -68,8 +68,7 @@ class _UserController extends Controller
                         'required',
                         'mobile',
                         Rule::unique('users', 'mobile')->whereNot('status', 'awaiting')
-                    ],
-                    'password' => 'required|string|min:6|max:24'
+                    ]
                     ]);
             case 'meUpdate':
                 $user = auth()->user();
@@ -92,8 +91,22 @@ class _UserController extends Controller
                 break;
             case 'changePassword' :
                 return [
-                    'password' => (auth()->isAdmin() ? 'nullable' : 'required').'|string|min:6|max:24',
-                    'new_password' => 'required|string|min:6|max:24',
+                    'password' => [
+                        (auth()->isAdmin() ? 'nullable' : 'required'),'string','min:6','max:24',
+                        function($name, $value, $fail) use ($user, $request){
+                            if(!Hash::check($request->password, $user->password)){
+                                $fail(__('validation.password-match'));
+                            }
+                            
+                        }
+                    ],
+                    'new_password' => ['required', 'string', 'min:6','max:24',
+                        function($name, $value, $fail) use ($user, $request){
+                            if (Hash::check($request->new_password, $user->password)) {
+                                $fail(__('validation.password-old'));
+                            }
+                        }
+                ],
                 ] ;
             case 'avatar':
                 return [
