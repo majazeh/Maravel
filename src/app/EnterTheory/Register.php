@@ -24,7 +24,10 @@ class Register extends Theory
         {
             $user = User::create($params);
         }
-        $this->model->delete();
+        try {
+            $this->model->delete();
+        } catch (\Throwable $th) {
+        }
         $auth = EnterTheory::create([
         'key' => $user->mobile,
         'user_id' => $user->id,
