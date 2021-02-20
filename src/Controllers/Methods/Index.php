@@ -3,6 +3,7 @@
 namespace Maravel\Controllers\Methods;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 trait Index
 {
@@ -132,9 +133,10 @@ trait Index
         {
             if(isset($model->emptyModel) && $model->emptyModel === true)
             {
-                $model->limit(0);
+                $paginate = new LengthAwarePaginator([], 0, 15);
+            }else{
+                $paginate = $model->paginate();
             }
-            $paginate = $model->paginate();
             if(join(',', array_keys($order_theory)) != join(',', array_keys($default_order)) || join(',', array_values($order_theory)) != join(',', array_values($default_order)))
             {
                 $paginate->appends($request->all('order', 'sort'));
