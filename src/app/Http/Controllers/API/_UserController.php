@@ -265,7 +265,10 @@ class _UserController extends Controller
         if($request->q)
         {
             $model->where(function($q) use ($request){
-                $q->where('name', 'LIKE', "%{$request->q}%");
+                $q->where('name', 'LIKE', "%{$request->q}%")
+                ->orWhere('mobile', 'LIKE', "%{$request->q}%")
+                ->orWhere('username', 'LIKE', "%{$request->q}%")
+                ->orWhere('email', 'LIKE', "%{$request->q}%");
             });
             $current['q'] = $request->q;
         }
