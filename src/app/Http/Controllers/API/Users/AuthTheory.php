@@ -8,6 +8,7 @@ use App\EnterTheory;
 use App\EnterTheory\Fake;
 use App\Http\Resources\User as ResourcesUser;
 use App\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 trait AuthTheory {
 
@@ -17,6 +18,14 @@ trait AuthTheory {
             return $this->userAuthResult($request, ...$response);
         }
         return $response;
+    }
+
+    public function theoryResultData(Request $request, $key){
+        $auth = EnterTheory::where('key', $key)->first();
+        if(!$auth){
+            throw (new ModelNotFoundException)->setModel(EnterTheory::class, $key);
+        }
+        return $auth->theory->response();
     }
     public function theory(Request $request, EnterTheory $enterTheory)
     {
