@@ -13,10 +13,10 @@ class GuardioCheck
         $this->user = $user;
 
         $groups = $this->groups();
-        $guardio = Guard::select('guard_positions.*')
-        ->whereIn('guards.title', $groups)
-        ->join('guard_positions', 'guards.id', 'guard_positions.guard_id')->get();
-
+        // $guardio = Guard::select('guard_positions.*')
+        // ->whereIn('guards.title', $groups)
+        // ->join('guard_positions', 'guards.id', 'guard_positions.guard_id')->get();
+        $guardio = [];
         $permissions = [];
         foreach ($groups as $key => $value) {
             $default = config("guardio.groups.{$value}", []);

@@ -28,7 +28,8 @@ class Guardio
 
     public static function allGroups()
     {
-        $guards = Guard::all()->pluck('group')->toArray();
+        // $guards = Guard::all()->pluck('group')->toArray();
+        $guards = [];
         $groups = array_unique(array_merge($guards, array_keys(config('guardio.groups', []))));
         return $groups;
     }

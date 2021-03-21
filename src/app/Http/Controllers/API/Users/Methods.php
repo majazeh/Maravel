@@ -118,9 +118,9 @@ trait Methods {
     {
         $show = $this->show($request, auth()->user());
         $token = auth()->user()->token();
-        $show->additional(array_merge_recursive($show->additional, [
-            'guards' => Guardio::permissions()
-        ]));
+        // $show->additional(array_merge_recursive($show->additional, [
+        //     'guards' => Guardio::permissions()
+        // ]));
         if (isset($token->meta['admin_id'])) {
             $admin = $this->model::findOrFail($token->meta['admin_id']);
             $user = $this->show($request, $admin);
