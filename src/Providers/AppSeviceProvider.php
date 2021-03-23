@@ -30,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
             if(!\Auth::user()) return false;
             return \Auth::user()->isAdmin();
         });
+        SessionGuard::macro('id', function(){
+            if(!\Auth::user()) return false;
+            return \Auth::user()->id;
+        });
         Route::macro('authIf', function(){
             return app('request')->header('authorization') ? 'auth:api' : 'api';
         });
