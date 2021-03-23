@@ -16,12 +16,17 @@ use Illuminate\Support\Facades\Cache;
 use Maravel\Middleware\Authenticate as MaravelAuthenticate;
 use Illuminate\Support\Facades\Config;
 use Route;
+use Illuminate\Auth\SessionGuard;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
         RequestGuard::macro('isAdmin', function(){
+            if(!$this->user) return false;
+            return $this->user->isAdmin();
+        });
+        SessionGuard::macro('isAdmin', function(){
             return $this->user->isAdmin();
         });
         Route::macro('authIf', function(){
