@@ -27,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
             return $this->user->isAdmin();
         });
         SessionGuard::macro('isAdmin', function(){
+            if(!\Auth::user()) return false;
             return \Auth::user()->isAdmin();
         });
         Route::macro('authIf', function(){
