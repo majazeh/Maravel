@@ -36,14 +36,22 @@ class Password extends Theory
             'parent_id' => $model->id,
             ['expired_at', '>', Carbon::now()],
             'theory' => 'password',
-        ])->first();
+        ])->first();        
         return $find ?: EnterTheory::create([
             'key' => EnterTheory::tokenGenerator(),
             'theory' => 'password',
             'value' => $model->value,
             'parent_id' => $model->id,
-            'expired_at' => Carbon::now()->addMinutes(5)
+            'expired_at' => Carbon::now()->addMinutes(5),
+            'meta' => ['authorized_key' => $request->authorized_key]
         ]);
+    }
+
+    public function response()
+    {
+        $response = parent::response();
+        $response['authorized_key'] = $this->result->meta['authorized_key'];
+        return $response;
     }
 
     public function rules(Request $request)

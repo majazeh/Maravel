@@ -46,12 +46,20 @@ class Recovery extends Theory
                 'key' => EnterTheory::tokenGenerator(),
                 'theory' => 'recovery',
                 'trigger' => 'mobileCode',
+                'meta' => ['authorized_key' => $model->user->mobile],
                 'expired_at' => Carbon::now()->addMinutes(3)
             ]);
         if ($theory->getAttribute('trigger')) {
             return $theory->trigger->register($request, $theory);
         }
         return $theory;
+    }
+
+    public function response()
+    {
+        $result = parent::response();
+        $result['authorized_key'] = $this->result->meta['authorized_key'];
+        return $result;
     }
 
     public function rules(Request $request)

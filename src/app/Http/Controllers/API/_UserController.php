@@ -58,7 +58,7 @@ class _UserController extends Controller
         switch ($action) {
             case 'auth':
                 return [
-                    'authorized_key' => 'required|min:4|max:24'
+                    'authorized_key' => 'required|min:4|max:110'
                 ];
             case 'theory' :
                 return $user->theory->rules($request);

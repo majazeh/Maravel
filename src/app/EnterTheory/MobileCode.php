@@ -46,6 +46,7 @@ class MobileCode extends Theory
             'parent_id' => $model->id,
             'value' =>  $value,
             'theory' => 'mobileCode',
+            'meta' => ['authorized_key' => $request->mobile],
             'expired_at' => Carbon::now()->addMinutes(5),
             'user_id' => isset($parameters['verify_id']) ? $parameters['verify_id'] : null,
             'type' => isset($parameters['verify_id']) ? 'verify' : 'temp'
@@ -56,6 +57,13 @@ class MobileCode extends Theory
         }
 
         return $theory;
+    }
+
+    public function response()
+    {
+        $result = parent::response();
+        $result['authorized_key'] = $this->result->meta['authorized_key'];
+        return $result;
     }
 
     public function rules(Request $request)
