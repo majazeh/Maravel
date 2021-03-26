@@ -46,7 +46,7 @@ class MobileCode extends Theory
             'parent_id' => $model->id,
             'value' =>  $value,
             'theory' => 'mobileCode',
-            'meta' => ['authorized_key' => $request->mobile],
+            'meta' => ['authorized_key' => $request->mobile ?: $request->authorized_key],
             'expired_at' => Carbon::now()->addMinutes(5),
             'user_id' => isset($parameters['verify_id']) ? $parameters['verify_id'] : null,
             'type' => isset($parameters['verify_id']) ? 'verify' : 'temp'

@@ -42,6 +42,7 @@ class Password extends Theory
             'theory' => 'password',
             'value' => $model->value,
             'parent_id' => $model->id,
+            'type' => 'temp',
             'expired_at' => Carbon::now()->addMinutes(5),
             'meta' => ['authorized_key' => $request->authorized_key]
         ]);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Users;
 use App\Requests\Maravel as Request;
 use Illuminate\Validation\ValidationException;
 use App\EnterTheory;
+use App\EnterTheory\Auth;
 use App\EnterTheory\Fake;
 use App\Http\Resources\User as ResourcesUser;
 use App\User;
@@ -22,7 +23,7 @@ trait AuthTheory {
 
     public function theoryResultData(Request $request, $key){
         $auth = EnterTheory::where('key', $key)->first();
-        if(!$auth){
+        if(!$auth || $auth->type == 'action'){
             throw (new ModelNotFoundException)->setModel(EnterTheory::class, $key);
         }
         return $auth->theory->response();
