@@ -7,9 +7,16 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 trait Index
 {
-    public function _index(Request $request)
+    public function _index(Request $request, ...$args)
     {
-        list($parent, $model, $order_list, $current_order, $default_order, $filters, $current_filter) = $this->_queryIndex(...func_get_args());
+        if(last($args) instanceof \Closure){
+            $callback = last($args);
+            array_pop($args);
+            array_unshift($args, $request);
+            list($parent, $model, $order_list, $current_order, $default_order, $filters, $current_filter) = call_user_func_array($callback, $args);
+        }else{
+            list($parent, $model, $order_list, $current_order, $default_order, $filters, $current_filter) = $this->_queryIndex(...func_get_args());
+        }
         $result = $this->resourceCollectionClass ? new $this->resourceCollectionClass($model) : $this->resourceClass::collection($model);
         $additional = [];
         if($parent)

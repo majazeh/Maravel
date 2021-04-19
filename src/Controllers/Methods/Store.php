@@ -60,13 +60,15 @@ trait Store
             $client = new $this->clientController(...func_get_args());
             $client->webStore($request, $result);
         }
-        if($result instanceof ResourceCollection && $result->count() > 1)
-        {
-            $this->statusMessage = $this->class_name() . ' (' . $result->count() . ") created";
-        }
-        else
-        {
-            $this->statusMessage = $this->class_name() . " created";
+        if(!$this->statusMessage){
+            if($result instanceof ResourceCollection && $result->count() > 1)
+            {
+                $this->statusMessage = $this->class_name() . ' (' . $result->count() . ") created";
+            }
+            else
+            {
+                $this->statusMessage = $this->class_name() . " created";
+            }
         }
         return $result;
     }
