@@ -6,6 +6,7 @@ use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Guardio;
 use App\Services\Kavenegar;
+use App\User;
 
 class _User extends Authenticatable
 {
@@ -91,11 +92,12 @@ class _User extends Authenticatable
                 return $this->notification('sms', self::find(1), 'recovery', [$value]);
             }
     }
-    public function notification($method, self $from, $template, array $parameters = []){
-        $method = strtolower($method);
+    public function notification($method, User $from, $template, array $parameters = []){
+        $check = strtolower($method);
         $call = null;
-        switch ($method){
+        switch ($check){
             case 'sms' : $call = 'SMS';
+            default : $call = $method;
         }
         if($call){
             return $this->{"notification$call"}($template, $parameters);

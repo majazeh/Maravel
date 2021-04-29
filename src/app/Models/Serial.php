@@ -10,18 +10,23 @@ trait Serial
 		return self::decode_id($this->id);
 	}
 
+    public static function prefix(){
+        $static = new static;
+        return method_exists($static, 'prefixSerial') ? $static->prefixSerial() : static::$s_prefix;
+    }
 	public static function decode_id($id)
 	{
-		return self::$s_prefix . Engine::encode($id + self::$s_start);
+        $static = new static;
+		return static::prefix() . Engine::encode($id + self::$s_start);
 	}
 
 	public static function encode_id($serial)
 	{
         $serial = strtoupper($serial);
-        if (substr($serial, 0, strlen(self::$s_prefix)) != self::$s_prefix) {
+        if (substr($serial, 0, strlen(static::prefix())) != static::prefix()) {
 			return false;
 		}
-		return Engine::decode(substr($serial, strlen(self::$s_prefix))) - self::$s_start;
+		return Engine::decode(substr($serial, strlen(static::prefix()))) - self::$s_start;
     }
     public static function rangeId($serial)
     {
@@ -58,7 +63,7 @@ trait Serial
 
     public function getSerialTextAttribute()
     {
-		return self::$s_prefix . '-'. Engine::encode($this->id + self::$s_start);
+		return static::prefix() . '-'. Engine::encode($this->id + self::$s_start);
     }
 
     public function resolveRouteBinding($value, $filed = null)
