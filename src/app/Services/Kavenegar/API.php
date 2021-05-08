@@ -15,7 +15,7 @@ class API {
             'Content-Type: application/x-www-form-urlencoded',
             'charset: utf-8'
         );
-        $fields_string = "";
+        $fields_string = $data;
         if (!is_null($data)) {
             $fields_string = http_build_query($data);
         }
@@ -65,7 +65,24 @@ class API {
             "type" => $type,
             "localid" => $localid
         );
-        return static::execute($path, $params);
+        $split = explode("\n", $message);
+        $sms_list = [''];
+        $sms_index = 0;
+        foreach($split as $sms){
+            $new_len = strlen($sms);
+            if(strlen($sms_list[$sms_index])  + $new_len  > 1000){
+                $sms_index++;
+                $sms_list[$sms_index] = '';
+            }
+            $sms_list[$sms_index] .= $sms . "\n";
+        }
+
+        $result = [];
+        foreach($sms_list as $sms){
+            $params['message'] = trim($sms, "\n");
+            $result[] = static::execute($path, $params);
+        }
+        return $result;
     }
 
     public static function VerifyLookup($receptor, $token, $token2, $token3, $template, $type = null)
