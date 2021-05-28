@@ -4,6 +4,11 @@ namespace Maravel\Lib;
 class MobileRV {
     public static function parse($value, $parameters = null)
     {
+        $alpha_replace = [
+            ['۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' , '۰', '٤', '٥', '٦', '٠'],
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9' , '0', '4', '5', '6', '0']
+        ];
+        $value = str_replace($alpha_replace[0], $alpha_replace[1], $value);
         if(!preg_match("#^\+?\d+#", $value))
         {
             return false;
