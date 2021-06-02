@@ -3,39 +3,14 @@
 namespace Maravel\Exceptions;
 
 use Exception;
-use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\QueryException;
 
-class ExceptionHandler extends Handler
+class ExceptionHandler extends \App\Exceptions\Handler
 {
     use QueryExceptionCode;
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array
-     */
-    protected $dontReport = [
-        //
-    ];
 
-    /**
-     * A list of the inputs that are never flashed for validation exceptions.
-     *
-     * @var array
-     */
-    protected $dontFlash = [
-        'password',
-        'password_confirmation',
-    ];
-
-    /**
-     * Report or log an exception.
-     *
-     * @param  \Exception  $exception
-     * @return void
-     */
     public function report(Exception $exception)
     {
         parent::report($exception);
