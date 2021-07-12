@@ -135,11 +135,12 @@ class _UserController extends Controller
             if(isset($data['username']))
             {
                 $username = $data['username'];
-                if ((substr($data['username'], 0, 1) == '+' && ctype_digit(substr($data['username'], 1))) || ctype_digit($data['username']))
+                if (MobileRV::parse($data['username']))
                 {
                     $data['method'] = 'mobile';
+                    list($mobile, $c, $code) = MobileRV::parse($data['username']);
                     unset($data['username']);
-                    $data['mobile'] = $username;
+                    $data['mobile'] = "+$code$mobile";
                 }
                 elseif (strstr($data['username'], '@'))
                 {
