@@ -65,7 +65,7 @@ trait Index
             list($filters, $current_filter) = $this->filters($request, $model, $parent);
         }
         list($model, $order_list, $current_order, $default_order) = $this->paginate($request, $model, $parent);
-        if($current_filter)
+        if($current_filter && $model instanceof \App\Models\ApiPaginator)
         {
             $model->appends($request->all(...array_keys($current_filter)));
         }
