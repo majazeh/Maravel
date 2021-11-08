@@ -6,6 +6,7 @@ use Str;
 use Carbon\Carbon;
 use App\EnterTheory;
 use App\User;
+use Exception;
 use Illuminate\Validation\ValidationException;
 
 class MobileCode extends Theory
@@ -53,7 +54,15 @@ class MobileCode extends Theory
         ]);
         if(!$muted){
             $user = $this->model->user ?: new User;
-            $user->mobileCodeTheory($request, $parameters, $model, $theory, $value);
+            try{
+                $user->mobileCodeTheory($request, $parameters, $model, $theory, $value);
+            }catch(Exception $e){
+                Log::info(json_encode([
+                    'request' => $request->all(),
+                    'parameters' => $parameters,
+                ]));
+                throw $e;
+            }
         }
 
         return $theory;
