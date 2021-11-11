@@ -8,6 +8,7 @@ use App\EnterTheory;
 use App\User;
 use Exception;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class MobileCode extends Theory
 {
