@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\EnterTheory;
 use App\User;
+use Maravel\Lib\MobileRV;
 
 class Register extends Theory
 {
@@ -44,8 +45,12 @@ class Register extends Theory
     }
     public function register(Request $request, EnterTheory $model, array $parameters = [])
     {
-        $parameters['status'] = User::count() ? User::defaultStatus() : 'active';
-        $parameters['type'] = User::count() ? User::defaultType() : 'admin';
+        $parameters['status'] = User::defaultStatus();
+        $parameters['type'] = User::defaultType();
+        if($request->has('authorized_key') && MobileRV::parse($request->authorized_key) && !$parameters['mobile']){
+            list($mobile, $c, $code) = MobileRV::parse($request->authorized_key);
+            $parameters['mobile'] = $code.$mobile;
+        }
         if (!User::where('mobile', $parameters['mobile'])->first()) {
             User::create($parameters);
         }

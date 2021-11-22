@@ -10,6 +10,7 @@ use App\EnterTheory\Fake;
 use App\Http\Resources\User as ResourcesUser;
 use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Maravel\Lib\MobileRV;
 
 trait AuthTheory {
 
@@ -36,7 +37,10 @@ trait AuthTheory {
     public function auth(Request $request)
     {
         $enterTheory = EnterTheory::where('key', $request->authorized_key)->first();
-        if (!$enterTheory) {
+        $is_mobile = MobileRV::parse($request->authorized_key);
+        if($is_mobile && !$enterTheory){
+            return $this->register($request);
+        }elseif (!$enterTheory) {
             throw ValidationException::withMessages([
                 "authorized_key" => __('auth.key')
             ]);
