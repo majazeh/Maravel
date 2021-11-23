@@ -38,6 +38,9 @@ trait AuthTheory {
     {
         $enterTheory = EnterTheory::where('key', $request->authorized_key)->first();
         $is_mobile = MobileRV::parse($request->authorized_key);
+        if($enterTheory && $enterTheory->type == 'chain'){
+            abort(419, 'لطفا چند دقیقه دیگر تلاش کنید');
+        }
         if($is_mobile && !$enterTheory){
             return $this->register($request);
         }elseif (!$enterTheory) {

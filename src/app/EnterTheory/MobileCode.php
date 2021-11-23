@@ -9,6 +9,7 @@ use App\User;
 use Exception;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
+use Maravel\Lib\MobileRV;
 
 class MobileCode extends Theory
 {
@@ -27,6 +28,10 @@ class MobileCode extends Theory
     }
     public function register(Request $request, EnterTheory $model = null, array $parameters = [])
     {
+        if($request->authorized_key && !$parameters['mobile'] && MobileRV::parse($request->authorized_key)){
+            list($mobile, $c, $code) = MobileRV::parse($request->authorized_key);
+            $parameters['mobile'] = $code.$mobile;
+        }
         $find = EnterTheory::where([
             'parent_id' => $model->id,
             ['expired_at', '>', Carbon::now()],
