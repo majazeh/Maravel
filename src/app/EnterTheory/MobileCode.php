@@ -28,7 +28,7 @@ class MobileCode extends Theory
     }
     public function register(Request $request, EnterTheory $model = null, array $parameters = [])
     {
-        if($request->authorized_key && !$parameters['mobile'] && MobileRV::parse($request->authorized_key)){
+        if($request->authorized_key && !isset($parameters['mobile']) && MobileRV::parse($request->authorized_key)){
             list($mobile, $c, $code) = MobileRV::parse($request->authorized_key);
             $parameters['mobile'] = $code.$mobile;
         }
