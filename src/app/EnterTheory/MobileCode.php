@@ -85,7 +85,7 @@ class MobileCode extends Theory
     {
         $model = $this->model;
         return [
-            'code' => ['required', function ($key, $value, $fail) use ($model) {
+            'code' => ['required','numeric', function ($key, $value, $fail) use ($model) {
                 if ($model->value != $value) {
                     $fail('mobileCode.failed');
                 }

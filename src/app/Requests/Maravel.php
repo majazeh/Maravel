@@ -29,7 +29,7 @@ class Maravel extends FormRequest
     {
         foreach ($this->parseRules() as $key => $value) {
             foreach ($value as $k => $v) {
-                if ($k == 'numbric' && isset($data[$key])) {
+                if (in_array($k, ['numbric', 'numeric']) && isset($data[$key])) {
                     $numbric = $this->numberial($data[$key]);
                     $data[$key] = ctype_digit($numbric) ? (int) $numbric : $numbric;
                 }
