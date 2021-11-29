@@ -1,5 +1,6 @@
 <?php
 namespace App\Services\Kavenegar;
+use Illuminate\Support\Facades\Log;
 
 class API {
     const APIPATH = "https://api.kavenegar.com/v1/%s/%s/%s.json/";
@@ -42,6 +43,7 @@ class API {
         } else {
             $json_return = $json_response->return;
             if ($json_return->status != 200) {
+                Log::channel('sms')->info($data);
                 throw new \Exception($json_return->message);
             }
             return $json_response->entries;
