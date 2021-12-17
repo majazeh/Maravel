@@ -9,7 +9,7 @@ class MobileRV {
             ['', '1', '2', '3', '4', '5', '6', '7', '8', '9' , '0', '4', '5', '6', '0']
         ];
         $value = str_replace($alpha_replace[0], $alpha_replace[1], $value);
-        if(!preg_match("#^\+?\d+#", $value))
+        if(!ctype_digit($value))
         {
             return false;
         }
