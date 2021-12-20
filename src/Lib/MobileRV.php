@@ -9,7 +9,8 @@ class MobileRV {
             ['', '1', '2', '3', '4', '5', '6', '7', '8', '9' , '0', '4', '5', '6', '0']
         ];
         $value = str_replace($alpha_replace[0], $alpha_replace[1], $value);
-        if(!ctype_digit($value))
+        $vx = substr($value, 0, 1) == '+' ? substr($value, 1) : $value;
+        if(!ctype_digit($vx))
         {
             return false;
         }
