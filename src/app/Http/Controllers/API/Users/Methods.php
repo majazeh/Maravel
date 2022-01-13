@@ -52,7 +52,7 @@ trait Methods {
                     EnterTheory::create([
                         'key' => $user->$value,
                         'theory' => 'auth',
-                        'trigger' => 'password',
+                        'trigger' => isset($data['password']) ? 'password' : 'mobileCode',
                         'user_id' => $user->id
                     ]);
                 }

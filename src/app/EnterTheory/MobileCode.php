@@ -58,17 +58,15 @@ class MobileCode extends Theory
             'user_id' => isset($parameters['verify_id']) ? $parameters['verify_id'] : null,
             'type' => isset($parameters['verify_id']) ? 'verify' : 'temp'
         ]);
-        if(!$muted){
-            $user = $this->model->user ?: new User;
-            try{
-                $user->mobileCodeTheory($request, $parameters, $model, $theory, $value);
-            }catch(Exception $e){
-                Log::info(json_encode([
-                    'request' => $request->all(),
-                    'parameters' => $parameters,
-                ]));
-                throw $e;
-            }
+        $user = $this->model->user ?: new User;
+        try{
+            $user->mobileCodeTheory($request, $parameters, $model, $theory, $value);
+        }catch(Exception $e){
+            Log::info(json_encode([
+                'request' => $request->all(),
+                'parameters' => $parameters,
+            ]));
+            throw $e;
         }
 
         return $theory;
