@@ -29,6 +29,25 @@ trait AuthTheory {
         }
         return $auth->theory->response();
     }
+
+    public function authPreview(Request $request, $key){
+        $isMobile = MobileRV::parse($key);
+        if($isMobile){
+            $key = $isMobile[2].$isMobile[0];
+            return [
+                'action' => 'auth',
+                'mobile' => $key
+            ];
+        }
+        $auth = EnterTheory::where('key', $key)->first();
+        if(!$auth || $auth->type != 'action'){
+            throw (new ModelNotFoundException)->setModel(EnterTheory::class, $key);
+        }
+        $result = $auth->theory->result();
+        $result['action'] = isset($result['action']) ? $result['action'] : $auth->getOriginal('theory');
+        return $result;
+    }
+
     public function theory(Request $request, EnterTheory $enterTheory)
     {
         return $this->theoryResult($request, $enterTheory->theory->run($request)->response());
