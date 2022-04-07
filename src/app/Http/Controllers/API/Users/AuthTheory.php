@@ -41,7 +41,11 @@ trait AuthTheory {
         }
         $auth = EnterTheory::where('key', $key)->first();
         if(!$auth || $auth->type != 'action'){
-            throw (new ModelNotFoundException)->setModel(EnterTheory::class, $key);
+            if(ctype_digit($key)){
+                abort(404, "چنین کد یا موبایلی معتبر نیست");
+            }else{
+                abort(404, "داده ورودی اشتباه است");
+            }
         }
         $result = $auth->theory->result();
         $result['action'] = isset($result['action']) ? $result['action'] : $auth->getOriginal('theory');
