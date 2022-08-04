@@ -34,7 +34,7 @@ class Response
             else
             {
                 $result = json_decode($response->content(), true);
-                if($result == null) return $response;
+                if(json_last_error() !== JSON_ERROR_NONE) return $response;
                 $result = array_merge([
                     'is_ok' => true
                 ],$result);
