@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\EnterTheory;
 use App\User;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
 use Maravel\Lib\MobileRV;
@@ -48,12 +49,20 @@ class MobileCode extends Theory
         }else{
             $value =  rand(130171, 999999);
         }
+        $meta = ['authorized_key' => $request->mobile ?: $request->authorized_key];
+        $secKey = rand(130171, 999999);
+        $meta['secKey'] = $secKey;
+
+        $tKey = EnterTheory::tokenGenerator();
+        $mobilex = isset($parameters['mobile']) ? $parameters['mobile'] : $request->mobile;
+        Cache::put('secKey:'. $mobilex, $tKey, 5 * 60);
+
         $theory = EnterTheory::create([
-            'key' => EnterTheory::tokenGenerator(),
+            'key' => $tKey,
             'parent_id' => $model->id,
             'value' =>  $value,
             'theory' => 'mobileCode',
-            'meta' => ['authorized_key' => $request->mobile ?: $request->authorized_key],
+            'meta' => $meta,
             'expired_at' => isset($parameters['expires_at']) ? $parameters['expires_at'] : Carbon::now()->addMinutes(5),
             'user_id' => isset($parameters['verify_id']) ? $parameters['verify_id'] : null,
             'type' => isset($parameters['verify_id']) ? 'verify' : 'temp'
@@ -76,12 +85,19 @@ class MobileCode extends Theory
     {
         $result = parent::response();
         $result['authorized_key'] = $this->result->meta['authorized_key'];
+        $result['secKey'] = $this->result->meta['secKey'];
+        if(isset($this->result->meta['secVerify'])){
+            return $this->run(new Request());
+        }
         return $result;
     }
 
     public function rules(Request $request)
     {
         $model = $this->model;
+        if(isset($this->model->meta['secVerify'])){
+            return [];
+        }
         return [
             'code' => ['required','numeric', function ($key, $value, $fail) use ($model) {
                 if ($model->value != $value) {
